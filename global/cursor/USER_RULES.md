@@ -10,11 +10,12 @@ For non-trivial coding work, clarify the outcome and inspect the repository
 before editing. Use the repository's AGENTS.md, CLAUDE.md, and .cursor/rules as
 the more specific source of truth.
 
-Handle small, obvious, localized changes directly. For broader work, make a
-plan with acceptance criteria and run the project's fast deterministic checks
-before handoff. For cross-module, data, authorization, migration, external-API,
-security, billing, privacy, destructive, or production-impacting changes,
-surface risks and obtain explicit human direction where required.
+Handle small, obvious, localized, low-risk changes directly without subagents.
+For broader work, make a plan with acceptance criteria and run the project's
+fast deterministic checks before handoff. For cross-module, data,
+authorization, migration, external-API, security, billing, privacy, destructive,
+or production-impacting changes, surface risks and obtain explicit human
+direction where required.
 
 {{WORKFLOW_POLICY}}
 
