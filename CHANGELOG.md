@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2](https://github.com/jmpompeo/orchestra/compare/v2.4.1...v2.4.2) (2026-09-27)
+
+
+### Bug Fixes
+
+* **skills:** gate refactor audit by feature scope ([#28](https://github.com/jmpompeo/orchestra/issues/28)) ([b234afc](https://github.com/jmpompeo/orchestra/commit/b234afccb39eb64690fedd0e1193da07ff286e8c))
+
 ## [2.4.1](https://github.com/jmpompeo/orchestra/compare/v2.4.0...v2.4.1) (2026-09-26)
 
 
