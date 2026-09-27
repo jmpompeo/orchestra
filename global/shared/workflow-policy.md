@@ -18,6 +18,11 @@
   refactor-code for separately requested behavior-preserving cleanup. Use
   grill-me when material choices need an interview. Use bootstrap-agent-harness
   as read-only preparation when project context is incomplete.
+- Handle small, obvious, localized, low-risk work directly without subagents,
+  even when a feature workflow is explicitly invoked. A localized, low-risk
+  feature needs a targeted check, not a refactor audit or independent reviewer.
+  For module-level, cross-cutting, or high-consequence feature work, run a
+  bounded read-only refactor audit and a separate independent correctness review.
 - Keep the primary workflow and task plan in charge when another skill is
   needed. Announce a clear transition briefly, carry the goal, existing
   authorization, evidence and checks, settled decisions and constraints, and

@@ -19,10 +19,11 @@ present. Repository instructions override these personal defaults.
 - Classify the task before adding process. Handle small, obvious, localized
   changes directly without subagents.
 - Use a proportionate risk tier. Low-risk localized work needs a targeted check;
-  a module-level feature needs a plan and deterministic checks; cross-module,
-  data, authorization, migration, or external-API work needs bounded
-  delegation and independent review; security, billing, privacy, destructive,
-  or production-impacting work also needs explicit human acceptance criteria.
+  a module-level feature needs a plan, deterministic checks, and independent
+  review; cross-module, data, authorization, migration, or external-API work
+  needs bounded delegation and independent review; security, billing, privacy,
+  destructive, or production-impacting work also needs explicit human acceptance
+  criteria.
 - For ambiguous or cross-cutting work, clarify outcomes before editing. Resolve
   only decisions that materially affect behavior, architecture, risk, cost, or
   destructive scope with the user.
@@ -42,8 +43,9 @@ present. Repository instructions override these personal defaults.
   Inspect every returned change and report; subagent claims are evidence, not
   proof.
 - The parent integrates the work, resolves conflicts, runs repository checks,
-  verifies acceptance criteria, and performs the final review. For non-trivial
-  work, use an independent read-only reviewer and address material findings.
+  verifies acceptance criteria, and performs the final review. For module-level
+  or higher feature work, use an independent read-only reviewer separate from
+  the refactor audit and address material findings.
 - Treat the repository's fast deterministic checks as the default feedback
   loop. Run broader checks before integration when the risk tier requires them;
   use model review for semantic judgment, not as a substitute for tests,
