@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prep Long Session"
+  short_description: "Prepare and launch a bounded agent run"
+  default_prompt: "Use $prep to interview me, validate a long-running session, build its local dashboard, and launch a fresh kickoff session where supported."
