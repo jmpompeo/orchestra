@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/jmpompeo/orchestra/compare/v2.4.2...v2.5.0) (2026-09-28)
+
+
+### Features
+
+* add bounded long-running agent sessions ([#32](https://github.com/jmpompeo/orchestra/issues/32)) ([b927afc](https://github.com/jmpompeo/orchestra/commit/b927afcd07532a6e04c1660cea1017909758bb45)), closes [#30](https://github.com/jmpompeo/orchestra/issues/30)
+
 ## [2.4.2](https://github.com/jmpompeo/orchestra/compare/v2.4.1...v2.4.2) (2026-09-27)
 
 
