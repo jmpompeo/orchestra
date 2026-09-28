@@ -15,6 +15,21 @@ static void CheckRenderedPolicy(string output, string policy, string destination
     Check(!output.Contains("{{WORKFLOW_POLICY}}", StringComparison.Ordinal), $"{destination} has no unresolved workflow marker");
 }
 
+static void CheckFeatureRouting(string output, string destination)
+{
+    var text = string.Join(' ', output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+    Check(text.Contains("localized, low-risk feature work directly without subagents", StringComparison.Ordinal)
+        && text.Contains("do not launch a refactor audit or independent reviewer for this tier", StringComparison.Ordinal),
+        $"{destination} routes localized low-risk features directly");
+    Check(text.Contains("For module-level, cross-cutting, or high-consequence feature work, once a reviewable draft or diff exists, launch", StringComparison.Ordinal),
+        $"{destination} gates the refactor audit at module-level or higher");
+    Check(text.Contains("For module-level, cross-cutting, or high-consequence feature work, obtain a separate independent read-only correctness review", StringComparison.Ordinal)
+        && text.Contains("The refactor audit does not replace this review", StringComparison.Ordinal),
+        $"{destination} retains a separate independent review at module-level or higher");
+    Check(!text.Contains("Once a reviewable draft or diff exists, launch the lowest-cost capable", StringComparison.Ordinal),
+        $"{destination} has no unconditional refactor audit");
+}
+
 static (int ExitCode, string Output, string Error) Capture(HarnessApp app, string[] args)
 {
     var previousOutput = Console.Out;
@@ -59,6 +74,10 @@ var workflowPolicy = new AssetStore().ReadText("global/shared/workflow-policy.md
 Check(workflowPolicy.Contains("clean working tree", StringComparison.Ordinal) && workflowPolicy.Contains("attached HEAD", StringComparison.Ordinal) && workflowPolicy.Contains("wait for confirmation", StringComparison.Ordinal) && workflowPolicy.Contains("before editing", StringComparison.Ordinal), "shared policy requires branch verification before edits");
 Check(workflowPolicy.Contains("agentic-feature-delivery", StringComparison.Ordinal) && workflowPolicy.Contains("agentic-debugging", StringComparison.Ordinal) && workflowPolicy.Contains("refactor-code", StringComparison.Ordinal) && workflowPolicy.Contains("grill-me", StringComparison.Ordinal) && workflowPolicy.Contains("bootstrap-agent-harness", StringComparison.Ordinal), "shared policy routes all primary and supporting workflows");
 Check(workflowPolicy.Contains("return to the primary workflow", StringComparison.Ordinal) && workflowPolicy.Contains("read-only", StringComparison.Ordinal), "shared policy preserves return routes and audit scope");
+var flattenedPolicy = string.Join(' ', workflowPolicy.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+Check(flattenedPolicy.Contains("localized, low-risk feature needs a targeted check, not a refactor audit or independent reviewer", StringComparison.Ordinal), "shared policy routes localized features directly");
+Check(flattenedPolicy.Contains("module-level, cross-cutting, or high-consequence feature work, run a bounded read-only refactor audit and a separate independent correctness review", StringComparison.Ordinal), "shared policy retains both reviews at module-level or higher");
+CheckFeatureRouting(new AssetStore().ReadText("skills/agentic-feature-delivery/SKILL.md"), "source feature skill");
 try
 {
     ChecksumParser.Parse(new string('a', 64) + "  duplicate.zip\n" + new string('b', 64) + "  duplicate.zip\n");
@@ -290,9 +309,13 @@ try
     }
     Check(app.Run(new[] { "install", "--tools", "codex" }) == 0, "Codex install succeeds in isolated home");
     Check(File.Exists(Path.Combine(home, ".codex", "AGENTS.md")), "Codex instructions installed");
+    var codexAgents = Directory.GetFiles(Path.Combine(home, ".codex", "agents"), "*.toml");
+    Check(codexAgents.Length == 4 && codexAgents.All(path => !File.ReadAllText(path).Contains("@@", StringComparison.Ordinal)), "Codex agent models are rendered");
+    Check(File.ReadAllText(Path.Combine(home, ".codex", "agents", "workflow_explorer.toml")).Contains("model = \"gpt-6-luna\"", StringComparison.Ordinal), "Codex explorer uses its configured model");
     CheckRenderedPolicy(File.ReadAllText(Path.Combine(home, ".codex", "AGENTS.md")), workflowPolicy, "installed Codex instructions");
     var renderedCodexInstructions = File.ReadAllBytes(Path.Combine(home, ".codex", "AGENTS.md"));
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "agentic-feature-delivery", "SKILL.md")), "Codex skill installed");
+    CheckFeatureRouting(File.ReadAllText(Path.Combine(home, ".agents", "skills", "agentic-feature-delivery", "SKILL.md")), "installed Codex feature skill");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "agentic-debugging", "SKILL.md")), "agentic-debugging skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "grill-me", "SKILL.md")), "grill-me skill installed");
     Check(File.ReadAllText(Path.Combine(home, ".agents", "skills", "prep", "SKILL.md")).Contains("orchestrate heartbeat init", StringComparison.Ordinal), "Codex prep skill installs with heartbeat setup");
@@ -317,10 +340,14 @@ try
     Check(app.Run(new[] { "install", "--tools", "claude", "--dry-run" }) == 0, "dry run succeeds");
     Check(Directory.GetFiles(home, "*", SearchOption.AllDirectories).Length == before, "dry run does not create Claude files");
     Check(app.Run(new[] { "install", "--tools", "claude" }) == 0, "Claude install succeeds in isolated home");
+    var claudeAgents = Directory.GetFiles(Path.Combine(home, ".claude", "agents"), "*.md");
+    Check(claudeAgents.Length == 4 && claudeAgents.All(path => !File.ReadAllText(path).Contains("@@", StringComparison.Ordinal)), "Claude agent models are rendered");
+    Check(File.ReadAllText(Path.Combine(home, ".claude", "agents", "workflow-explorer.md")).Contains("model: \"haiku\"", StringComparison.Ordinal), "Claude explorer uses its configured model");
     CheckRenderedPolicy(File.ReadAllText(Path.Combine(home, ".claude", "CLAUDE.md")), workflowPolicy, "installed Claude instructions");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "agentic-debugging", "SKILL.md")), "Claude agentic-debugging skill installed");
     Check(File.ReadAllText(Path.Combine(home, ".claude", "skills", "prep", "SKILL.md")).Contains("dashboard.html", StringComparison.Ordinal), "Claude prep skill installs with dashboard handoff");
     Check(File.ReadAllText(Path.Combine(home, ".claude", "skills", "kickoff", "SKILL.md")).Contains("progress.md", StringComparison.Ordinal), "Claude kickoff skill installs with progress ledger");
+    CheckFeatureRouting(File.ReadAllText(Path.Combine(home, ".claude", "skills", "agentic-feature-delivery", "SKILL.md")), "installed Claude feature skill");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "SKILL.md")), "Claude refactor-code skill installed");
     Check(!File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "agents", "openai.yaml")), "Claude excludes refactor-code Codex metadata");
     var printedCursorRules = Capture(app, new[] { "cursor-rules", "--print" });
@@ -335,6 +362,7 @@ try
         var cursorProjectRule = Path.Combine(project, ".cursor", "rules", "agentic-feature-workflow.mdc");
         CheckRenderedPolicy(File.ReadAllText(cursorProjectRule), workflowPolicy, "generated Cursor project rule");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")), "Cursor command generated");
+        CheckFeatureRouting(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")), "generated Cursor feature command");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("shared Git branch", StringComparison.Ordinal), "Cursor feature command refers to the shared Git gate");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("reviewable draft or diff", StringComparison.Ordinal), "Cursor feature command retains refactor audit sequencing");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "agentic-debugging.md")), "Cursor agentic-debugging command generated");

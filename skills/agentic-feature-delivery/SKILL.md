@@ -11,8 +11,10 @@ tokens and latency without weakening correctness, evidence, or review.
 1. Read repository instructions and `docs/agent-context.md` when present.
    Read `docs/harness-evolution.md` when it exists and a recurring failure is
    relevant. Inspect the working tree and preserve unrelated changes.
-2. Decide whether orchestration is justified. Handle a small, obvious,
-   localized edit directly without subagents.
+2. Decide whether orchestration is justified. Handle small, obvious,
+   localized, low-risk feature work directly without subagents, even when this
+   skill was explicitly invoked. Use a targeted check; do not launch a refactor
+   audit or independent reviewer for this tier.
 3. Resolve meaningful ambiguity before editing. Establish outcomes,
    constraints, non-goals, edge cases, and acceptance criteria. Ask only about
    decisions that materially change behavior, architecture, risk, cost, or
@@ -38,14 +40,14 @@ tokens and latency without weakening correctness, evidence, or review.
    the work. Give faster capable agents only the context required for a bounded
    task, reuse compact findings across phases, combine implementation with its
    focused tests when ownership aligns, and stop obsolete branches early.
-10. Once a reviewable draft or diff exists, launch the lowest-cost capable
-    read-only subagent in parallel with validation or review using
-    the refactor-code skill in audit mode. Scope it to the affected methods or
-    functions and minimum context, never the whole file by default.
-    Implementation, validation, and review must not depend on its completion,
-    but collect its result before the final handoff. Report pre-existing smells
-    without fixing them; route issues introduced by the feature through normal
-    review.
+10. For module-level, cross-cutting, or high-consequence feature work, once a
+    reviewable draft or diff exists, launch the lowest-cost capable read-only
+    subagent in parallel with validation or review using the refactor-code skill
+    in audit mode. Scope it to the affected methods or functions and minimum
+    context, never the whole file by default. Implementation, validation, and
+    review must not depend on its completion, but collect its result before the
+    final handoff. Report pre-existing smells without fixing them; route issues
+    introduced by the feature through normal review.
 11. Keep architecture and integration decisions with the parent. Inspect every
    returned change and the final diff; subagent reports are not proof.
 12. Run fast deterministic checks before handoff, then the broader checks the
@@ -55,8 +57,10 @@ tokens and latency without weakening correctness, evidence, or review.
 13. For behaviour-critical work, use approved fixtures or explicit manual
     acceptance steps. Do not treat agent-authored tests alone as sufficient
     evidence when trusted examples are available.
-14. For non-trivial changes, obtain an independent read-only review, address
-   material findings, and rerun affected checks.
+14. For module-level, cross-cutting, or high-consequence feature work, obtain a
+    separate independent read-only correctness review, address material
+    findings, and rerun affected checks. The refactor audit does not replace
+    this review.
 15. When a pattern has failed at least twice, propose the smallest durable
     control in `docs/harness-evolution.md`; never record sensitive data or raw
     transcripts. Stop only when acceptance criteria are met or a concrete

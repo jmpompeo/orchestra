@@ -20,16 +20,16 @@ integration, and final review. Use faster capable agents for targeted
 exploration, bounded implementation, and verification. Parallel writers must
 have explicit, non-overlapping file ownership. Keep integration with the parent,
 inspect all returned work, run repository checks, and independently review
-non-trivial changes. Treat agent reports as evidence to verify. Minimize total
-tokens and latency: delegate adaptively, keep work with the parent when a
-handoff would cost more than the task, share only needed context, reuse compact
-findings, and stop obsolete branches early.
+module-level or higher feature changes. Treat agent reports as evidence to
+verify. Minimize total tokens and latency: delegate adaptively, keep work with
+the parent when a handoff would cost more than the task, share only needed
+context, reuse compact findings, and stop obsolete branches early.
 
-Use a proportionate risk tier: make small localized changes directly with a
-targeted check; plan and run deterministic checks for module-level work; use
-bounded delegation and independent review for cross-module, data,
-authorization, migration, or external-API work; require explicit human
-acceptance criteria for security, billing, privacy, destructive, or
+Use a proportionate risk tier: make small localized, low-risk changes directly
+with a targeted check; plan, run deterministic checks, and independently review
+module-level feature work; use bounded delegation and independent review for
+cross-module, data, authorization, migration, or external-API work; require
+explicit human acceptance criteria for security, billing, privacy, destructive, or
 production-impacting work. Prefer the fast checks in `agent-context.md` before
 integration. AI review complements tests, linters, type checks, and structural
 checks; it does not replace them.

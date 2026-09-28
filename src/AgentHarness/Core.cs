@@ -374,7 +374,7 @@ public sealed class HarnessApp
         foreach (var line in _assets.ReadText("models.conf").Split('\n'))
         {
             var pair = line.Split('=', 2, StringSplitOptions.TrimEntries);
-            if (pair.Length == 2 && !pair[0].StartsWith('#')) text = text.Replace("{{" + pair[0] + "}}", pair[1], StringComparison.Ordinal);
+            if (pair.Length == 2 && !pair[0].StartsWith('#')) text = text.Replace("@@" + pair[0] + "@@", pair[1], StringComparison.Ordinal);
         }
         return text;
     }
