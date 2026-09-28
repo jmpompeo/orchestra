@@ -99,6 +99,7 @@ public static partial class Heartbeat
             throw new ArgumentException("--stream-id must be a valid ID of at most 100 characters.");
         string? observedSessionId = null;
         var turnNumber = 0;
+        var turnPending = false;
         string? line;
         while ((line = Console.ReadLine()) is not null)
         {
@@ -127,8 +128,16 @@ public static partial class Heartbeat
                 if (expectedSessionId is not null && observedSessionId != expectedSessionId)
                     throw new InvalidOperationException("Codex stream belongs to a different session.");
                 if (observedSessionId is not null) BindObservedSession(file, observedSessionId);
+                turnPending = true;
                 continue;
             }
+            if (type.GetString() == "turn.started")
+            {
+                turnPending = true;
+                continue;
+            }
+            if (type.GetString() == "turn.failed")
+                throw new InvalidOperationException("Codex exec turn failed.");
             if (type.GetString() == "turn.completed" && root.TryGetProperty("usage", out var turnUsage) && turnUsage.ValueKind == JsonValueKind.Object)
             {
                 var sessionId = observedSessionId ?? throw new InvalidOperationException("Codex usage arrived before thread.started.");
@@ -137,8 +146,11 @@ public static partial class Heartbeat
                 var output = ReadNonnegativeCount(turnUsage, "output_tokens");
                 if (output > long.MaxValue - input) throw new ArgumentException("Codex token usage would overflow.");
                 RecordDeltaUsage(file, "codex-exec", sessionId, input + output, $"{streamId}-turn-{++turnNumber}");
+                turnPending = false;
             }
         }
+        if (turnPending || (streamId is not null && turnNumber == 0))
+            throw new InvalidOperationException("Codex exec stream ended before a completed turn with usage.");
         return 0;
     }
 

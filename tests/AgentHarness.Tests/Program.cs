@@ -199,9 +199,22 @@ try
     Check(codexSummary.GetProperty("tokensUsed").GetInt64() == 37 && codexSummary.GetProperty("usageSource").GetString() == "codex-app-server", "Codex collector keeps only bound cumulative thread usage");
     var codexExecRun = Path.Combine(heartbeatRoot, "codex-exec-run");
     Check(Capture(app, new[] { "heartbeat", "init", "--dir", codexExecRun, "--run-id", "codex-exec-run", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 0, "Codex exec collector fixture initializes");
+    var truncatedExecRun = Path.Combine(heartbeatRoot, "codex-exec-truncated");
+    Check(Capture(app, new[] { "heartbeat", "init", "--dir", truncatedExecRun, "--run-id", "codex-exec-truncated", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 0, "Truncated Codex exec fixture initializes");
     oldInput = Console.In;
     try
     {
+        Console.SetIn(new StringReader(""));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", truncatedExecRun, "--stream-id", "empty-invocation" }).ExitCode == 2, "Codex exec collector rejects an empty invocation stream");
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"truncated-thread\"}\n{\"type\":\"turn.started\"}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", truncatedExecRun, "--stream-id", "truncated-invocation" }).ExitCode == 2, "Codex exec collector rejects EOF before turn completion");
+        var truncatedSummary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", truncatedExecRun }).Output).RootElement;
+        Check(truncatedSummary.GetProperty("tokensUsed").ValueKind == JsonValueKind.Null, "Truncated Codex exec stream records no invented usage");
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"truncated-thread\"}\n{\"type\":\"turn.failed\"}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", truncatedExecRun, "--stream-id", "failed-invocation" }).ExitCode == 2, "Codex exec collector rejects a failed terminal turn");
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"truncated-thread\"}\n" +
+            "{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"output_tokens\":7}}\n{\"type\":\"turn.started\"}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", truncatedExecRun, "--stream-id", "partial-second-turn" }).ExitCode == 2, "Codex exec collector rejects EOF during a later turn");
         Console.SetIn(new StringReader("{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"output_tokens\":7}}\n"));
         Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexExecRun, "--session-id", "exec-thread" }).ExitCode == 2, "Codex exec usage requires a native thread.started identity");
         Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"exec-thread\"}\n" +

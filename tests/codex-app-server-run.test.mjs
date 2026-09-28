@@ -61,10 +61,19 @@ readline.createInterface({ input: process.stdin }).on('line', line => {
     send({ id, result: { turn: { id: turn, status: 'inProgress' } } });
     send({ method: 'turn/started', params: { threadId: 'thread-1', turn: { id: turn } } });
     if (process.env.MOCK_MODE !== 'no-usage') send({ method: 'thread/tokenUsage/updated', params: { threadId: 'thread-1', turnId: turn, tokenUsage: { total: { totalTokens: resumed ? 14 : 7 } } } });
-    if (!['cap', 'hold'].includes(process.env.MOCK_MODE)) send({ method: 'turn/completed', params: { threadId: 'thread-1', turn: { id: turn, status: 'completed' } } });
+    if (!['cap', 'hold', 'external-interrupt-during-ack'].includes(process.env.MOCK_MODE)) {
+      const status = process.env.MOCK_MODE === 'failed-over-cap' ? 'failed'
+        : process.env.MOCK_MODE === 'external-interrupt-over-cap' ? 'interrupted' : 'completed';
+      send({ method: 'turn/completed', params: { threadId: 'thread-1', turn: { id: turn, status } } });
+    }
   } else if (method === 'turn/interrupt') {
-    send({ id, result: {} });
-    send({ method: 'turn/completed', params: { threadId: 'thread-1', turn: { id: turn, status: 'interrupted' } } });
+    if (process.env.MOCK_MODE === 'external-interrupt-during-ack') {
+      send({ method: 'turn/completed', params: { threadId: 'thread-1', turn: { id: turn, status: 'interrupted' } } });
+      setTimeout(() => send({ id, result: {} }), 10);
+    } else {
+      send({ id, result: {} });
+      send({ method: 'turn/completed', params: { threadId: 'thread-1', turn: { id: turn, status: 'interrupted' } } });
+    }
   }
 });
 `);
@@ -93,6 +102,20 @@ readline.createInterface({ input: process.stdin }).on('line', line => {
   state = JSON.parse(heartbeat(capped, 'status'));
   assert.equal(state.tokensUsed, 7);
   assert.equal(state.tokensOverBudget, true);
+
+  for (const [mode, expectedStatus] of [['failed-over-cap', 'failed'], ['external-interrupt-over-cap', 'interrupted'], ['external-interrupt-during-ack', 'interrupted']]) {
+    const runDir = await createRun(mode, 5);
+    result = command('node', [launcher, '--project', root, '--run-dir', runDir, '--model', 'mock', '--codex-bin', codex, '--orchestrate-bin', bin], { MOCK_MODE: mode });
+    assert.equal(result.status, 1, `${mode} must not be reported as a successful cap stop: ${result.stdout}`);
+    assert.match(result.stderr, new RegExp(`Codex turn ${expectedStatus}`));
+    state = JSON.parse(heartbeat(runDir, 'status'));
+    assert.equal(state.tokensOverBudget, true);
+  }
+
+  const completedOverCap = await createRun('completed-over-cap', 5);
+  result = command('node', [launcher, '--project', root, '--run-dir', completedOverCap, '--model', 'mock', '--codex-bin', codex, '--orchestrate-bin', bin]);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Token cap reached; Codex turn completed/);
 
   const withoutUsage = await createRun('without-usage', 5);
   result = command('node', [launcher, '--project', root, '--run-dir', withoutUsage, '--model', 'mock', '--codex-bin', codex, '--orchestrate-bin', bin], { MOCK_MODE: 'no-usage' });

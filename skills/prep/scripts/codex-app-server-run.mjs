@@ -89,7 +89,10 @@ class AppServer {
       clearTimeout(pending.timer);
       this.pending.delete(message.id);
       if (message.error) pending.reject(new Error(`Codex ${pending.method} was rejected (code ${message.error.code ?? 'unknown'})`));
-      else pending.resolve(message.result);
+      else {
+        pending.onAccepted?.();
+        pending.resolve(message.result);
+      }
       return;
     }
     if (message.method && message.id !== undefined) {
@@ -104,14 +107,14 @@ class AppServer {
     this.child.stdin.write(`${JSON.stringify(message)}\n`);
   }
 
-  request(method, params, timeoutMs = REQUEST_TIMEOUT_MS) {
+  request(method, params, timeoutMs = REQUEST_TIMEOUT_MS, onAccepted = null) {
     const id = this.nextId++;
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(id);
         reject(new Error(`Codex ${method} timed out`));
       }, timeoutMs);
-      this.pending.set(id, { resolve, reject, timer, method });
+      this.pending.set(id, { resolve, reject, timer, method, onAccepted });
       try { this.send({ id, method, params }); }
       catch (error) { clearTimeout(timer); this.pending.delete(id); reject(error); }
     });
@@ -227,6 +230,8 @@ async function main(options) {
   const firstUsage = new Promise(resolve => { usageResolve = resolve; });
   let stoppedForCap = false;
   let interrupted = false;
+  let capInterruptAwaitingAck = false;
+  let capCompletionBeforeAck = false;
   let protocolError = null;
   let rawCompletedTurnId = null;
   let rawCompleteResolve;
@@ -269,6 +274,8 @@ async function main(options) {
   };
   server.onNotification = message => {
     if (message.method === 'turn/completed') {
+      if (capInterruptAwaitingAck && message.params?.turn?.id === turnId)
+        capCompletionBeforeAck = true;
       rawCompletedTurnId = message.params?.turn?.id;
       rawCompleteResolve();
     }
@@ -288,11 +295,14 @@ async function main(options) {
         if (current.boundSessionId !== sessionId || current.usageSource !== 'codex-app-server')
           throw new Error('Heartbeat session or usage source changed during Codex run');
         if (current.tokensOverBudget && !interrupted && !completed && rawCompletedTurnId !== turnId) {
-          stoppedForCap = true;
           interrupted = true;
           if (!turnId) throw new Error('Token cap reached before Codex identified the turn');
+          capInterruptAwaitingAck = true;
           try {
-            await server.request('turn/interrupt', { threadId, turnId });
+            await server.request('turn/interrupt', { threadId, turnId }, REQUEST_TIMEOUT_MS,
+              () => { capInterruptAwaitingAck = false; });
+            // A terminal event before the ACK may be an unrelated interruption.
+            stoppedForCap = !capCompletionBeforeAck;
           } catch (error) {
             // A completion can race the interrupt request. Its queued handler
             // will validate the thread and turn before this run succeeds.
@@ -302,6 +312,8 @@ async function main(options) {
               clearTimeout(timer);
               if (rawCompletedTurnId !== turnId) throw error;
             }
+          } finally {
+            capInterruptAwaitingAck = false;
           }
         }
       } else if (method === 'turn/started') {
@@ -385,11 +397,12 @@ async function main(options) {
     if (finalStatus.boundSessionId !== sessionId || finalStatus.usageSource !== 'codex-app-server')
       throw new Error('Native Codex usage could not be confirmed in the run');
     if (options.probe && finalTurn.status !== 'completed') throw new Error(`Codex probe ${finalTurn.status}`);
+    if (finalTurn.status !== 'completed' && !(finalTurn.status === 'interrupted' && stoppedForCap))
+      throw new Error(`Codex turn ${finalTurn.status}`);
     if (stoppedForCap || finalStatus.tokensOverBudget) {
       console.log(`Token cap reached; Codex turn ${finalTurn.status}. Native usage: ${finalStatus.tokensUsed}`);
       return;
     }
-    if (finalTurn.status !== 'completed') throw new Error(`Codex turn ${finalTurn.status}`);
     console.log(`${options.probe ? 'ORCHESTRA_CODEX_USAGE_PROBE=ok' : 'Codex kickoff completed'}; native tokens ${finalStatus.tokensUsed}`);
   } finally {
     await cleanup();
