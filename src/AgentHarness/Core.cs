@@ -130,6 +130,7 @@ public sealed class HarnessApp
         {
             if (args.Length == 0 || args[0] is "--help" or "-h" or "help") return Help();
             var command = args[0].ToLowerInvariant();
+            if (command == "heartbeat") return Heartbeat.Run(args[1..]);
             var options = CliOptions.Parse(args[1..]);
             return command switch
             {
@@ -152,7 +153,7 @@ public sealed class HarnessApp
     private static int Help()
     {
         Console.WriteLine("orchestrate — Orchestra's portable AI engineering workflow CLI\n\n" +
-            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
+            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n  heartbeat init|event|usage|collect-codex|collect-claude|bind|hook|status --dir PATH [options]\n\n" +
             "Without --tools, install and init-project ask interactively. Use --tools in scripts or CI.");
         return 0;
     }
@@ -336,6 +337,7 @@ public sealed class HarnessApp
                 var output = CursorCommandGenerator.FromSkill(skill, _assets.ReadText($"skills/{skill}/SKILL.md"));
                 list.Add(new PlannedFile($"generated Cursor command for {skill}", Path.Combine(project, ".cursor", "commands", skill + ".md"), Encoding.UTF8.GetBytes(output)));
             }
+            Add("skills/prep/scripts/cursor-sdk-run.mjs", Path.Combine(project, ".cursor", "orchestra", "cursor-sdk-run.mjs"));
         }
         return list;
     }

@@ -78,6 +78,133 @@ try
     var help = Capture(app, new[] { "--help" });
     Check(help.ExitCode == 0 && help.Output.Contains("orchestrate", StringComparison.Ordinal), "help uses the orchestrate command name");
     Check(!help.Output.Contains("agent-harness", StringComparison.Ordinal), "help omits the retired command name");
+    var heartbeatRoot = OperatingSystem.IsMacOS() && root.StartsWith("/var/", StringComparison.Ordinal) ? "/private" + root : root;
+    var heartbeatDir = Path.Combine(heartbeatRoot, "run");
+    var noRun = Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "started", "--reason", "begin" });
+    Check(noRun.ExitCode == 2 && !Directory.Exists(heartbeatDir), "heartbeat event refuses an uninitialized run without creating files");
+    var init = Capture(app, new[] { "heartbeat", "init", "--dir", heartbeatDir, "--run-id", "test-run", "--total-tasks", "3", "--time-budget-minutes", "10", "--stale-after-seconds", "30", "--token-budget", "100" });
+    Check(init.ExitCode == 0, "heartbeat initializes a run");
+    var heartbeatFile = Path.Combine(heartbeatDir, "heartbeat.js");
+    var originalHeartbeat = File.ReadAllText(heartbeatFile);
+    Check(originalHeartbeat.StartsWith("window.ORCHESTRA_HEARTBEAT = {", StringComparison.Ordinal), "heartbeat is browser-loadable JavaScript");
+    var initialSummary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(initialSummary.GetProperty("createdAt").ValueKind == JsonValueKind.String && initialSummary.GetProperty("startedAt").ValueKind == JsonValueKind.Null && initialSummary.GetProperty("elapsedSeconds").GetInt64() == 0, "time budget starts on first started event");
+    Check(initialSummary.GetProperty("tokensUsed").ValueKind == JsonValueKind.Null && !initialSummary.GetProperty("tokensOverBudget").GetBoolean(), "token usage is unavailable until reported");
+    Check(!initialSummary.GetProperty("stale").GetBoolean() && initialSummary.GetProperty("hookState").GetString() == "waiting", "native liveness is unavailable before first hook");
+    Check(Capture(app, new[] { "heartbeat", "init", "--dir", heartbeatDir, "--run-id", "other", "--total-tasks", "1", "--time-budget-minutes", "1", "--stale-after-seconds", "1" }).ExitCode == 2 && File.ReadAllText(heartbeatFile) == originalHeartbeat, "heartbeat init refuses to overwrite existing run");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "started", "--reason", "begin" }).ExitCode == 0, "heartbeat records task start");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "finished", "--reason", "done" }).ExitCode == 0, "heartbeat records task finish");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "two", "--status", "blocked", "--reason", "waiting" }).ExitCode == 0, "heartbeat records blocked task");
+    var summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("done").GetInt32() == 1 && summary.GetProperty("remaining").GetInt32() == 2 && summary.GetProperty("blockedTasks")[0].GetString() == "two", "heartbeat status computes done, remaining, and blocked queue");
+    Check(summary.GetProperty("tokensUsed").ValueKind == JsonValueKind.Null && summary.GetProperty("failureCounts").EnumerateObject().Count() == 0, "task events do not invent token usage");
+    var priorInput = Console.In;
+    try
+    {
+        Console.SetIn(new StringReader(JsonSerializer.Serialize(new { hook_event_name = "PostToolUse", session_id = "preflight", tool_response = new string('x', 1_100_000), tool_input = "secret" })));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 0, "heartbeat accepts large native hook payload for preflight probe");
+        summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+        Check(summary.GetProperty("lastProbeSessionId").GetString() == "preflight" && summary.GetProperty("lastProbeAt").ValueKind == JsonValueKind.String && summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.Null && summary.GetProperty("hookState").GetString() == "waiting", "preflight hook records only probe fields");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"PostToolUse\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 2, "heartbeat requires hook session ID");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"PostToolUse\",\"session_id\":\"\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 2, "heartbeat rejects empty hook session ID");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"Unknown\",\"session_id\":\"preflight\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 2, "heartbeat rejects unknown hook event");
+        Check(Capture(app, new[] { "heartbeat", "bind", "--dir", heartbeatDir, "--session-id", "kickoff" }).ExitCode == 0, "heartbeat binds kickoff session");
+        Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "other", "--tokens-used", "9" }).ExitCode == 2, "usage cannot come from another session");
+        Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "kickoff", "--tokens-used", "14" }).ExitCode == 0, "native usage sets absolute token count");
+        Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "kickoff", "--tokens-used", "14" }).ExitCode == 0, "repeated usage snapshot is idempotent");
+        Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "kickoff", "--tokens-used", "7" }).ExitCode == 0, "late lower snapshot is ignored");
+        Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "claude-otel", "--session-id", "kickoff", "--tokens-used", "7" }).ExitCode == 2, "usage cannot mix native sources");
+        Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "started", "--reason", "x", "--tokens-used", "4" }).ExitCode == 2, "task event does not accept guessed token deltas");
+        summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+        Check(summary.GetProperty("boundSessionId").GetString() == "kickoff" && summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.Null && summary.GetProperty("hookState").GetString() == "waiting", "bind resets native liveness to waiting");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"PostToolUse\",\"session_id\":\"other\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 0, "unrelated PostToolUse is accepted and ignored");
+        summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+        Check(summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.Null && summary.GetProperty("hookState").GetString() == "waiting", "unrelated hook cannot activate run");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"PostToolUse\",\"session_id\":\"kickoff\",\"tool_input\":\"secret\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 0, "bound PostToolUse activates run");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"Stop\",\"session_id\":\"other\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 0, "unrelated Stop is accepted and ignored");
+        summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+        Check(summary.GetProperty("hookState").GetString() == "active" && summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.String, "unrelated Stop cannot stop bound run");
+        Console.SetIn(new StringReader("{\"hook_event_name\":\"Stop\",\"session_id\":\"kickoff\",\"transcript_path\":\"secret\"}"));
+        Check(Capture(app, new[] { "heartbeat", "hook", "--dir", heartbeatDir }).ExitCode == 0, "bound Stop marks run stopped");
+    }
+    finally { Console.SetIn(priorInput); }
+    var script = File.ReadAllText(heartbeatFile);
+    Check(script.Length < 100_000 && !script.Contains("secret", StringComparison.Ordinal), "heartbeat does not store large hook payloads or tool arguments");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("hookState").GetString() == "stopped" && summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.String, "bound Stop hook updates liveness state");
+    Check(Capture(app, new[] { "heartbeat", "bind", "--dir", heartbeatDir, "--session-id", "other" }).ExitCode == 2, "bind refuses a different session by default");
+    Check(Capture(app, new[] { "heartbeat", "bind", "--dir", heartbeatDir, "--session-id", "resume", "--replace", "--expected-session-id", "other" }).ExitCode == 2, "compare-and-swap bind rejects a changed prior session");
+    Check(Capture(app, new[] { "heartbeat", "bind", "--dir", heartbeatDir, "--session-id", "resume", "--replace", "--expected-session-id", "kickoff" }).ExitCode == 0, "explicit compare-and-swap replace binds resumed session");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("boundSessionId").GetString() == "resume" && summary.GetProperty("lastHookAt").ValueKind == JsonValueKind.Null && summary.GetProperty("hookState").GetString() == "waiting" && summary.GetProperty("done").GetInt32() == 1 && summary.GetProperty("tokensUsed").GetInt64() == 14, "rebind resets liveness and preserves task progress and budget");
+    Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "resume", "--tokens-used", "10" }).ExitCode == 0, "resumed native session reports its own absolute usage");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("tokensUsed").GetInt64() == 24 && !summary.GetProperty("tokensOverBudget").GetBoolean() && summary.GetProperty("usageSource").GetString() == "cursor-sdk", "usage totals aggregate resumed sessions");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "four", "--status", "failed", "--reason", "first" }).ExitCode == 0, "heartbeat records distinct failure signature");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "four", "--status", "failed", "--reason", "second" }).ExitCode == 0, "heartbeat records second distinct failure signature");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("failureCounts").GetProperty("four").GetInt32() == 2 && !summary.GetProperty("stopRecommended").GetBoolean(), "distinct failure reasons do not recommend stop");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "three", "--status", "failed", "--reason", "bad" }).ExitCode == 0, "heartbeat records failure");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "three", "--status", "failed", "--reason", "bad" }).ExitCode == 0, "heartbeat records repeated failure");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("failureCounts").GetProperty("three").GetInt32() == 2 && summary.GetProperty("stopRecommended").GetBoolean(), "two matching failures on one task recommend stop");
+    Check(Capture(app, new[] { "heartbeat", "usage", "--dir", heartbeatDir, "--source", "cursor-sdk", "--session-id", "resume", "--tokens-used", "100" }).ExitCode == 0, "usage collector records budget crossing");
+    summary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", heartbeatDir }).Output).RootElement;
+    Check(summary.GetProperty("tokensUsed").GetInt64() == 114 && summary.GetProperty("tokensOverBudget").GetBoolean(), "native usage recommends budget stop");
+    var heartbeatState = JsonDocument.Parse(File.ReadAllText(heartbeatFile)["window.ORCHESTRA_HEARTBEAT = ".Length..^1]).RootElement;
+    Check(heartbeatState.GetProperty("events").GetArrayLength() >= 7, "heartbeat state retains event history");
+    var malformed = Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "invalid", "--reason", "bad" });
+    Check(malformed.ExitCode == 2, "heartbeat rejects invalid event status");
+    Check(Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "one", "--status", "started", "--reason", "x", "--total-tasks", "2" }).ExitCode == 2, "heartbeat refuses task count decrease");
+    var malicious = Capture(app, new[] { "heartbeat", "event", "--dir", heartbeatDir, "--task", "safe", "--status", "blocked", "--reason", "</script><script>alert(1)</script>" });
+    Check(malicious.ExitCode == 0 && !File.ReadAllText(heartbeatFile).Contains("</script>", StringComparison.Ordinal), "heartbeat JSON safely escapes script-closing text");
+    var codexRun = Path.Combine(heartbeatRoot, "codex-run");
+    Check(Capture(app, new[] { "heartbeat", "init", "--dir", codexRun, "--run-id", "codex-run", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 0, "Codex collector fixture initializes");
+    Check(Capture(app, new[] { "heartbeat", "bind", "--dir", codexRun, "--session-id", "codex-thread" }).ExitCode == 0, "Codex collector fixture binds thread");
+    var oldInput = Console.In;
+    try
+    {
+        Console.SetIn(new StringReader("{\"method\":\"thread/tokenUsage/updated\",\"params\":{\"threadId\":\"another-thread\",\"tokenUsage\":{\"total\":{\"totalTokens\":900}}}}\n" +
+            "{\"method\":\"thread/tokenUsage/updated\",\"params\":{\"threadId\":\"codex-thread\",\"tokenUsage\":{\"total\":{\"totalTokens\":37}}}}\n" +
+            "{\"method\":\"thread/tokenUsage/updated\",\"params\":{\"threadId\":\"codex-thread\",\"tokenUsage\":{\"total\":{\"totalTokens\":37}}}}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexRun, "--session-id", "codex-thread" }).ExitCode == 0, "Codex app-server collector consumes native JSONL");
+    }
+    finally { Console.SetIn(oldInput); }
+    var codexSummary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", codexRun }).Output).RootElement;
+    Check(codexSummary.GetProperty("tokensUsed").GetInt64() == 37 && codexSummary.GetProperty("usageSource").GetString() == "codex-app-server", "Codex collector keeps only bound cumulative thread usage");
+    var codexExecRun = Path.Combine(heartbeatRoot, "codex-exec-run");
+    Check(Capture(app, new[] { "heartbeat", "init", "--dir", codexExecRun, "--run-id", "codex-exec-run", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 0, "Codex exec collector fixture initializes");
+    oldInput = Console.In;
+    try
+    {
+        Console.SetIn(new StringReader("{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"output_tokens\":7}}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexExecRun, "--session-id", "exec-thread" }).ExitCode == 2, "Codex exec usage requires a native thread.started identity");
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"exec-thread\"}\n" +
+            "{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"cached_input_tokens\":5,\"output_tokens\":7}}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexExecRun, "--stream-id", "invocation-one" }).ExitCode == 0, "Codex exec collector consumes final native usage");
+    }
+    finally { Console.SetIn(oldInput); }
+    codexSummary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", codexExecRun }).Output).RootElement;
+    Check(codexSummary.GetProperty("boundSessionId").GetString() == "exec-thread" && codexSummary.GetProperty("tokensUsed").GetInt64() == 27 && codexSummary.GetProperty("usageSource").GetString() == "codex-exec", "Codex exec collector auto-binds and does not double-count cached input");
+    oldInput = Console.In;
+    try
+    {
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"exec-thread\"}\n" +
+            "{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"output_tokens\":7}}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexExecRun, "--stream-id", "invocation-one" }).ExitCode == 0, "Codex exec stream replay is accepted");
+        Console.SetIn(new StringReader("{\"type\":\"thread.started\",\"thread_id\":\"exec-thread\"}\n" +
+            "{\"type\":\"turn.completed\",\"usage\":{\"input_tokens\":20,\"output_tokens\":7}}\n"));
+        Check(Capture(app, new[] { "heartbeat", "collect-codex", "--dir", codexExecRun, "--stream-id", "invocation-two" }).ExitCode == 0, "Codex exec resumed invocation is accepted");
+    }
+    finally { Console.SetIn(oldInput); }
+    codexSummary = JsonDocument.Parse(Capture(app, new[] { "heartbeat", "status", "--dir", codexExecRun }).Output).RootElement;
+    Check(codexSummary.GetProperty("tokensUsed").GetInt64() == 54, "Codex exec usage deduplicates replay and counts a resumed invocation");
     var unknown = Capture(app, new[] { "unknown-command" });
     Check(unknown.ExitCode == 2 && unknown.Error.Contains("orchestrate --help", StringComparison.Ordinal), "unknown-command guidance uses orchestrate");
     var doctor = Capture(app, new[] { "doctor" });
@@ -168,6 +295,9 @@ try
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "agentic-feature-delivery", "SKILL.md")), "Codex skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "agentic-debugging", "SKILL.md")), "agentic-debugging skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "grill-me", "SKILL.md")), "grill-me skill installed");
+    Check(File.ReadAllText(Path.Combine(home, ".agents", "skills", "prep", "SKILL.md")).Contains("orchestrate heartbeat init", StringComparison.Ordinal), "Codex prep skill installs with heartbeat setup");
+    Check(File.ReadAllText(Path.Combine(home, ".agents", "skills", "prep", "scripts", "codex-app-server-run.mjs")).Contains("thread/tokenUsage/updated", StringComparison.Ordinal), "Codex measured app-server launcher installs with prep");
+    Check(File.ReadAllText(Path.Combine(home, ".agents", "skills", "kickoff", "SKILL.md")).Contains("orchestrate heartbeat event", StringComparison.Ordinal), "Codex kickoff skill installs with event writes");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "refactor-code", "SKILL.md")), "refactor-code skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "refactor-code", "agents", "openai.yaml")), "refactor-code Codex metadata installed");
     Check(app.Run(new[] { "install", "--tools", "codex" }) == 0, "repeat install is a no-op");
@@ -189,6 +319,8 @@ try
     Check(app.Run(new[] { "install", "--tools", "claude" }) == 0, "Claude install succeeds in isolated home");
     CheckRenderedPolicy(File.ReadAllText(Path.Combine(home, ".claude", "CLAUDE.md")), workflowPolicy, "installed Claude instructions");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "agentic-debugging", "SKILL.md")), "Claude agentic-debugging skill installed");
+    Check(File.ReadAllText(Path.Combine(home, ".claude", "skills", "prep", "SKILL.md")).Contains("dashboard.html", StringComparison.Ordinal), "Claude prep skill installs with dashboard handoff");
+    Check(File.ReadAllText(Path.Combine(home, ".claude", "skills", "kickoff", "SKILL.md")).Contains("progress.md", StringComparison.Ordinal), "Claude kickoff skill installs with progress ledger");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "SKILL.md")), "Claude refactor-code skill installed");
     Check(!File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "agents", "openai.yaml")), "Claude excludes refactor-code Codex metadata");
     var printedCursorRules = Capture(app, new[] { "cursor-rules", "--print" });
@@ -208,6 +340,9 @@ try
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "agentic-debugging.md")), "Cursor agentic-debugging command generated");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-debugging.md")).Contains("compact evidence ledger", StringComparison.Ordinal), "Cursor agentic-debugging command retains workflow body");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "grill-me.md")), "Cursor grill-me command generated");
+        Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "prep.md")).Contains("heartbeat.js", StringComparison.Ordinal), "Cursor prep command includes heartbeat dashboard contract");
+        Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "kickoff.md")).Contains("orchestrate heartbeat event", StringComparison.Ordinal), "Cursor kickoff command includes task events");
+        Check(File.ReadAllText(Path.Combine(project, ".cursor", "orchestra", "cursor-sdk-run.mjs")).Contains("cursor-sdk", StringComparison.Ordinal), "Cursor measured-run launcher installs with project commands");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "grill-me.md")).Contains("Return automatically to the originating workflow", StringComparison.Ordinal), "Cursor grill-me command returns to the originating workflow");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "refactor-code.md")), "Cursor refactor-code command generated");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "refactor-code.md")).Contains("explicit writable-file allowlist", StringComparison.Ordinal), "Cursor refactor-code command retains scope gate");
