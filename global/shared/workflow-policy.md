@@ -20,9 +20,12 @@
   as read-only preparation when project context is incomplete.
 - Handle small, obvious, localized, low-risk work directly without subagents,
   even when a feature workflow is explicitly invoked. A localized, low-risk
-  feature needs a targeted check, not a refactor audit or independent reviewer.
-  For module-level, cross-cutting, or high-consequence feature work, run a
-  bounded read-only refactor audit and a separate independent correctness review.
+  feature needs a targeted check. Run a read-only refactor audit or an
+  independent model correctness review only when the user explicitly requests
+  it for this task or a standing project rule opts in. The agent may suggest a
+  review when evidence is weak, but must not launch it without opt-in. Keep
+  deterministic checks, risk-based acceptance criteria, and the parent's own
+  final diff inspection regardless of review opt-in.
 - Keep the primary workflow and task plan in charge when another skill is
   needed. Announce a clear transition briefly, carry the goal, existing
   authorization, evidence and checks, settled decisions and constraints, and
@@ -39,3 +42,18 @@
   settles behavior and scope. Bootstrap returns its findings to the workflow
   that requested project context; writing project context still needs specific
   authorization.
+
+## Token efficiency
+
+- Keep reusable prompt guidance stable. Put volatile task values in task
+  context, not persistent instructions; do not add session metadata to shared
+  policy text.
+- When context grows or work changes phases, retain a concise checkpoint of
+  the goal, settled decisions, key evidence, and next action. Trim repetitive
+  tool output before carrying it forward; keep details needed for verification.
+- Before repeating a tool call, check whether its objective and arguments
+  duplicate an unproductive recent attempt. Change the approach or report a
+  concrete blocker instead of looping. Do not impose a fixed tool-turn ceiling.
+- Route bounded tasks to cheaper capable agents when the handoff saves total
+  tokens or latency. Give them only needed context; keep tiny tasks with the
+  parent when delegation would cost more.

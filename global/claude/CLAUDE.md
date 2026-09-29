@@ -7,7 +7,7 @@ final review. Use faster capable subagents for focused exploration, bounded
 implementation, and verification. The repository's `models.conf` is the single
 source of truth for concrete role-to-model assignments; rerun the installer
 after changing it. Minimize total tokens and latency without weakening
-correctness, evidence, or review.
+correctness or evidence.
 
 Read the repository's `CLAUDE.md` and `docs/agent-context.md` when present.
 Repository instructions override these personal defaults.
@@ -18,11 +18,10 @@ Repository instructions override these personal defaults.
 
 - Handle small, obvious, localized changes directly without subagents.
 - Use a proportionate risk tier. Low-risk localized work needs a targeted check;
-  a module-level feature needs a plan, deterministic checks, and independent
-  review; cross-module, data, authorization, migration, or external-API work
-  needs bounded delegation and independent review; security, billing, privacy,
-  destructive, or production-impacting work also needs explicit human acceptance
-  criteria.
+  a module-level feature needs a plan and deterministic checks; cross-module,
+  data, authorization, migration, or external-API work needs bounded delegation
+  and broader deterministic checks; security, billing, privacy, destructive, or
+  production-impacting work also needs explicit human acceptance criteria.
 - For ambiguous or cross-cutting work, resolve material product and architecture
   choices before editing.
 - Explore actual behavior, tests, conventions, and constraints before planning.
@@ -37,8 +36,8 @@ Repository instructions override these personal defaults.
 - Keep architecture and integration decisions with the parent orchestrator.
   Inspect every returned change; a subagent success report is not proof.
 - Integrate centrally, run repository checks, verify acceptance criteria, and
-  use an independent read-only reviewer separate from the refactor audit for
-  module-level or higher feature work.
+  inspect the final diff. Run an independent read-only reviewer or refactor
+  audit only when opted in; keep them separate when both are requested.
 - Use fast deterministic checks as the default feedback loop. Run broader
   checks before integration when the risk tier requires them; use model review
   for semantic judgment, not as a substitute for tests, linters, type checks,
