@@ -12,7 +12,13 @@ license; see `LICENSE`.
 1. Read the repository instructions and relevant project context. Inspect the
    codebase for facts that can answer a question before asking the user.
 2. Map the unresolved work as a decision tree. Separate facts to discover from
-   decisions that require the user's intent.
+   decisions that require the user's intent. When invoked by another workflow,
+   incorporate that workflow's required interview fields and ask each question
+   only once. For `$prep`, cover the project and agent tool, outcome and task
+   dependencies, acceptance criteria and non-goals, base and working branch,
+   autonomous and parked decisions, permissions and commit scope, time and
+   enforceable token budgets, stop conditions, and exact validation commands.
+   Prep owns the later Git, environment, hook, and artifact checks.
 3. Work in rounds. In each round, ask every independent decision whose
    prerequisites are settled. Number each question and give a recommended
    answer with a brief rationale. Do not ask a question whose answer depends on

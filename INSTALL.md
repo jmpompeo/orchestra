@@ -92,7 +92,100 @@ non-trivial choices after investigation or before feature implementation;
 `$agentic-feature-delivery` for executing an approved feature; `$refactor-code`
 for behaviour-preserving structural improvements and scoped smell audits; and
 `$bootstrap-agent-harness` for adopting the framework in an existing
-repository.
+repository. `$prep` and `$kickoff` structure long, unattended sessions.
+
+### Prepare a long-running session
+
+Invoke `$prep` (or `/prep` in Claude Code or Cursor) in the target project.
+Prep asks for the outcome, allowed scope and decisions, a branch, time budget,
+stop conditions, and explicit commands for the done check, baseline tests, and
+an app smoke check when applicable. It verifies the done check is runnable,
+then requires the baseline tests and app smoke check to pass. It also verifies
+that required permissions and heartbeat hooks work before starting a fresh
+native session where the host supports it. Cursor can launch through the
+measured SDK runner or receive instructions for `/kickoff` in a new IDE Agent
+chat. Orchestra does not supervise the native loop.
+
+Prep keeps the brief, plan, progress ledger, decisions, heartbeat data, and
+local dashboard under `.orchestra/runs/<run-id>/`. These files are ignored by
+Git for that project. The dashboard is an HTML file generated once during prep;
+it reloads `heartbeat.js` from the same directory and works over `file://`
+without a server. It shows task progress, parked questions, liveness, and
+available budget data, including the usage source and last sample time. Run
+notes can contain sensitive context, so inspect them before sharing or
+copying them elsewhere.
+
+Kickoff reads the brief and resumes from the local ledger after compaction or a
+restart. The time budget begins with its first task. A question needing human
+judgment is recorded in the decision queue; independent tasks can continue.
+The run stops at its time limit, an unmet permission or environment gate, or
+the second occurrence of the same failure on a task.
+Per-task commits require explicit authorization in that run's brief and stay
+on its named branch. Token counts come from the selected tool's native usage
+feed and are bound to that run's session ID. The agent or collector writes an
+absolute native total through `orchestrate heartbeat usage`; task events do
+not accept token deltas. If no native sample has arrived, the dashboard shows
+usage as unavailable rather than zero.
+
+| Tool and launch path | Token source | When a token cap is available |
+| --- | --- | --- |
+| Codex app-server | Bundled one-turn launcher reads live `thread/tokenUsage/updated` notifications | When its read-only probe receives a native usage sample |
+| Codex desktop | Native Goal `get_goal` usage written at kickoff checkpoints | When the user authorizes a capped Goal and the fresh task can create and read it |
+| Codex CLI `exec --json` | `turn.completed` usage forwarded to `heartbeat collect-codex` | Final accounting only for a single long kickoff turn; no token cap |
+| Claude Code background | [OpenTelemetry token counter](https://code.claude.com/docs/en/monitoring-usage) sent to a run-scoped loopback receiver | When prep proves telemetry with a native sample and starts the receiver before kickoff |
+| Cursor SDK | [SDK usage events](https://cursor.com/docs/sdk/typescript) recorded by the bundled project launcher | When its read-only native usage probe succeeds |
+| Cursor IDE Agent chat | No documented cumulative per-session token feed | Unavailable; use a time limit and failure stop |
+
+Prep offers both the Cursor SDK measured run and manual IDE chat. The SDK
+launcher is installed in the project at `.cursor/orchestra/cursor-sdk-run.mjs`;
+it needs Node.js, `@cursor/sdk` installed in the ignored run directory, a
+selected model, and Cursor authentication. Run its read-only usage probe
+before starting a capped run. Manual chat remains available through a fresh
+Agent chat and `/kickoff <absolute-run-dir>`, with token usage labeled
+unavailable. The SDK launcher runs one native Cursor agent and records its
+usage; it does not supervise it. An explicit `--resume` checks that the prior
+SDK run ended, reuses its saved agent state, and adds the new run's usage to
+the existing total.
+
+For Codex, the bundled prep script can start a measured app-server run and
+record live thread usage. Its read-only probe must succeed with the installed
+Codex version before prep accepts a cap. A parked measured run can continue
+with `--resume` after the prior turn ends. Prep uses `--detach` for the measured
+run, retains its local PID and log, and verifies the native session binding
+before ending. The separate `collect-codex` command
+also parses an existing app-server or CLI JSONL stream.
+
+The Claude receiver starts as a local process for that run and listens only
+on `127.0.0.1`. Prep launches Claude with session telemetry directed to the
+receiver and verifies that a sample reaches the right session. It counts
+native input, output, cache-read, and cache-creation token counters. The
+receiver records cumulative series snapshots in batches, keeping the local
+dashboard file compact across long runs. It stops the
+receiver when the run completes or aborts. Token caps require Claude Code
+2.1.214 or newer because earlier versions can inflate streamed usage metrics.
+Codex hooks and Claude hooks
+report liveness, not tokens. Codex desktop Goal snapshots are written by the
+kickoff agent at safe boundaries; they are not a background feed. The Codex
+CLI final event arrives too late to stop a single long kickoff turn at a cap.
+
+A token cap stops additional work at the next safe boundary after usage
+reaches it. One model request or a delayed telemetry export can exceed the
+number. Prep declines a cap when the selected path cannot prove a working
+usage feed, and kickoff parks a capped run if that feed later stops.
+
+`orchestrate heartbeat` records task events, hook timestamps, and native usage
+samples in the dashboard's script file. `heartbeat collect-codex` reads a
+Codex JSONL stream, while `heartbeat collect-claude` listens for local Claude
+telemetry. Neither starts or supervises an agent. Hooks are configured for
+the selected project and run during prep, not enabled globally by
+`orchestrate install`. [Codex requires review and
+trust](https://learn.chatgpt.com/docs/hooks) of a new hook definition before
+it runs. Prep verifies an actual hook
+probe, then binds future stamps to the launched session ID so another session
+in the same project cannot make this run appear live. Claude background
+sessions [normally move into a new worktree](https://code.claude.com/docs/en/agent-view#how-file-edits-are-isolated)
+on their first edit; prep uses a
+verified dedicated linked worktree for an automatic Claude launch.
 
 Refactor audits and independent model correctness reviews run only when you
 request them for a task or a standing project rule opts in. The agent may
