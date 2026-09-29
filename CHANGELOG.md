@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/jmpompeo/orchestra/compare/v2.5.0...v2.6.0) (2026-09-29)
+
+
+### Features
+
+* make model reviews opt-in and document token pilot ([#34](https://github.com/jmpompeo/orchestra/issues/34)) ([08a3b43](https://github.com/jmpompeo/orchestra/commit/08a3b431f18172b02d0200fee951247b00e7a530))
+
 ## [2.5.0](https://github.com/jmpompeo/orchestra/compare/v2.4.2...v2.5.0) (2026-09-28)
 
 
