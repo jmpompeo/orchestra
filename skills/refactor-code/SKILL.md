@@ -1,6 +1,6 @@
 ---
 name: refactor-code
-description: Improve existing code structure, readability, and maintainability without changing observable behavior. Use for standalone requests to refactor, simplify, reorganize, clean up, or reduce duplication in code, and as the read-only audit subagent launched during agentic feature delivery; do not use for feature development, behavior changes, broad rewrites, or bug fixes.
+description: Improve existing code structure, readability, and maintainability without changing observable behavior. Use for standalone requests to refactor, simplify, reorganize, clean up, or reduce duplication in code, and for an explicitly opted-in read-only audit during agentic feature delivery; do not use for feature development, behavior changes, broad rewrites, or bug fixes.
 ---
 
 # Refactor code
@@ -13,9 +13,9 @@ ceremony.
 
 - When invoked standalone for a refactor request, execute the complete refactor
   workflow and edit only approved files.
-- When invoked by agentic-feature-delivery as a subagent, perform only the
-  read-only audit workflow below. Never expand the feature or edit code from
-  this mode.
+- When explicitly opted in and invoked by agentic-feature-delivery as a
+  subagent, perform only the read-only audit workflow below. Never expand the
+  feature or edit code from this mode.
 
 ## Execute a refactor
 

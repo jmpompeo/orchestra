@@ -63,9 +63,10 @@ confidence; do not trade correctness for a smaller transcript.
    Avoid broad refactors, unrelated cleanup, and tests that merely encode the
    implementation.
 10. Re-run the original reproduction, focused regression checks, and broader
-    deterministic checks proportional to risk. For non-trivial fixes, obtain an
-    independent read-only review and address material findings. Distinguish new
-    failures from pre-existing or environmental ones.
+    deterministic checks proportional to risk. Obtain an independent read-only
+    correctness review only when the user explicitly requests it for this task
+    or a standing project rule opts in; address material findings when it runs.
+    Distinguish new failures from pre-existing or environmental ones.
 
 ## Skill transitions
 

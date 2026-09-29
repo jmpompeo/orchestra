@@ -94,6 +94,16 @@ for behaviour-preserving structural improvements and scoped smell audits; and
 `$bootstrap-agent-harness` for adopting the framework in an existing
 repository.
 
+Refactor audits and independent model correctness reviews run only when you
+request them for a task or a standing project rule opts in. The agent may
+suggest a review when evidence is weak, but deterministic checks, risk-based
+acceptance criteria, and its own final diff inspection still apply without one.
+The installed policy also keeps persistent guidance stable, uses concise state
+checkpoints when context grows or work changes phases, avoids repeated
+unproductive tool calls, and delegates narrow tasks when the handoff saves
+total tokens or latency. These are agent instructions, not runtime enforcement
+of prompt caching, tool-call interception, or a fixed turn limit.
+
 ## Conflicts, backups, and safety
 
 Preview changes first:
