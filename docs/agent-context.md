@@ -14,12 +14,14 @@
 - Configuration assets: `global/` holds personal-tool defaults and agent templates; `skills/` holds portable skills; `project-template/` holds files created by `init-project`.
 - Model assignments: `models.conf` is the single source of truth for model assignments rendered into installed agent definitions.
 - Tests and delivery: `tests/AgentHarness.Tests/` is the executable test suite; `.github/workflows/ci.yml` builds and runs it; `.github/workflows/release.yml` uses Release Please and publishes self-contained platform archives.
+- Maintainer behaviour evals: `evals/` contains opt-in Codex debugging and refactoring fixtures and a local runner. It is separate from `orchestrate` and CI; raw traces stay in ignored local artifacts.
 - Distribution: public stable GitHub Releases include `install.sh` and `install.ps1`; installation and self-update use anonymous HTTPS downloads and verify platform archives against `SHA256SUMS`. GitHub CLI credentials are not a user prerequisite.
 
 ## Commands
 
 - Build: `dotnet build AgentHarness.sln --configuration Release`
 - Test: `dotnet run --project tests/AgentHarness.Tests/AgentHarness.Tests.csproj --configuration Release`
+- Offline eval fixture check: `dotnet run --project evals/Orchestra.Evals.csproj -- self-test` (no model call; requires Docker or Podman with a preloaded .NET 10 SDK image).
 - Run the CLI from source: `dotnet run --project src/AgentHarness/AgentHarness.csproj -- --help`
 - Package: the release workflow runs `dotnet publish src/AgentHarness/AgentHarness.csproj --configuration Release --runtime <rid> --self-contained true -p:PublishSingleFile=true`.
 
