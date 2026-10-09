@@ -426,6 +426,26 @@ try
     Check(legacy.Run(new[] { "install", "--tools", "codex" }) == 0, "legacy-shaped install is reported without taking ownership");
     Check(legacy.Run(new[] { "uninstall", "--tools", "codex" }) == 0, "legacy-shaped uninstall succeeds");
     Check(File.Exists(legacyInstructions), "matching unowned legacy configuration is preserved");
+    var mergeHome = Path.Combine(root, "merge-home"); var mergeState = Path.Combine(root, "merge-state");
+    var mergeFile = Path.Combine(mergeHome, ".claude", "CLAUDE.md"); Directory.CreateDirectory(Path.GetDirectoryName(mergeFile)!);
+    const string personal = "# My rules\n\nbe brief\n";
+    File.WriteAllText(mergeFile, personal);
+    var merge = new HarnessApp(mergeHome, mergeState);
+    Check(merge.Run(new[] { "install", "--tools", "claude", "--dry-run" }) == 0 && File.ReadAllText(mergeFile) == personal, "dry run does not append to unowned instructions");
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0, "install into unowned instructions succeeds");
+    var merged = File.ReadAllText(mergeFile);
+    Check(merged.StartsWith(personal.TrimEnd(), StringComparison.Ordinal) && merged.Contains("Personal engineering workflow", StringComparison.Ordinal), "unowned instructions keep user content and gain the Orchestra block");
+    Check(Directory.GetFiles(Path.GetDirectoryName(mergeFile)!, "CLAUDE.md.backup.*").Length == 0, "append makes no backup");
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == merged, "repeat install leaves the appended block unchanged");
+    File.WriteAllText(mergeFile, merged.Replace("be brief", "be very brief").Replace("Personal engineering workflow", "Stale workflow"));
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0, "install refreshes a stale block");
+    var refreshed = File.ReadAllText(mergeFile);
+    Check(refreshed.Contains("be very brief", StringComparison.Ordinal) && refreshed.Contains("Personal engineering workflow", StringComparison.Ordinal) && !refreshed.Contains("Stale workflow", StringComparison.Ordinal), "refresh rewrites only the block");
+    Check(merge.Run(new[] { "uninstall", "--tools", "claude" }) == 0, "uninstall succeeds with an appended block");
+    Check(File.ReadAllText(mergeFile) == "# My rules\n\nbe very brief\n", "uninstall removes only the Orchestra block");
+    var unmatched = personal + "<!-- orchestra:begin -->\nno end marker\n";
+    File.WriteAllText(mergeFile, unmatched);
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == unmatched, "unmatched markers are left alone");
     Console.WriteLine("All Orchestra tests passed.");
 }
 finally

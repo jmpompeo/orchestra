@@ -195,6 +195,7 @@ public sealed class HarnessApp
             if (!options.DryRun) File.Delete(path);
             state.Files.Remove(path); removed++;
         }
+        foreach (var file in GlobalPlan(tools).Where(x => x.Mergeable)) RemoveBlock(file.Destination, options.DryRun);
         if (!options.DryRun) SaveState(state);
         Console.WriteLine($"Uninstall complete: {removed} unchanged CLI-owned file(s) {(options.DryRun ? "would be " : "")}removed. Project files were not touched.");
         return 0;
@@ -307,13 +308,13 @@ public sealed class HarnessApp
         var list = new List<PlannedFile>();
         if (tools.HasFlag(Tool.Codex))
         {
-            AddWorkflowAsset(list, "global/codex/AGENTS.md", Path.Combine(_home, ".codex", "AGENTS.md"));
+            AddWorkflowAsset(list, "global/codex/AGENTS.md", Path.Combine(_home, ".codex", "AGENTS.md"), mergeable: true);
             AddTemplates(list, "global/codex/agents/", Path.Combine(_home, ".codex", "agents"), ".toml.tmpl");
             AddSkills(list, Path.Combine(_home, ".agents", "skills"), claude: false);
         }
         if (tools.HasFlag(Tool.Claude))
         {
-            AddWorkflowAsset(list, "global/claude/CLAUDE.md", Path.Combine(_home, ".claude", "CLAUDE.md"));
+            AddWorkflowAsset(list, "global/claude/CLAUDE.md", Path.Combine(_home, ".claude", "CLAUDE.md"), mergeable: true);
             AddTemplates(list, "global/claude/agents/", Path.Combine(_home, ".claude", "agents"), ".md.tmpl");
             AddSkills(list, Path.Combine(_home, ".claude", "skills"), claude: true);
         }
@@ -361,8 +362,8 @@ public sealed class HarnessApp
         }
     }
     private void AddAsset(List<PlannedFile> list, string source, string destination) => list.Add(new PlannedFile(source, destination, _assets.ReadBytes(source)));
-    private void AddWorkflowAsset(List<PlannedFile> list, string source, string destination) =>
-        list.Add(new PlannedFile(source, destination, Encoding.UTF8.GetBytes(RenderWorkflowPolicy(_assets.ReadText(source)))));
+    private void AddWorkflowAsset(List<PlannedFile> list, string source, string destination, bool mergeable = false) =>
+        list.Add(new PlannedFile(source, destination, Encoding.UTF8.GetBytes(RenderWorkflowPolicy(_assets.ReadText(source))), mergeable));
     private string RenderWorkflowPolicy(string text)
     {
         const string marker = "{{WORKFLOW_POLICY}}";
@@ -404,6 +405,7 @@ public sealed class HarnessApp
                 {
                     Console.WriteLine($"UPDATE {destination}"); if (!dryRun) Write(destination, file.Content); state.Files[destination] = wanted; changed++; continue;
                 }
+                if (file.Mergeable && !backup && !state.Files.ContainsKey(destination)) { changed += MergeBlock(destination, Encoding.UTF8.GetString(file.Content), dryRun); continue; }
                 if (!backup) { Console.WriteLine($"CONFLICT {destination}: existing file is not unchanged CLI-owned. Re-run with --backup or merge manually."); continue; }
                 var backupPath = NextBackup(destination);
                 Console.WriteLine($"BACKUP {destination} -> {backupPath}\nREPLACE {destination}");
@@ -413,6 +415,38 @@ public sealed class HarnessApp
             if (onlyMissing || !onlyMissing) { Console.WriteLine($"CREATE {destination}"); if (!dryRun) Write(destination, file.Content); if (!onlyMissing) state.Files[destination] = wanted; changed++; }
         }
         return changed;
+    }
+
+    private static int MergeBlock(string destination, string content, bool dryRun)
+    {
+        var text = File.ReadAllText(destination);
+        switch (ManagedBlock.Locate(text, out var start, out var length))
+        {
+            case BlockPresence.Malformed:
+                Console.WriteLine($"CONFLICT {destination}: unmatched Orchestra block markers; fix or remove them, then re-run.");
+                return 0;
+            case BlockPresence.Present:
+                var updated = ManagedBlock.Replace(text, start, length, content);
+                if (updated == text) { Console.WriteLine($"UNCHANGED {destination} (Orchestra block)"); return 0; }
+                Console.WriteLine($"UPDATE {destination} (Orchestra block only)");
+                if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(updated));
+                return 1;
+            default:
+                Console.WriteLine($"APPEND {destination} (Orchestra block; your content is kept)");
+                if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(ManagedBlock.Append(text, content)));
+                return 1;
+        }
+    }
+
+    private void RemoveBlock(string destination, bool dryRun)
+    {
+        if (LinkedParent(destination, _home) || !TryExistingFile(destination, out var issue) || issue is not null) return;
+        var text = File.ReadAllText(destination);
+        if (ManagedBlock.Locate(text, out var start, out var length) != BlockPresence.Present) return;
+        var remaining = ManagedBlock.Remove(text, start, length);
+        if (remaining.Length == 0) { Console.WriteLine($"REMOVE {destination} (only held the Orchestra block)"); if (!dryRun) File.Delete(destination); return; }
+        Console.WriteLine($"REMOVE Orchestra block from {destination}");
+        if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(remaining));
     }
 
     private void ReconcileStaleSkills(Tool tools, IReadOnlyList<PlannedFile> plan, StateDocument state, bool dryRun, bool uninstall)
@@ -482,7 +516,7 @@ public sealed class HarnessApp
     }
 }
 
-public sealed record PlannedFile(string Source, string Destination, byte[] Content);
+public sealed record PlannedFile(string Source, string Destination, byte[] Content, bool Mergeable = false);
 
 public sealed class CliOptions
 {
