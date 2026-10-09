@@ -8,6 +8,7 @@
     <RootNamespace>AgentHarness</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="AgentHarness.Tests" />
     <EmbeddedResource Include="../../global/**/*" LogicalName="AgentHarness.Assets/global/%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="../../skills/**/*" LogicalName="AgentHarness.Assets/skills/%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="../../project-template/**/*" LogicalName="AgentHarness.Assets/project-template/%(RecursiveDir)%(Filename)%(Extension)" />

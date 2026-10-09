@@ -211,6 +211,9 @@ your global `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`: if one exists and
 the CLI doesn't own it, the policy is appended between `<!-- orchestra:begin -->`
 and `<!-- orchestra:end -->` markers and the rest of your file is untouched.
 Later installs rewrite only that block, and `uninstall` removes only that block.
+These operations preserve UTF-8 BOMs and user whitespace, and stage replacement
+bytes in the same directory before atomically replacing the file. Non-UTF-8
+instruction files are a conflict; convert them to UTF-8 before re-running.
 The dry run reports these as `APPEND` or `UPDATE`. Unmatched markers are a
 conflict. It refuses links/reparse points and
 records SHA-256 ownership data in its per-user state directory. To explicitly

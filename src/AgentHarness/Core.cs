@@ -181,6 +181,7 @@ public sealed class HarnessApp
     {
         if (tools.HasFlag(Tool.Cursor)) throw new ArgumentException("Cursor has no global installation to uninstall. Project files are never removed automatically.");
         var state = LoadState();
+        var trackedPaths = state.Files.Keys.ToHashSet(PathComparer());
         var expected = GlobalPlan(tools).Select(x => x.Destination).ToHashSet(PathComparer());
         var roots = SkillRoots(tools);
         var candidates = state.Files.Keys.Where(path => expected.Contains(path) || roots.Any(root => IsUnder(path, root))).ToArray();
@@ -195,7 +196,7 @@ public sealed class HarnessApp
             if (!options.DryRun) File.Delete(path);
             state.Files.Remove(path); removed++;
         }
-        foreach (var file in GlobalPlan(tools).Where(x => x.Mergeable)) RemoveBlock(file.Destination, options.DryRun);
+        foreach (var file in GlobalPlan(tools).Where(x => x.Mergeable && !trackedPaths.Contains(Path.GetFullPath(x.Destination)))) RemoveBlock(file.Destination, options.DryRun);
         if (!options.DryRun) SaveState(state);
         Console.WriteLine($"Uninstall complete: {removed} unchanged CLI-owned file(s) {(options.DryRun ? "would be " : "")}removed. Project files were not touched.");
         return 0;
@@ -419,7 +420,7 @@ public sealed class HarnessApp
 
     private static int MergeBlock(string destination, string content, bool dryRun)
     {
-        var text = File.ReadAllText(destination);
+        if (!ManagedInstructionFile.TryRead(destination, out var text, out var hasBom)) return 0;
         switch (ManagedBlock.Locate(text, out var start, out var length))
         {
             case BlockPresence.Malformed:
@@ -429,11 +430,11 @@ public sealed class HarnessApp
                 var updated = ManagedBlock.Replace(text, start, length, content);
                 if (updated == text) { Console.WriteLine($"UNCHANGED {destination} (Orchestra block)"); return 0; }
                 Console.WriteLine($"UPDATE {destination} (Orchestra block only)");
-                if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(updated));
+                if (!dryRun) ManagedInstructionFile.WriteAtomic(destination, ManagedInstructionFile.Encode(updated, hasBom));
                 return 1;
             default:
                 Console.WriteLine($"APPEND {destination} (Orchestra block; your content is kept)");
-                if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(ManagedBlock.Append(text, content)));
+                if (!dryRun) ManagedInstructionFile.WriteAtomic(destination, ManagedInstructionFile.Encode(ManagedBlock.Append(text, content), hasBom));
                 return 1;
         }
     }
@@ -441,12 +442,12 @@ public sealed class HarnessApp
     private void RemoveBlock(string destination, bool dryRun)
     {
         if (LinkedParent(destination, _home) || !TryExistingFile(destination, out var issue) || issue is not null) return;
-        var text = File.ReadAllText(destination);
+        if (!ManagedInstructionFile.TryRead(destination, out var text, out var hasBom)) return;
         if (ManagedBlock.Locate(text, out var start, out var length) != BlockPresence.Present) return;
         var remaining = ManagedBlock.Remove(text, start, length);
-        if (remaining.Length == 0) { Console.WriteLine($"REMOVE {destination} (only held the Orchestra block)"); if (!dryRun) File.Delete(destination); return; }
+        if (remaining.Length == 0 && !hasBom && !ManagedBlock.PreservesEmptyFile(text, start, length)) { Console.WriteLine($"REMOVE {destination} (only held the Orchestra block)"); if (!dryRun) File.Delete(destination); return; }
         Console.WriteLine($"REMOVE Orchestra block from {destination}");
-        if (!dryRun) Write(destination, Encoding.UTF8.GetBytes(remaining));
+        if (!dryRun) ManagedInstructionFile.WriteAtomic(destination, ManagedInstructionFile.Encode(remaining, hasBom));
     }
 
     private void ReconcileStaleSkills(Tool tools, IReadOnlyList<PlannedFile> plan, StateDocument state, bool dryRun, bool uninstall)
@@ -467,7 +468,18 @@ public sealed class HarnessApp
     private StateDocument LoadState()
     {
         if (!File.Exists(_statePath)) return StateDocument.Empty();
-        try { return JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(_statePath)) ?? StateDocument.Empty(); }
+        try
+        {
+            var state = JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(_statePath)) ?? StateDocument.Empty();
+            var files = new Dictionary<string, string>(PathComparer());
+            foreach (var (path, hash) in state.Files)
+            {
+                if (files.TryGetValue(path, out var existing) && existing != hash)
+                    throw new InvalidOperationException($"State file has conflicting ownership records for {path}: {_statePath}. Review the records before re-running; configuration was not changed.");
+                files[path] = hash;
+            }
+            return state with { Files = files };
+        }
         catch (JsonException) { throw new InvalidOperationException($"State file is invalid JSON: {_statePath}. Move it aside after reviewing it; configuration was not changed."); }
     }
     private void SaveState(StateDocument state)
