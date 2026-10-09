@@ -3,6 +3,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text;
 
 static void Check(bool condition, string message)
 {
@@ -426,6 +427,114 @@ try
     Check(legacy.Run(new[] { "install", "--tools", "codex" }) == 0, "legacy-shaped install is reported without taking ownership");
     Check(legacy.Run(new[] { "uninstall", "--tools", "codex" }) == 0, "legacy-shaped uninstall succeeds");
     Check(File.Exists(legacyInstructions), "matching unowned legacy configuration is preserved");
+    var mergeHome = Path.Combine(root, "merge-home"); var mergeState = Path.Combine(root, "merge-state");
+    var mergeFile = Path.Combine(mergeHome, ".claude", "CLAUDE.md"); Directory.CreateDirectory(Path.GetDirectoryName(mergeFile)!);
+    const string personal = "# My rules\n\nbe brief\n";
+    File.WriteAllText(mergeFile, personal);
+    var merge = new HarnessApp(mergeHome, mergeState);
+    Check(merge.Run(new[] { "install", "--tools", "claude", "--dry-run" }) == 0 && File.ReadAllText(mergeFile) == personal, "dry run does not append to unowned instructions");
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0, "install into unowned instructions succeeds");
+    var merged = File.ReadAllText(mergeFile);
+    Check(merged.StartsWith(personal.TrimEnd(), StringComparison.Ordinal) && merged.Contains("Personal engineering workflow", StringComparison.Ordinal), "unowned instructions keep user content and gain the Orchestra block");
+    Check(Directory.GetFiles(Path.GetDirectoryName(mergeFile)!, "CLAUDE.md.backup.*").Length == 0, "append makes no backup");
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == merged, "repeat install leaves the appended block unchanged");
+    File.WriteAllText(mergeFile, merged.Replace("be brief", "be very brief").Replace("Personal engineering workflow", "Stale workflow"));
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0, "install refreshes a stale block");
+    var refreshed = File.ReadAllText(mergeFile);
+    Check(refreshed.Contains("be very brief", StringComparison.Ordinal) && refreshed.Contains("Personal engineering workflow", StringComparison.Ordinal) && !refreshed.Contains("Stale workflow", StringComparison.Ordinal), "refresh rewrites only the block");
+    Check(merge.Run(new[] { "uninstall", "--tools", "claude" }) == 0, "uninstall succeeds with an appended block");
+    Check(File.ReadAllText(mergeFile) == "# My rules\n\nbe very brief\n", "uninstall removes only the Orchestra block");
+    var unmatched = personal + "<!-- orchestra:begin -->\nno end marker\n";
+    File.WriteAllText(mergeFile, unmatched);
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == unmatched, "unmatched markers are left alone");
+    var inline = "# Notes\n\nOrchestra wraps its policy in `<!-- orchestra:begin -->` and `<!-- orchestra:end -->` lines.\n\nkeep this\n";
+    File.WriteAllText(mergeFile, inline);
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile).StartsWith(inline.TrimEnd(), StringComparison.Ordinal) && File.ReadAllText(mergeFile).Contains("Personal engineering workflow", StringComparison.Ordinal), "inline marker mentions are user text, not a block");
+    File.AppendAllText(mergeFile, "    indented after block\n");
+    Check(merge.Run(new[] { "uninstall", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == inline + "    indented after block\n", "uninstall keeps user text before and after the block verbatim");
+    const string legacyBlockText = "personal\r\n\r\n\r\n<!-- orchestra:begin -->\r\nstale\r\n<!-- orchestra:end -->\r\n    suffix\r\n";
+    File.WriteAllText(mergeFile, legacyBlockText);
+    Check(merge.Run(["install", "--tools", "claude"]) == 0 && merge.Run(["uninstall", "--tools", "claude"]) == 0
+        && File.ReadAllText(mergeFile) == "personal\r\n\r\n\r\n    suffix\r\n", "legacy block refresh and removal preserve surrounding whitespace conservatively");
+    foreach (var invalid in new byte[][] { [0x23, 0x20, 0xe9], [0xff, 0xfe, 0x23, 0x00] })
+    {
+        File.WriteAllBytes(mergeFile, invalid);
+        var rejected = Capture(merge, ["install", "--tools", "claude"]);
+        Check(rejected.ExitCode == 0 && rejected.Output.Contains("not valid UTF-8", StringComparison.Ordinal)
+            && File.ReadAllBytes(mergeFile).SequenceEqual(invalid), "install rejects invalid encodings without changing bytes");
+        var invalidBlock = Encoding.UTF8.GetBytes("<!-- orchestra:begin -->\npolicy\n<!-- orchestra:end -->\n").Concat(invalid).ToArray();
+        File.WriteAllBytes(mergeFile, invalidBlock);
+        Check(merge.Run(["uninstall", "--tools", "claude"]) == 0 && File.ReadAllBytes(mergeFile).SequenceEqual(invalidBlock), "uninstall preserves invalidly encoded user text around a block");
+    }
+    foreach (var personalText in new[] { "rules", "rules\n", "rules\n\n\n", "rules\r\n\r\n", " \t\r\n\r\n", "" })
+    foreach (var bom in new[] { false, true })
+    {
+        var originalBytes = ManagedInstructionFile.Encode(personalText, bom);
+        File.WriteAllBytes(mergeFile, originalBytes);
+        Check(merge.Run(["install", "--tools", "claude"]) == 0, "install preserves arbitrary original whitespace");
+        var installedBytes = File.ReadAllBytes(mergeFile);
+        Check(installedBytes.AsSpan().StartsWith(originalBytes), "append preserves original bytes including BOM and trailing whitespace");
+        var installedText = File.ReadAllText(mergeFile);
+        File.WriteAllBytes(mergeFile, ManagedInstructionFile.Encode(installedText.Replace("Personal engineering workflow", "Stale workflow"), bom));
+        Check(merge.Run(["install", "--tools", "claude"]) == 0 && File.ReadAllBytes(mergeFile).SequenceEqual(installedBytes), "block refresh retains separator metadata and original bytes");
+        Check(merge.Run(["uninstall", "--tools", "claude", "--dry-run"]) == 0 && File.ReadAllBytes(mergeFile).SequenceEqual(installedBytes), "uninstall dry run preserves merged bytes");
+        Check(merge.Run(["uninstall", "--tools", "claude"]) == 0, "whitespace round-trip uninstall succeeds");
+        Check(File.Exists(mergeFile) && File.ReadAllBytes(mergeFile).SequenceEqual(originalBytes), "uninstall restores exact original bytes, including an empty user file");
+    }
+
+    var ownedBlockHome = Path.Combine(root, "owned-block-home");
+    var ownedBlockApp = new HarnessApp(ownedBlockHome, Path.Combine(root, "owned-block-state"));
+    Check(ownedBlockApp.Run(["install", "--tools", "claude"]) == 0, "owned-block fixture initially installs");
+    var ownedBlockFile = Path.Combine(ownedBlockHome, ".claude", "CLAUDE.md");
+    File.AppendAllText(ownedBlockFile, "\n<!-- orchestra:begin -->\nuser-authored example\n<!-- orchestra:end -->\n");
+    var ownedBlockBytes = File.ReadAllBytes(ownedBlockFile);
+    Check(ownedBlockApp.Run(["uninstall", "--tools", "claude"]) == 0 && File.ReadAllBytes(ownedBlockFile).SequenceEqual(ownedBlockBytes), "uninstall preserves modified owned instructions even when they contain markers");
+
+    var atomicFile = Path.Combine(root, "atomic-instructions.md");
+    var originalAtomic = Encoding.UTF8.GetBytes("personal instructions\n");
+    File.WriteAllBytes(atomicFile, originalAtomic);
+    var originalMode = OperatingSystem.IsWindows() ? default : File.GetUnixFileMode(atomicFile);
+    try
+    {
+        ManagedInstructionFile.WriteAtomic(atomicFile, Encoding.UTF8.GetBytes("new instructions"), (stream, bytes) =>
+        {
+            stream.Write(bytes.AsSpan(0, 3));
+            throw new IOException("simulated disk-full staging failure");
+        });
+        Check(false, "staging failure must propagate");
+    }
+    catch (IOException ex) when (ex.Message.Contains("simulated disk-full", StringComparison.Ordinal)) { }
+    Check(File.ReadAllBytes(atomicFile).SequenceEqual(originalAtomic), "partial staging failure preserves the original file");
+    Check(Directory.GetFiles(root, ".orchestra-*.tmp").Length == 0, "failed atomic write cleans up its staging file");
+    ManagedInstructionFile.WriteAtomic(atomicFile, Encoding.UTF8.GetBytes("new instructions"));
+    Check(File.ReadAllText(atomicFile) == "new instructions", "successful atomic write replaces the destination");
+    Check(OperatingSystem.IsWindows() || File.GetUnixFileMode(atomicFile) == originalMode, "atomic replacement preserves Unix permissions");
+
+    if (OperatingSystem.IsWindows())
+    {
+        var caseHome = Path.Combine(root, "CaseHome"); var caseState = Path.Combine(root, "case-state");
+        var caseApp = new HarnessApp(caseHome, caseState);
+        Check(caseApp.Run(["install", "--tools", "claude"]) == 0, "case fixture initially installs owned instructions");
+        var caseFile = Path.Combine(caseHome, ".claude", "CLAUDE.md");
+        File.WriteAllText(caseFile, "old owned policy");
+        var caseStatePath = Path.Combine(caseState, "state.json");
+        var caseDocument = JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(caseStatePath))!;
+        caseDocument.Files[caseFile] = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(caseFile))).ToLowerInvariant();
+        caseDocument.Files[caseFile.ToUpperInvariant()] = caseDocument.Files[caseFile];
+        File.WriteAllText(caseStatePath, JsonSerializer.Serialize(caseDocument));
+        var differentCaseApp = new HarnessApp(caseHome.ToUpperInvariant(), caseState);
+        Check(differentCaseApp.Run(["install", "--tools", "claude"]) == 0 && !File.ReadAllText(caseFile).Contains("old owned policy", StringComparison.Ordinal)
+            && !File.ReadAllText(caseFile).Contains(ManagedBlock.Begin, StringComparison.Ordinal), "case-insensitive ownership updates the full file instead of appending");
+        File.AppendAllText(caseFile, "\nuser edit");
+        var editedCaseBytes = File.ReadAllBytes(caseFile);
+        Check(differentCaseApp.Run(["install", "--tools", "claude"]) == 0 && File.ReadAllBytes(caseFile).SequenceEqual(editedCaseBytes), "case-insensitive ownership preserves modified owned files");
+        var conflictingDocument = JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(caseStatePath))!;
+        conflictingDocument.Files[caseFile.ToUpperInvariant()] = "conflicting-hash";
+        File.WriteAllText(caseStatePath, JsonSerializer.Serialize(conflictingDocument));
+        var ambiguousOwnership = Capture(differentCaseApp, ["install", "--tools", "claude"]);
+        Check(ambiguousOwnership.ExitCode == 2 && ambiguousOwnership.Error.Contains("conflicting ownership records", StringComparison.Ordinal)
+            && File.ReadAllBytes(caseFile).SequenceEqual(editedCaseBytes), "conflicting case aliases are rejected before changing configuration");
+    }
     Console.WriteLine("All Orchestra tests passed.");
 }
 finally

@@ -206,7 +206,16 @@ orchestrate install --tools codex,claude --dry-run
 ```
 
 The CLI creates missing files, updates only unchanged CLI-owned files, and
-never silently overwrites a different file. It refuses links/reparse points and
+never silently overwrites a different file. The one exception to skipping is
+your global `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`: if one exists and
+the CLI doesn't own it, the policy is appended between `<!-- orchestra:begin -->`
+and `<!-- orchestra:end -->` markers and the rest of your file is untouched.
+Later installs rewrite only that block, and `uninstall` removes only that block.
+These operations preserve UTF-8 BOMs and user whitespace, and stage replacement
+bytes in the same directory before atomically replacing the file. Non-UTF-8
+instruction files are a conflict; convert them to UTF-8 before re-running.
+The dry run reports these as `APPEND` or `UPDATE`. Unmatched markers are a
+conflict. It refuses links/reparse points and
 records SHA-256 ownership data in its per-user state directory. To explicitly
 replace a conflicting file while retaining a timestamped sibling backup:
 
@@ -316,7 +325,8 @@ orchestrate uninstall --tools codex,claude --dry-run
 orchestrate uninstall --tools codex,claude
 ```
 
-Only unchanged, CLI-owned global files are removed. Retired skill files are
+Only unchanged, CLI-owned global files are removed, and the Orchestra block
+is stripped from a `CLAUDE.md` or `AGENTS.md` it was appended to. Retired skill files are
 removed only when their ownership hash still matches. Modified, unknown, or
 unsafe files and all project-local harness files are preserved.
 
