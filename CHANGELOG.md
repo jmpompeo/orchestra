@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/jmpompeo/orchestra/compare/v2.6.0...v2.7.0) (2026-10-09)
+
+
+### Features
+
+* append managed block to existing global instruction files ([#37](https://github.com/jmpompeo/orchestra/issues/37)) ([c583cbf](https://github.com/jmpompeo/orchestra/commit/c583cbf44d0b3986558e59ff58a2f145aacda947))
+
 ## [2.6.0](https://github.com/jmpompeo/orchestra/compare/v2.5.0...v2.6.0) (2026-09-29)
 
 
