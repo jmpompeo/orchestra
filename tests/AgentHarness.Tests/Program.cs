@@ -446,6 +446,11 @@ try
     var unmatched = personal + "<!-- orchestra:begin -->\nno end marker\n";
     File.WriteAllText(mergeFile, unmatched);
     Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == unmatched, "unmatched markers are left alone");
+    var inline = "# Notes\n\nOrchestra wraps its policy in `<!-- orchestra:begin -->` and `<!-- orchestra:end -->` lines.\n\nkeep this\n";
+    File.WriteAllText(mergeFile, inline);
+    Check(merge.Run(new[] { "install", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile).StartsWith(inline.TrimEnd(), StringComparison.Ordinal) && File.ReadAllText(mergeFile).Contains("Personal engineering workflow", StringComparison.Ordinal), "inline marker mentions are user text, not a block");
+    File.AppendAllText(mergeFile, "    indented after block\n");
+    Check(merge.Run(new[] { "uninstall", "--tools", "claude" }) == 0 && File.ReadAllText(mergeFile) == inline.TrimEnd() + "\n\n    indented after block\n", "uninstall keeps user text after the block verbatim");
     Console.WriteLine("All Orchestra tests passed.");
 }
 finally
