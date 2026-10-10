@@ -28,3 +28,7 @@ for setup, monitoring, budgets, and tool-specific behavior.
 
 See [INSTALL.md](INSTALL.md) for setup, updates, project adoption, model
 assignments, work/personal boundaries, and safe uninstall instructions.
+
+Maintainers can run the opt-in [Codex workflow evals](evals/README.md) to
+inspect debugging, refactoring, and skill handoff behavior. These local runs
+are separate from the installer test suite and are not part of CI.
