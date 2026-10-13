@@ -373,7 +373,7 @@ try
     Check(app.Run(new[] { "install", "--tools", "claude" }) == 0, "Claude install succeeds in isolated home");
     var claudeAgents = Directory.GetFiles(Path.Combine(home, ".claude", "agents"), "*.md");
     Check(claudeAgents.Length == 4 && claudeAgents.All(path => !File.ReadAllText(path).Contains("@@", StringComparison.Ordinal)), "Claude agent models are rendered");
-    Check(File.ReadAllText(Path.Combine(home, ".claude", "agents", "workflow-explorer.md")).Contains("model: \"haiku\"", StringComparison.Ordinal), "Claude explorer uses its configured model");
+    Check(File.ReadAllText(Path.Combine(home, ".claude", "agents", "workflow-explorer.md")).Contains("model: \"claude-haiku-5-5\"", StringComparison.Ordinal), "Claude explorer uses its configured model");
     CheckRenderedPolicy(File.ReadAllText(Path.Combine(home, ".claude", "CLAUDE.md")), workflowPolicy, "installed Claude instructions");
     Check(Flatten(File.ReadAllText(Path.Combine(home, ".claude", "CLAUDE.md"))).Contains("Run an independent read-only reviewer or refactor audit only when opted in", StringComparison.Ordinal), "installed Claude instructions require review opt-in");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "agentic-debugging", "SKILL.md")), "Claude agentic-debugging skill installed");
