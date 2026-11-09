@@ -101,8 +101,9 @@ Prep asks for the outcome, allowed scope and decisions, a branch, time budget,
 stop conditions, and explicit commands for the done check, baseline tests, and
 an app smoke check when applicable. It verifies the done check is runnable,
 then requires the baseline tests and app smoke check to pass. It also verifies
-that required permissions and heartbeat hooks work before starting a fresh
-native session where the host supports it. Cursor can launch through the
+required permissions before starting a fresh native session where the host
+supports it. Native liveness hooks are opt-in; without verified hooks, task
+progress still works and native liveness is unavailable. Cursor can launch through the
 measured SDK runner or receive instructions for `/kickoff` in a new IDE Agent
 chat. Orchestra does not supervise the native loop.
 
@@ -176,16 +177,30 @@ usage feed, and kickoff parks a capped run if that feed later stops.
 `orchestrate heartbeat` records task events, hook timestamps, and native usage
 samples in the dashboard's script file. `heartbeat collect-codex` reads a
 Codex JSONL stream, while `heartbeat collect-claude` listens for local Claude
-telemetry. Neither starts or supervises an agent. Hooks are configured for
-the selected project and run during prep, not enabled globally by
+telemetry. Neither starts or supervises an agent. When requested, hooks are
+configured for the selected project and run during prep, not enabled globally by
 `orchestrate install`. [Codex requires review and
 trust](https://learn.chatgpt.com/docs/hooks) of a new hook definition before
-it runs. Prep verifies an actual hook
-probe, then binds future stamps to the launched session ID so another session
-in the same project cannot make this run appear live. Claude background
+it runs. For requested hooks, prep verifies an actual hook probe, then binds
+future stamps to the launched session ID so another session
+in the same project cannot make this run appear live. An unverified hook does
+not block ordinary work; it blocks only a run that explicitly requires verified
+monitoring. Claude background
 sessions [normally move into a new worktree](https://code.claude.com/docs/en/agent-view#how-file-edits-are-isolated)
 on their first edit; prep uses a
 verified dedicated linked worktree for an automatic Claude launch.
+
+After successful tasks and final checks, kickoff retires run-owned temporary
+worktrees and scratch resources, retaining the final deliverable and concise
+validation/run evidence, including `dashboard.html` and its sibling
+`heartbeat.js`. The pair is retained together after success, even when a
+worktree is retired. Prep and kickoff provide a clickable **Open dashboard in
+agent** file link and a separate **Open in browser** action or platform command;
+completion repeats those choices at the retained path. Rendering depends on the
+host's HTML preview support; a blocked preview is reported without preventing
+implementation. Cleanup preserves uncommitted work, active resources and
+resumable runs, and asks before uncertain removal. Pre-existing worktrees are
+outside this cleanup scope.
 
 Refactor audits and independent model correctness reviews run only when you
 request them for a task or a standing project rule opts in. The agent may

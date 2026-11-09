@@ -35,13 +35,15 @@ For Codex and Claude, the heartbeat must be bound to this native session ID.
 At first launch, prep may still be receiving the ID from the launcher. If
 `boundSessionId` is null, wait up to 30 seconds, checking status every few
 seconds, for prep to bind it. Proceed only when it equals this session's ID
-and a matching hook event advances `lastHookAt`. If a different ID appears,
-or the bounded wait expires, stop before unattended work and report the gap.
+and, only when the brief requires verified monitoring, a matching hook event
+advances `lastHookAt`. If a different ID appears or the bounded wait expires, stop before unattended work and report the gap.
 On a resumed native session with a new ID, confirm the previous session ended,
 then run
 `orchestrate heartbeat bind --dir <absolute-run-dir> --session-id <new-id> --replace`
-and verify a matching hook event. Never use a different session's probe as
-proof of this run's liveness. For a Cursor SDK run, verify the launcher has
+and verify the binding. For opt-in hooks, check for a matching hook event;
+if absent, report native liveness unavailable and continue unless verified
+monitoring is an explicit acceptance criterion. Never use a different session's
+probe as proof of this run's liveness. For a Cursor SDK run, verify the launcher has
 bound its returned run ID; Cursor has no native hook in this version. A manual
 Cursor IDE Agent chat has neither native binding nor measured token usage.
 Do not start a manual chat under a brief that requires a token cap.
@@ -73,9 +75,9 @@ orchestrate heartbeat event --dir <absolute-run-dir> --task <task-id> --status s
 
 Work to the task's acceptance criteria. Record decisions, material evidence,
 file changes, and check results in the ledgers as they happen so a resumed
-session can continue accurately. Native Codex and Claude hooks supply
-additional liveness stamps; use task events for progress in every tool,
-including Cursor. If a reliable cumulative token count is available, record
+session can continue accurately. Optional native Codex and Claude hooks supply
+additional liveness stamps. Without verified hooks, native liveness is
+unavailable. Use task events for progress in every tool, including Cursor. If a reliable cumulative token count is available, record
 its absolute value with
 the separate `orchestrate heartbeat usage --dir <absolute-run-dir> --source
 <source> --session-id <native-session-id> --tokens-used <cumulative-total>`
@@ -160,3 +162,33 @@ stop. Stop the run-scoped Claude telemetry receiver on permanent completion
 or abort; leave it available while the run is parked for a resumable decision
 only if it is needed for the same bound session. Do not launch a replacement
 session automatically.
+
+## Cleanup after success
+
+After every task and the final done check pass, apply the shared successful-run
+cleanup policy using prep's ownership inventory, including resources created by
+subagents. Keep the final deliverable, `dashboard.html`, its sibling `heartbeat.js`,
+and concise evidence of decisions, checks, results and retained paths. These two
+dashboard files are retained run evidence, never disposable scratch artifacts.
+Write final task events before cleanup. If retiring their worktree, move both
+files together to a retained run directory first, verify the dashboard still
+loads its sibling heartbeat, and update the brief, ledgers and handoff links.
+Keep a clickable **Open dashboard in agent** link and a separate **Open in
+browser** option in the kickoff and completion handoffs as defined by prep.
+Consolidate evidence at a verified retained location before removing redundant
+run logs, scratch outputs, temporary dependency installs or disposable worktrees; update all handoff/dashboard paths that change.
+Do not remove files still used by an active launcher, collector or native session.
+Stop only verified run-owned processes once final events and evidence are written.
+Preserve any still-needed state and the working checkout holding uncommitted work.
+
+For each worktree, inspect tracked, untracked and ignored files, unique commits,
+and active sessions; prove useful work and evidence are preserved before removal.
+Use the native managed-worktree archive tool when applicable or normal Git
+worktree removal, never force or recursive deletion of a checkout. Do not delete
+needed branches or commits. Check the resulting worktree/resource inventory.
+
+If any cleanup is uncertain, ask the user with the exact path, reason and proposed
+action, retain it pending an answer, and finish other safe cleanup. Failed,
+blocked and budget-stopped resumable runs retain recovery artifacts. Summarize
+removed resources and the minimum retained artifacts with reasons in the final
+handoff. Outstanding cleanup decisions must be reported explicitly.

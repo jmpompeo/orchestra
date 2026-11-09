@@ -80,3 +80,26 @@
 - Measure accepted work including retries, review and rework. Report agent latency,
   tokens and cost separately from observed user overhead and developer productivity.
   Missing human observations mean the productivity outcome is unverified.
+
+## Successful-run cleanup
+
+- Track run-owned temporary worktrees, scratch files, dependency installs,
+  processes and configuration as they are created. Reuse suitable resources
+  instead of creating a worktree per task. Creation of disposable run resources
+  includes permission for their safe cleanup under these rules.
+- After all tasks and final checks pass, keep the final deliverable and concise
+  run/validation evidence, including `dashboard.html` and its sibling
+  `heartbeat.js` when a run dashboard exists, then retire run-owned resources
+  no longer needed. Preserve the pair together at a retained location and keep
+  dashboard links current if its temporary worktree is removed.
+  Preserve the checkout containing uncommitted deliverables. Before removing a
+  worktree, check tracked, untracked and ignored files, unique commits, and
+  active sessions; verify useful work and required evidence survive elsewhere.
+  Use the native managed-worktree archive tool when applicable, otherwise normal
+  Git worktree removal. Never force removal, delete needed branches or commits,
+  or sweep pre-existing/user-owned resources.
+- If ownership, activity, preservation or removal safety is uncertain, retain
+  the resource and ask the user with its path and the specific uncertainty.
+  Complete independent safe cleanup while awaiting an answer. Preserve resources
+  needed by failed, blocked or resumable runs. Report what was removed and what
+  remains, with reasons; do not claim cleanup is complete while decisions remain.
