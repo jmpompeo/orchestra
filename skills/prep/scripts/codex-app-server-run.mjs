@@ -383,6 +383,16 @@ async function main(options) {
     const id = startedTurn?.turn?.id;
     if (!validId(id) || (turnId && turnId !== id)) throw new Error('Codex did not return a valid turn ID');
     turnId = id;
+    // A recorded request is not proof of the model that executed it. Keep unknown effort explicit.
+    const evidencePath = path.join(runDir, `model-evidence-${randomUUID()}.json`);
+    const evidenceFile = await open(evidencePath, 'wx', 0o600);
+    try {
+      await evidenceFile.writeFile(JSON.stringify({ observations: [{
+        tool: 'codex', sessionId, role: 'orchestrator', source: 'codex-app-server/turn-start-request',
+        stage: 'requested', model: options.model, effort: null,
+      }] }, null, 2) + '\n');
+    } finally { await evidenceFile.close(); }
+    console.log(`Model request evidence: ${evidencePath}; executed model and effort unverified`);
     console.log(`Codex app-server turn started ${turnId}; thread ${threadId}; session ${sessionId}; ${options.probe ? 'probe' : 'kickoff'}`);
     const finalTurn = await turnDone;
     if (!receivedUsage) {

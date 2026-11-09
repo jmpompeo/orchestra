@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "alwaysRequired": [
+    "dotnet-tests"
+  ],
+  "broadChecks": [
+    "dotnet-tests",
+    "launcher-tests",
+    "efficiency-tests",
+    "installer-posix",
+    "installer-windows",
+    "dashboard-tests"
+  ],
+  "projects": [
+    {
+      "id": "embedded",
+      "paths": [
+        "skills/**",
+        "global/**",
+        "project-template/**",
+        "models.conf"
+      ],
+      "checks": [
+        "dotnet-tests"
+      ]
+    },
+    {
+      "id": "launcher",
+      "paths": [
+        "skills/prep/scripts/codex-app-server-run.mjs",
+        "tests/codex-app-server-run.test.mjs"
+      ],
+      "checks": [
+        "launcher-tests"
+      ],
+      "dependsOn": [
+        "core"
+      ]
+    },
+    {
+      "id": "core",
+      "paths": [
+        "src/**",
+        "tests/AgentHarness.Tests/**",
+        "AgentHarness.sln"
+      ],
+      "checks": [
+        "dotnet-tests"
+      ],
+      "dependsOn": [
+        "embedded"
+      ]
+    },
+    {
+      "id": "posix-installer",
+      "paths": [
+        "scripts/install.sh",
+        "tests/Installer.Tests/install-sh-tests.sh"
+      ],
+      "checks": [
+        "installer-posix"
+      ]
+    },
+    {
+      "id": "windows-installer",
+      "paths": [
+        "scripts/install.ps1",
+        "tests/Installer.Tests/install-ps1-tests.ps1"
+      ],
+      "checks": [
+        "installer-windows"
+      ]
+    },
+    {
+      "id": "efficiency",
+      "paths": [
+        "skills/agentic-feature-delivery/scripts/validate.mjs",
+        "scripts/evaluate-efficiency.mjs",
+        "scripts/validation-manifest.json",
+        "tests/efficiency.test.mjs",
+        "tests/fixtures/efficiency/**"
+      ],
+      "checks": [
+        "efficiency-tests"
+      ]
+    },
+    {
+      "id": "docs",
+      "paths": [
+        "docs/*.md",
+        "docs/**/*.md",
+        "README.md",
+        "CHANGELOG.md",
+        "INSTALL.md"
+      ],
+      "checks": []
+    },
+    {
+      "id": "dashboard",
+      "paths": [
+        "skills/prep/templates/dashboard.html",
+        "tests/dashboard.test.mjs"
+      ],
+      "checks": [
+        "dashboard-tests"
+      ],
+      "dependsOn": [
+        "core"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "build",
+      "command": [
+        "dotnet",
+        "build",
+        "AgentHarness.sln",
+        "--configuration",
+        "Release"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "dotnet-tests",
+      "command": [
+        "dotnet",
+        "run",
+        "--project",
+        "tests/AgentHarness.Tests/AgentHarness.Tests.csproj",
+        "--configuration",
+        "Release",
+        "--no-build"
+      ],
+      "dependsOn": [
+        "build"
+      ]
+    },
+    {
+      "id": "launcher-tests",
+      "command": [
+        "node",
+        "--test",
+        "tests/codex-app-server-run.test.mjs"
+      ],
+      "dependsOn": [
+        "build"
+      ]
+    },
+    {
+      "id": "efficiency-tests",
+      "command": [
+        "node",
+        "--test",
+        "tests/efficiency.test.mjs"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "installer-posix",
+      "command": [
+        "/bin/sh",
+        "tests/Installer.Tests/install-sh-tests.sh"
+      ],
+      "dependsOn": [],
+      "platforms": [
+        "darwin",
+        "linux",
+        "freebsd"
+      ]
+    },
+    {
+      "id": "installer-windows",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "tests/Installer.Tests/install-ps1-tests.ps1"
+      ],
+      "dependsOn": [],
+      "platforms": [
+        "win32"
+      ]
+    },
+    {
+      "id": "dashboard-tests",
+      "command": [
+        "node",
+        "--test",
+        "tests/dashboard.test.mjs"
+      ],
+      "dependsOn": []
+    }
+  ]
+}

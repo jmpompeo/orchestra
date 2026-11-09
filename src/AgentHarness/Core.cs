@@ -82,6 +82,7 @@ public static class CursorCommandGenerator
             var close = body.IndexOf("\n---\n", 4, StringComparison.Ordinal);
             if (close >= 0) body = body[(close + 5)..];
         }
+        if (name == "agentic-feature-delivery") body = body.Replace("`scripts/validate.mjs`", "`.cursor/orchestra/validate.mjs`", StringComparison.Ordinal);
         return $"---\ndescription: {name} workflow\n---\n\n# {name}\n\n{body.Trim()}\n";
     }
 }
@@ -131,6 +132,7 @@ public sealed class HarnessApp
             if (args.Length == 0 || args[0] is "--help" or "-h" or "help") return Help();
             var command = args[0].ToLowerInvariant();
             if (command == "heartbeat") return Heartbeat.Run(args[1..]);
+            if (command == "models") return ModelDiagnostics.Run(args[1..], _assets, _home);
             var options = CliOptions.Parse(args[1..]);
             return command switch
             {
@@ -153,7 +155,7 @@ public sealed class HarnessApp
     private static int Help()
     {
         Console.WriteLine("orchestrate — Orchestra's portable AI engineering workflow CLI\n\n" +
-            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n  heartbeat init|event|usage|collect-codex|collect-claude|bind|hook|status --dir PATH [options]\n\n" +
+            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n  models inspect --tool codex|claude [--evidence PATH]\n  models candidate --config PATH [--tool codex|claude] [--results PATH]\n  heartbeat init|event|usage|collect-codex|collect-claude|bind|hook|status --dir PATH [options]\n\n" +
             "Without --tools, install and init-project ask interactively. Use --tools in scripts or CI.");
         return 0;
     }
@@ -340,6 +342,8 @@ public sealed class HarnessApp
                 list.Add(new PlannedFile($"generated Cursor command for {skill}", Path.Combine(project, ".cursor", "commands", skill + ".md"), Encoding.UTF8.GetBytes(output)));
             }
             Add("skills/prep/scripts/cursor-sdk-run.mjs", Path.Combine(project, ".cursor", "orchestra", "cursor-sdk-run.mjs"));
+            foreach (var asset in _assets.Paths.Where(x => x.StartsWith("skills/agentic-feature-delivery/scripts/", StringComparison.Ordinal)))
+                Add(asset, Path.Combine(project, ".cursor", "orchestra", Path.GetFileName(asset)));
         }
         return list;
     }

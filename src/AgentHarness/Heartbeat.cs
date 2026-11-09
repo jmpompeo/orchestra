@@ -97,7 +97,20 @@ public static partial class Heartbeat
         using var guard = HeartbeatStore.Lock(file);
         HeartbeatStore.RefuseLinkedFile(file);
         if (File.Exists(file)) throw new InvalidOperationException("Heartbeat run already exists; refusing to overwrite it.");
-        HeartbeatStore.Write(file, state, overwrite: false);
+        var dashboard = Path.Combine(Path.GetDirectoryName(file)!, "dashboard.html");
+        HeartbeatStore.RefuseLinkedFile(dashboard);
+        var template = new AssetStore().ReadBytes("skills/prep/templates/dashboard.html");
+        // CreateNew preserves unrelated dashboards and makes initialization reusable without an agent.
+        using (var output = new FileStream(dashboard, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            output.Write(template);
+        try { HeartbeatStore.Write(file, state, overwrite: false); }
+        catch
+        {
+            // Only the dashboard created by this initialization is eligible for rollback.
+            HeartbeatStore.RefuseLinkedFile(dashboard);
+            if (File.ReadAllBytes(dashboard).AsSpan().SequenceEqual(template)) File.Delete(dashboard);
+            throw;
+        }
         Console.WriteLine(file);
         return 0;
     }

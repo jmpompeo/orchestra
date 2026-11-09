@@ -108,7 +108,7 @@ chat. Orchestra does not supervise the native loop.
 
 Prep keeps the brief, plan, progress ledger, decisions, heartbeat data, and
 local dashboard under `.orchestra/runs/<run-id>/`. These files are ignored by
-Git for that project. The dashboard is an HTML file generated once during prep;
+Git for that project. The dashboard is a reusable HTML template emitted by `heartbeat init`;
 it reloads `heartbeat.js` from the same directory and works over `file://`
 without a server. It shows task progress, parked questions, liveness, and
 available budget data, including the usage source and last sample time. Run
@@ -329,6 +329,18 @@ Only unchanged, CLI-owned global files are removed, and the Orchestra block
 is stripped from a `CLAUDE.md` or `AGENTS.md` it was appended to. Retired skill files are
 removed only when their ownership hash still matches. Modified, unknown, or
 unsafe files and all project-local harness files are preserved.
+
+## Measure workflow efficiency
+
+See [the efficiency guide](docs/efficiency.md) for dependency-aware local validation,
+model assignment diagnostics and report-only candidate evaluation, and observed
+productivity trials. The portable Node tools require Node.js 22 or newer; normal
+CLI installation and heartbeat dashboards remain self-contained.
+
+`orchestrate models inspect --tool codex` (or `claude`) compares bundled assignments
+with installed role definitions. `orchestrate models candidate --config PATH`
+validates a proposed models.conf without adopting it. Requested and runtime-reported
+models remain separate; configuration and token totals do not prove execution.
 
 ## Developing and releasing
 

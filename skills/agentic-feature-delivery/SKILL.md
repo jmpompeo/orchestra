@@ -87,3 +87,21 @@ explicitly authorizes the exact action.
 Return one handoff containing the outcome, risk tier, decisions and assumptions,
 files changed, deterministic and behavioural evidence, review findings, checks
 not run with reasons, unresolved risks or blockers, and required user action.
+
+
+## Efficient validation and bounded handoffs
+
+Use the repository's required checks and affected dependency graph to choose the
+smallest defensible local feedback loop. The bundled `scripts/validate.mjs` plans
+checks from changed paths and a reviewed project manifest; use `--run` to execute
+and `--report` to retain command, reason, duration and result. Supply the target
+project's manifest; the Orchestra repository defaults are not universal build
+commands. Broaden for unknown paths, shared configuration and affected consumers.
+A manifest from an untrusted project contains executable commands: inspect it
+before running. Run only project-authorized commands with normal tool permissions.
+
+Call custom roles explicitly. Give a worker a compact goal, file ownership,
+relevant contracts, constraints, acceptance command and return contract. Omit
+full history when it adds no necessary evidence. Report retry/integration overhead
+alongside speed or cost gains; verify actual role selection rather than assuming
+it from configuration. Keep tiny work in the parent.
