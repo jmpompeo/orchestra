@@ -180,25 +180,25 @@ Use `orchestrate heartbeat status --dir <absolute-run-dir>` to inspect its
 summary. The writer is for the agents and native hooks, not a command the
 user must run during normal work.
 
-## 4. Build the dashboard once
+## 4. Verify the bundled dashboard
 
-Spawn one bounded subagent to create only `dashboard.html` in the run directory.
-Give it the version 1 `window.ORCHESTRA_HEARTBEAT` schema, the selected tool,
-a sample status result, read-only access to other run files, and no permission
-to alter source or launch another agent. The page must work by opening the
-local file: load `heartbeat.js` through
-`<script src="heartbeat.js"></script>`, include a meta
-refresh, and require no local server, remote library, or network call. Show the
-current task, completed and remaining counts, parked decisions, liveness and
-stale state, elapsed and remaining time, and token usage or an explicit
-unavailable marker. Render event and decision text as text, never as HTML.
-Before the first task starts, show the time budget as
-pending rather than counting prep time. Never display a stale warning for
-Cursor solely because Cursor has no native hook; label native liveness
-unavailable. Inspect the generated HTML and open it locally to verify the
-core fields and refresh.
-If this environment has no usable subagent, report that the required dashboard
-build could not run and stop before kickoff.
+`orchestrate heartbeat init` automatically writes the reusable `dashboard.html`
+beside `heartbeat.js`. No dashboard generation agent is required. Open the
+local HTML file and verify the core fields and automatic refresh. It loads
+`window.ORCHESTRA_HEARTBEAT` version 1 from `heartbeat.js`, uses a meta refresh,
+and requires no server, network, or dependencies. It supports system appearance
+and a persistent light/dark/system selector, including a fallback when local
+file storage is unavailable.
+
+The page shows current work, completed and remaining counts, native liveness,
+active-only staleness, elapsed and remaining time, and native token usage with
+its source and sample time. Unavailable usage is distinct from zero; absent
+native hooks mean unavailable liveness. Before `startedAt` is set, time is
+pending. After all tasks finish, displayed elapsed time freezes at the final
+finished event; CLI status continues measuring wall time. Task state follows
+event append order. Blocked event reasons represent parked decisions on the
+page; it does not load `decisions.md`. Emit a blocked event with a useful reason
+when parking a choice. Event text is rendered as text, never HTML.
 
 ## 5. Activate run-scoped liveness
 

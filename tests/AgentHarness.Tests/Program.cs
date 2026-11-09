@@ -75,6 +75,8 @@ static byte[] ReleaseZip(string executableName, byte[] contents)
     return memory.ToArray();
 }
 
+ModelDiagnosticsTests.Run();
+
 var parsed = ToolSelection.Parse("codex, cursor");
 Check(parsed == (Tool.Codex | Tool.Cursor), "tool selection parses comma-separated values");
 Check(ToolSelection.Parse("all") == Tool.All, "all selects every tool");
@@ -120,6 +122,22 @@ try
     Check(noRun.ExitCode == 2 && !Directory.Exists(heartbeatDir), "heartbeat event refuses an uninitialized run without creating files");
     var init = Capture(app, new[] { "heartbeat", "init", "--dir", heartbeatDir, "--run-id", "test-run", "--total-tasks", "3", "--time-budget-minutes", "10", "--stale-after-seconds", "30", "--token-budget", "100" });
     Check(init.ExitCode == 0, "heartbeat initializes a run");
+    var dashboardPath = Path.Combine(heartbeatDir, "dashboard.html");
+    Check(File.ReadAllText(dashboardPath) == new AssetStore().ReadText("skills/prep/templates/dashboard.html"), "heartbeat installs the exact reusable dashboard");
+    var conflictDir = Path.Combine(heartbeatRoot, "dashboard-conflict");
+    Directory.CreateDirectory(conflictDir);
+    File.WriteAllText(Path.Combine(conflictDir, "dashboard.html"), "user dashboard");
+    Check(Capture(app, new[] { "heartbeat", "init", "--dir", conflictDir, "--run-id", "conflict", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 2
+        && File.ReadAllText(Path.Combine(conflictDir, "dashboard.html")) == "user dashboard"
+        && !File.Exists(Path.Combine(conflictDir, "heartbeat.js")), "initialization preserves unrelated dashboard and does not create a partial run");
+    if (!OperatingSystem.IsWindows())
+    {
+        var linkedDir = Path.Combine(heartbeatRoot, "dashboard-linked");
+        Directory.CreateDirectory(linkedDir);
+        File.CreateSymbolicLink(Path.Combine(linkedDir, "dashboard.html"), dashboardPath);
+        Check(Capture(app, new[] { "heartbeat", "init", "--dir", linkedDir, "--run-id", "linked", "--total-tasks", "1", "--time-budget-minutes", "10", "--stale-after-seconds", "30" }).ExitCode == 2
+            && !File.Exists(Path.Combine(linkedDir, "heartbeat.js")), "initialization refuses linked dashboard without partial run");
+    }
     var heartbeatFile = Path.Combine(heartbeatDir, "heartbeat.js");
     var originalHeartbeat = File.ReadAllText(heartbeatFile);
     Check(originalHeartbeat.StartsWith("window.ORCHESTRA_HEARTBEAT = {", StringComparison.Ordinal), "heartbeat is browser-loadable JavaScript");
@@ -397,6 +415,8 @@ try
         CheckRenderedPolicy(File.ReadAllText(cursorProjectRule), workflowPolicy, "generated Cursor project rule");
         Check(Flatten(File.ReadAllText(cursorProjectRule)).Contains("Run model reviews only when opted in", StringComparison.Ordinal), "generated Cursor project rule requires review opt-in");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")), "Cursor command generated");
+        Check(File.Exists(Path.Combine(project, ".cursor", "orchestra", "validate.mjs")), "Cursor receives the portable validation runner");
+        Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("`.cursor/orchestra/validate.mjs`", StringComparison.Ordinal), "Cursor validation instructions resolve to installed runner");
         CheckFeatureRouting(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")), "generated Cursor feature command");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("shared Git branch", StringComparison.Ordinal), "Cursor feature command refers to the shared Git gate");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("reviewable draft or diff", StringComparison.Ordinal), "Cursor feature command retains refactor audit sequencing");

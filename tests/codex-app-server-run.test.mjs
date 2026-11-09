@@ -4,7 +4,7 @@
 // Run after building the Release AgentHarness binary.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { access, mkdtemp, mkdir, readFile, writeFile, chmod, rm, realpath } from 'node:fs/promises';
+import { access, mkdtemp, mkdir, readFile, writeFile, chmod, rm, realpath, readdir } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -91,6 +91,11 @@ readline.createInterface({ input: process.stdin }).on('line', line => {
   let result = command('node', [launcher, '--project', root, '--run-dir', probe, '--model', 'mock', '--probe', '--codex-bin', codex, '--orchestrate-bin', bin], { MOCK_MODE: 'probe' });
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /ORCHESTRA_CODEX_USAGE_PROBE=ok/);
+  const evidenceNames = (await readdir(probe)).filter(name => name.startsWith('model-evidence-'));
+  assert.equal(evidenceNames.length, 1);
+  const evidence = JSON.parse(await readFile(path.join(probe, evidenceNames[0]), 'utf8'));
+  assert.deepEqual(evidence.observations, [{ tool: 'codex', sessionId: 'thread-1', role: 'orchestrator', source: 'codex-app-server/turn-start-request', stage: 'requested', model: 'mock', effort: null }]);
+  assert.match(result.stdout, /executed model and effort unverified/);
   let state = JSON.parse(heartbeat(probe, 'status'));
   assert.equal(state.tokensUsed, 7);
   assert.equal(state.usageSource, 'codex-app-server');

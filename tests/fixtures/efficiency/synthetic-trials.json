@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "synthetic": true,
+  "trials": [
+    {
+      "taskId": "small-edit",
+      "taskType": "small-edit",
+      "variant": "baseline",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 10,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "small-edit",
+      "taskType": "small-edit",
+      "variant": "candidate",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 8,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "feature",
+      "taskType": "feature",
+      "variant": "baseline",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 10,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "feature",
+      "taskType": "feature",
+      "variant": "candidate",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 8,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "bug",
+      "taskType": "bug",
+      "variant": "baseline",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 10,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "bug",
+      "taskType": "bug",
+      "variant": "candidate",
+      "batch": "batch1",
+      "heldOut": false,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 8,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "refactor",
+      "taskType": "refactor",
+      "variant": "baseline",
+      "batch": "batch1",
+      "heldOut": true,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 10,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    },
+    {
+      "taskId": "refactor",
+      "taskType": "refactor",
+      "variant": "candidate",
+      "batch": "batch1",
+      "heldOut": true,
+      "repetition": "1",
+      "attempts": [
+        {
+          "accepted": true,
+          "deterministicPassed": true,
+          "failed": false,
+          "retried": false,
+          "latencySeconds": 8,
+          "tokens": 100,
+          "costUsd": 0.01
+        }
+      ]
+    }
+  ]
+}

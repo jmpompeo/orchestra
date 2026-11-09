@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "alwaysRequired": [],
+  "broadChecks": [
+    "consumer-test"
+  ],
+  "projects": [
+    {
+      "id": "library",
+      "paths": [
+        "library/**"
+      ],
+      "checks": [
+        "library-test"
+      ]
+    },
+    {
+      "id": "consumer",
+      "paths": [
+        "consumer/**"
+      ],
+      "dependsOn": [
+        "library"
+      ],
+      "checks": [
+        "consumer-test"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "build",
+      "command": [
+        "node",
+        "--check",
+        "tests/fixtures/efficiency/library/api.mjs"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "library-test",
+      "command": [
+        "node",
+        "tests/fixtures/efficiency/library/check.mjs"
+      ],
+      "dependsOn": [
+        "build"
+      ]
+    },
+    {
+      "id": "consumer-test",
+      "command": [
+        "node",
+        "tests/fixtures/efficiency/consumer/contract.mjs"
+      ],
+      "dependsOn": [
+        "build"
+      ]
+    }
+  ]
+}

@@ -57,3 +57,26 @@
 - Route bounded tasks to cheaper capable agents when the handoff saves total
   tokens or latency. Give them only needed context; keep tiny tasks with the
   parent when delegation would cost more.
+
+
+## Validation and delegation evidence
+
+- Choose checks from the affected behavior and its transitive dependents, including
+  embedded assets, shared configuration, generated output and installation paths.
+  Keep repository-required checks authoritative. Use the portable validate.mjs
+  runner with the project's reviewed manifest when available; it plans by default,
+  runs only with --run, and records command, reason, duration and result. Unknown
+  paths or dependency uncertainty require broader checks. Do not ask about builds
+  routinely or rerun passing checks without a relevant change or unresolved risk.
+- Name the installed custom role explicitly when delegating; generic agents may
+  inherit the parent model. Send only the goal, owned files, relevant symbols and
+  constraints, acceptance checks and return contract. Avoid full-history handoffs
+  when a compact brief is sufficient. Require reports of retries and blockers.
+- Distinguish configured, rendered/installed, selected/requested and runtime-reported
+  model and reasoning effort. Use orchestrate models inspect for installed drift;
+  neither a template nor token totals prove the executed model. Label unavailable
+  runtime evidence. Use models candidate and representative evaluations before
+  requesting approval to change models.conf; never adopt a candidate automatically.
+- Measure accepted work including retries, review and rework. Report agent latency,
+  tokens and cost separately from observed user overhead and developer productivity.
+  Missing human observations mean the productivity outcome is unverified.
