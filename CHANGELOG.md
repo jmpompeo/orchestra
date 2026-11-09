@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.0](https://github.com/jmpompeo/orchestra/compare/v2.8.0...v2.9.0) (2026-11-09)
+
+
+### Features
+
+* clean up successful runs and make liveness hooks optional ([#43](https://github.com/jmpompeo/orchestra/issues/43)) ([7e21d76](https://github.com/jmpompeo/orchestra/commit/7e21d768b7c21891ecd54668c4d1e008011dbff1))
+
 ## [2.8.0](https://github.com/jmpompeo/orchestra/compare/v2.7.0...v2.8.0) (2026-11-09)
 
 
