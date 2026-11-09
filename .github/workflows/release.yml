@@ -57,11 +57,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
+          - os: macos-15
             rid: osx-arm64
           # Self-contained .NET publishing bundles the selected runtime host,
           # so Apple Silicon can produce the Intel macOS distribution too.
-          - os: macos-14
+          - os: macos-15
             rid: osx-x64
           - os: ubuntu-latest
             rid: linux-x64
