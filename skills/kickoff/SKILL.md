@@ -167,10 +167,16 @@ session automatically.
 
 After every task and the final done check pass, apply the shared successful-run
 cleanup policy using prep's ownership inventory, including resources created by
-subagents. Keep the final deliverable and concise evidence of decisions, checks,
-results and retained paths. Consolidate that evidence at a verified retained
-location before removing redundant run logs, scratch outputs, temporary dependency
-installs or disposable worktrees; update all handoff/dashboard paths that change.
+subagents. Keep the final deliverable, `dashboard.html`, its sibling `heartbeat.js`,
+and concise evidence of decisions, checks, results and retained paths. These two
+dashboard files are retained run evidence, never disposable scratch artifacts.
+Write final task events before cleanup. If retiring their worktree, move both
+files together to a retained run directory first, verify the dashboard still
+loads its sibling heartbeat, and update the brief, ledgers and handoff links.
+Keep a clickable **Open dashboard in agent** link and a separate **Open in
+browser** option in the kickoff and completion handoffs as defined by prep.
+Consolidate evidence at a verified retained location before removing redundant
+run logs, scratch outputs, temporary dependency installs or disposable worktrees; update all handoff/dashboard paths that change.
 Do not remove files still used by an active launcher, collector or native session.
 Stop only verified run-owned processes once final events and evidence are written.
 Preserve any still-needed state and the working checkout holding uncommitted work.

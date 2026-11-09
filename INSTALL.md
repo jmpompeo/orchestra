@@ -192,8 +192,14 @@ verified dedicated linked worktree for an automatic Claude launch.
 
 After successful tasks and final checks, kickoff retires run-owned temporary
 worktrees and scratch resources, retaining the final deliverable and concise
-validation/run evidence. It preserves uncommitted work, active resources and
-resumable runs, and asks before uncertain cleanup. Pre-existing worktrees are
+validation/run evidence, including `dashboard.html` and its sibling
+`heartbeat.js`. The pair is retained together after success, even when a
+worktree is retired. Prep and kickoff provide a clickable **Open dashboard in
+agent** file link and a separate **Open in browser** action or platform command;
+completion repeats those choices at the retained path. Rendering depends on the
+host's HTML preview support; a blocked preview is reported without preventing
+implementation. Cleanup preserves uncommitted work, active resources and
+resumable runs, and asks before uncertain removal. Pre-existing worktrees are
 outside this cleanup scope.
 
 Refactor audits and independent model correctness reviews run only when you

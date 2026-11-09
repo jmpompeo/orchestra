@@ -151,8 +151,9 @@ contains:
   paths/identities, ownership, purpose, preservation destination and safe removal
   method as resources are created, including during probes. Define the minimum
   final deliverable and concise evidence to retain outside any disposable
-  worktree. Default to safe cleanup after success under the shared policy; ask
-  before uncertain removal. Preserve uncommitted deliverables and resumable runs.
+  worktree, including `dashboard.html` and its sibling `heartbeat.js`. Default
+  to safe cleanup after success under the shared policy; ask before uncertain
+  removal. Preserve uncommitted deliverables and resumable runs.
 - `plan.md`: ordered task IDs, acceptance checks, and dependencies.
 - `progress.md`: timestamped task state and evidence; initialize all tasks as
   pending. Keep this readable after context compaction.
@@ -190,8 +191,26 @@ user must run during normal work.
 ## 4. Verify the bundled dashboard
 
 `orchestrate heartbeat init` automatically writes the reusable `dashboard.html`
-beside `heartbeat.js`. No dashboard generation agent is required. Open the
-local HTML file and verify the core fields and automatic refresh. It loads
+beside `heartbeat.js`. No dashboard generation agent is required. Always provide
+an absolute-path Markdown link labeled **Open dashboard in agent** in the prep
+handoff and kickoff prompt; a path in plain text or a code block is insufficient.
+Use the host's supported HTML artifact/file preview when available. In Codex,
+link the absolute workspace path, for example
+`[Open dashboard in agent](</absolute/project/.orchestra/runs/run-id/dashboard.html>)`.
+Use the available native file-preview tool when permitted. Do not pass local
+file links through browser automation that rejects `file://`, or bypass a
+rejected preview through another surface. Report when the host cannot render the preview; never claim it opened
+without evidence. Preview restrictions do not block the run's implementation.
+
+Also offer a separate **Open in browser** option. Always provide the platform's
+correctly quoted invocation (`open` on macOS, `Start-Process -FilePath` on
+Windows, or `xdg-open` on Linux), using the actual absolute dashboard path.
+A clickable follow-up action may supplement that command only when the host
+renders it as an actionable control; plain text is not a working action.
+Execute the external opener only when the user chooses that option. Keep both choices in
+the prep handoff, kickoff prompt and completion handoff.
+
+Verify core fields and automatic refresh when previewing is available. It loads
 `window.ORCHESTRA_HEARTBEAT` version 1 from `heartbeat.js`, uses a meta refresh,
 and requires no server, network, or dependencies. It supports system appearance
 and a persistent light/dark/system selector, including a fallback when local
@@ -255,8 +274,8 @@ reload it. Do not commit project hook configuration or run files.
 
 ## 6. Launch one fresh session
 
-After the checks and dashboard pass, launch exactly one fresh native session
-with `kickoff-prompt.md`. Obtain a native session ID from the launcher or set
+After the required checks pass and the dashboard files exist, launch exactly
+one fresh native session with `kickoff-prompt.md`. Obtain a native session ID from the launcher or set
 it through a documented native session option, then promptly run
 `orchestrate heartbeat bind --dir <absolute-run-dir> --session-id <native-session-id>`.
 The Codex JSONL collector may bind the ID from `thread.started`; the Cursor

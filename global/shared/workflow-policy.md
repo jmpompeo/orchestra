@@ -88,7 +88,10 @@
   instead of creating a worktree per task. Creation of disposable run resources
   includes permission for their safe cleanup under these rules.
 - After all tasks and final checks pass, keep the final deliverable and concise
-  run/validation evidence, then retire run-owned resources no longer needed.
+  run/validation evidence, including `dashboard.html` and its sibling
+  `heartbeat.js` when a run dashboard exists, then retire run-owned resources
+  no longer needed. Preserve the pair together at a retained location and keep
+  dashboard links current if its temporary worktree is removed.
   Preserve the checkout containing uncommitted deliverables. Before removing a
   worktree, check tracked, untracked and ignored files, unique commits, and
   active sessions; verify useful work and required evidence survive elsewhere.
