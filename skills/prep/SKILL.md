@@ -65,7 +65,7 @@ command fails prep. Run the deterministic done check once to prove it is executa
 and interpretable. It may fail because the feature is unfinished; record that
 starting result. A missing executable, malformed command, or ambiguous result
 is a failed preflight. Resolve any failures before launching. Check that the
-selected tool, `orchestrate` executable, needed native hooks, and permissions
+selected tool, `orchestrate` executable, requested monitoring, and permissions
 are available. A command may be authorized for unattended execution only if
 the tool's actual permission mode permits it; do not select an unsafe bypass
 mode merely to avoid a prompt.
@@ -146,6 +146,13 @@ contains:
   budgets, stop conditions, allowed autonomous decisions, parked decisions,
   the explicit per-task commit choice, and the selected usage source and
   collector process details when applicable.
+  In `brief.md`, maintain a cleanup inventory of run-owned worktrees, temporary
+  files, dependency installs, processes and inserted configuration. Record exact
+  paths/identities, ownership, purpose, preservation destination and safe removal
+  method as resources are created, including during probes. Define the minimum
+  final deliverable and concise evidence to retain outside any disposable
+  worktree. Default to safe cleanup after success under the shared policy; ask
+  before uncertain removal. Preserve uncommitted deliverables and resumable runs.
 - `plan.md`: ordered task IDs, acceptance checks, and dependencies.
 - `progress.md`: timestamped task state and evidence; initialize all tasks as
   pending. Keep this readable after context compaction.
@@ -200,7 +207,14 @@ event append order. Blocked event reasons represent parked decisions on the
 page; it does not load `decisions.md`. Emit a blocked event with a useful reason
 when parking a choice. Event text is rendered as text, never HTML.
 
-## 5. Activate run-scoped liveness
+## 5. Optional run-scoped liveness
+
+Native hooks are opt-in monitoring. Record whether the user requested them in
+`brief.md`; default to no hook installation. Without verified hooks, task events
+still report progress and native liveness is unavailable. Missing, unsupported
+or unverified hooks do not block launch or implementation. Session binding and
+verified usage required for a token cap remain independent requirements.
+Apply the following configuration and probe steps only when hooks are requested.
 
 `orchestrate heartbeat hook --dir <absolute-run-dir>` consumes native hook JSON
 on stdin and stamps `PostToolUse` or `Stop`. Make the hook command use the
@@ -233,8 +247,9 @@ require a newer `lastProbeAt` with the preflight session's known `session_id`.
 If the ID cannot be obtained, native hook activation is unverified. Probe
 stamps never mark this run active. A direct call to `heartbeat hook` only
 tests the writer, not hook activation. If a hook cannot be trusted or made
-active, do not claim live monitoring and do not auto-launch; report the step to
-complete and leave the prepared run available for a later kickoff. Use a new
+active, do not claim live monitoring. Report the gap and continue without native
+liveness unless the brief explicitly requires verified monitoring as an
+acceptance criterion; in that case park for the user. Use a new
 session after changing hook configuration because an existing session may not
 reload it. Do not commit project hook configuration or run files.
 
@@ -246,12 +261,13 @@ it through a documented native session option, then promptly run
 `orchestrate heartbeat bind --dir <absolute-run-dir> --session-id <native-session-id>`.
 The Codex JSONL collector may bind the ID from `thread.started`; the Cursor
 SDK launcher binds the ID it receives from the SDK. Kickoff waits up to 30
-seconds for binding before its first task. For Codex or Claude, verify a
-matching hook event advances `lastHookAt` during a bounded check. If the
-launcher cannot report or set an ID, or a
-matching stamp never arrives, stop or park the launched session where
-supported and give the user the recovery step; do not label native liveness
-verified. For Cursor, verify the chosen SDK or manual chat handoff instead;
+seconds for binding before its first task. If the launcher cannot report or
+set an ID, stop or park the launched session where supported and give the user
+the recovery step. For Codex or Claude with requested hooks, verify a matching
+hook event advances `lastHookAt` during a bounded check. If no matching stamp
+arrives, label native liveness unavailable and continue unless the brief
+explicitly requires verified monitoring; then park for the user. For Cursor,
+verify the chosen SDK or manual chat handoff instead;
 native hook liveness is unavailable.
 Never launch an agent from a heartbeat event, hook, timer, or dashboard; there
 is no supervisor or recursive polling loop.
@@ -343,7 +359,7 @@ run ID. If the prior run is still active or its state cannot be verified, do
 not start a replacement. The dashboard keeps usage from both run IDs.
 
 Manual fallback always states the project directory, selected branch, run
-directory, exact native invocation, dashboard path, and any trust or permission
-step still needed. Never say a run has started until the native tool confirms
-it. Hand off the fresh session or the concrete manual start instructions,
+directory, exact native invocation, dashboard path, and any required permission
+step or requested hook trust step still needed. Never say a run has started
+until the native tool confirms it. Hand off the fresh session or the concrete manual start instructions,
 then end this prep session.
