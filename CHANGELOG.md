@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.8.0](https://github.com/jmpompeo/orchestra/compare/v2.7.0...v2.8.0) (2026-11-09)
+
+
+### Features
+
+* streamline validation, model diagnostics, and run dashboards ([#40](https://github.com/jmpompeo/orchestra/issues/40)) ([eeb4930](https://github.com/jmpompeo/orchestra/commit/eeb49309d852f5f4a04e371081c80e90de8165a5))
+
 ## [2.7.0](https://github.com/jmpompeo/orchestra/compare/v2.6.0...v2.7.0) (2026-10-09)
 
 
