@@ -1,0 +1,267 @@
+{
+  "date": "2026-11-10",
+  "protocol": {
+    "design": "One C# task, one baseline/candidate pair; exploratory only, no repeatability or commit/push authorization.",
+    "baseline": "Same frozen pre-quality-first instruction snapshot used by the Python screen.",
+    "candidate": "Current feat/delegation-improvements instructions, unchanged since prior screen.",
+    "quality": "70 held-out functionality + 20 authored-test mutation strength + 10 anchored maintainability; failed attempts zero.",
+    "quality_min_delta_points": -0.25,
+    "throughput_ratio_min": 1.1,
+    "tokens_per_accepted_ratio_max": 1.1,
+    "hard_gates": [
+      "all critical held-out checks pass",
+      "no baseline-passing functional group regresses",
+      "added/changed passing C# tests",
+      "scope respected",
+      "native parent/descendant usage reconciles",
+      "manual quality assessments complete"
+    ],
+    "budgets": {
+      "agent_timeout_seconds": 300,
+      "grading_timeout_seconds": 180
+    },
+    "manual_rubric": "Same frozen five 0/1/2 maintainability criteria and anchors as prior screen; opaque arm labels where practical.",
+    "limits": "One tiny method is a direct-work control, not evidence about complex parallel delegation. C# task/test/held-out programs; Python orchestration reused without modifying its original historical +10% quality gate. This protocol defines the new mini-screen gate."
+  },
+  "input_hashes": {
+    "source_assets": {
+      "baseline": {
+        "global/codex/AGENTS.md": "ae97f61132f079a3f30fb7374f1a2d43a66f31dc19f356e4ef6ecfa87be7f893",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "174482b19a505c6fc698d328d4a7f9aebf5b65159677ae384fa68f5651f0d3be",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "7f772fc28866baab18e4c3fc2b5ae29ae2cc4eac8a1fc3cfa5760c71917081f0",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      },
+      "candidate": {
+        "global/codex/AGENTS.md": "3c9b60908566a0ffa046cf9e3170891f430dc1c4faa80521cb38b225e9b05717",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "bf1f34b30feb9dacc7409f28133690f4b885042a74b94cb56c005cbe0d272f9b",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "db72e71d7a72c86a3618fe1f508eef4f4f8b16284b4f8229ab12f95374ff5238",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      }
+    },
+    "corpus_sha256": "d5509f10cdb09987e70c16ac4a57c0a142c11d7437912a6b5459f4a24887c24d",
+    "runner_sha256": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+    "binary_sha256": "50ab38ba21d0d9f8346f32f41848382f15b556190f3c7a07e885a4fb73e379c8",
+    "models": {
+      "CLAUDE_EXPLORER_MODEL": "haiku",
+      "CLAUDE_ORCHESTRATOR_MODEL": "opus",
+      "CLAUDE_REVIEWER_MODEL": "opus",
+      "CLAUDE_VERIFIER_MODEL": "haiku",
+      "CLAUDE_WORKER_MODEL": "sonnet",
+      "CODEX_EXPLORER_MODEL": "gpt-6-luna",
+      "CODEX_ORCHESTRATOR_MODEL": "gpt-6-sol",
+      "CODEX_REVIEWER_MODEL": "gpt-6-sol",
+      "CODEX_VERIFIER_MODEL": "gpt-6-luna",
+      "CODEX_WORKER_MODEL": "gpt-6-sol"
+    },
+    "root_effort": "medium"
+  },
+  "arms": {
+    "baseline": {
+      "acceptance_rate": 1.0,
+      "accepted": 1,
+      "attempt_seconds": {
+        "max": 69.93475620890968,
+        "mean": 69.93475620890968,
+        "min": 69.93475620890968,
+        "n": 1,
+        "stdev": null
+      },
+      "attempts": 1,
+      "attempts_with_delegation": 0,
+      "coding_attempts": 1,
+      "manual_reviews_complete": true,
+      "native_descendants": 0,
+      "quality": 100.0,
+      "throughput": 0.01429904176705488,
+      "time_complete": true,
+      "token_counters": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 102016,
+        "input_tokens": 109254,
+        "output_tokens": 2355,
+        "reasoning_output_tokens": 349,
+        "total_tokens": 111609
+      },
+      "tokens_per_accepted_task": 111609.0,
+      "total_seconds": 69.93475620890968,
+      "total_tokens": 111609,
+      "usage_complete": true
+    },
+    "candidate": {
+      "acceptance_rate": 1.0,
+      "accepted": 1,
+      "attempt_seconds": {
+        "max": 92.749483166961,
+        "mean": 92.749483166961,
+        "min": 92.749483166961,
+        "n": 1,
+        "stdev": null
+      },
+      "attempts": 1,
+      "attempts_with_delegation": 0,
+      "coding_attempts": 1,
+      "manual_reviews_complete": true,
+      "native_descendants": 0,
+      "quality": 100.0,
+      "throughput": 0.010781731238327995,
+      "time_complete": true,
+      "token_counters": {
+        "cache_write_input_tokens": 0,
+        "cached_input_tokens": 166016,
+        "input_tokens": 173982,
+        "output_tokens": 3365,
+        "reasoning_output_tokens": 692,
+        "total_tokens": 177347
+      },
+      "tokens_per_accepted_task": 177347.0,
+      "total_seconds": 92.749483166961,
+      "total_tokens": 177347,
+      "usage_complete": true
+    }
+  },
+  "quality_delta_points": 0.0,
+  "ratios": {
+    "quality": 1.0,
+    "throughput": 0.7540177456624542,
+    "tokens": 1.5890026789954215
+  },
+  "mini_screen_gates": {
+    "quality_tolerance": true,
+    "throughput": false,
+    "tokens": false,
+    "correctness": true,
+    "evidence": true
+  },
+  "mini_screen_passed": false,
+  "confirmatory": false,
+  "trials": [
+    {
+      "trial_id": "update-plan-r1-baseline-a1",
+      "arm": "baseline",
+      "accepted": true,
+      "elapsed_seconds": 69.93475620890968,
+      "agent_seconds": 56.40121312497649,
+      "grading_seconds": 11.355968790943734,
+      "total_tokens": 111609,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "conflicts": true,
+          "identical": true,
+          "invalid_and_immutable": true,
+          "missing": true,
+          "owned": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 11.355968790943734,
+        "mutants": {
+          "backup": true,
+          "identical": true,
+          "modified": true,
+          "ownership": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 13.533543083933182
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-arm-obscured",
+        "rationale": "UpdatePlanner.cs: explicit precedence and early returns; a small named hash-validation helper keeps its rule separate and can avoid hashing when ownership is absent/invalid. Pure state and framework null validation. Checks.cs: named behavioral cases and reusable decision/nonmutation assertions. The additional validation is a reasonable implementation choice, not a demonstrated quality defect. No material issue on the five frozen criteria."
+      },
+      "native_children": 0
+    },
+    {
+      "trial_id": "update-plan-r1-candidate-a1",
+      "arm": "candidate",
+      "accepted": true,
+      "elapsed_seconds": 92.749483166961,
+      "agent_seconds": 79.03270166693255,
+      "grading_seconds": 12.937733792001382,
+      "total_tokens": 177347,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "conflicts": true,
+          "identical": true,
+          "invalid_and_immutable": true,
+          "missing": true,
+          "owned": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 12.937733792001382,
+        "mutants": {
+          "backup": true,
+          "identical": true,
+          "modified": true,
+          "ownership": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 13.716781500028446
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-arm-obscured",
+        "rationale": "UpdatePlanner.cs: explicit precedence with early returns, one cohesive pure method, framework null validation and ordinal hash matching; no shared mutable state or extra abstraction. Checks.cs: a reusable named behavioral assertion helper checks both decisions and input immutability, with readable precedence/ownership/backup cases. No material issue on the five frozen criteria."
+      },
+      "native_children": 0
+    }
+  ],
+  "selfcheck": "Faulty seed rejected; complete reference accepted with 70 functional + 20 regression and all four mutants killed.",
+  "limits": [
+    "One tiny C# task, one pair, fixed baseline-first order; no repeatability or confidence claim.",
+    "Neither arm delegated: complex delegation behavior unverified.",
+    "Anchored maintainability assessed by parent with opaque arm labels; experiment context known.",
+    "Native total tokens include cached input; no billing or human-productivity claim.",
+    "Original runner historical +10% quality gate is unchanged; revised mini-screen decision is separate.",
+    "Initial local grader self-check stopped after sandbox compiler delays; shared compilation disabled before inference, both arms identical. No extra model trials."
+  ],
+  "observations": "Both first authored suites passed. Candidate added checks after its initial successful run and reran them successfully. Independent validation cost was about 14 seconds in both arms; most timing difference was in the agent phase. This does not establish an instruction-level cause."
+}

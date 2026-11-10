@@ -1,0 +1,111 @@
+diff --git a/src/AgentHarness/Core.cs b/src/AgentHarness/Core.cs
+index 1386fc3..37895b9 100644
+--- a/src/AgentHarness/Core.cs
++++ b/src/AgentHarness/Core.cs
+@@ -121,10 +121,11 @@ public sealed class HarnessApp
+             if (args.Length == 0 || args[0] is "--help" or "-h" or "help") return Help();
+             var command = args[0].ToLowerInvariant();
+             var options = CliOptions.Parse(args[1..]);
++            if (options.Json && command != "status") throw new ArgumentException("--json is only supported by status.");
+             return command switch
+             {
+                 "install" => Install(RequireTools(options, true), options),
+-                "status" => Status(),
++                "status" => Status(options),
+                 "doctor" => Doctor(),
+                 "uninstall" => Uninstall(RequireTools(options, false), options),
+                 "init-project" => InitProject(RequireTools(options, true), options),
+@@ -142,7 +143,7 @@ public sealed class HarnessApp
+     private static int Help()
+     {
+         Console.WriteLine("orchestrate — Orchestra's portable AI engineering workflow CLI\n\n" +
+-            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
++            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status [--json]\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
+             "Without --tools, install and init-project ask interactively. Use --tools in scripts or CI.");
+         return 0;
+     }
+@@ -213,9 +214,24 @@ public sealed class HarnessApp
+         return 0;
+     }
+ 
+-    private int Status()
++    private int Status(CliOptions options)
+     {
+         var state = LoadState();
++        if (options.Json)
++        {
++            Console.WriteLine(JsonSerializer.Serialize(new
++            {
++                schemaVersion = 1,
++                stateFile = _statePath,
++                tools = new[]
++                {
++                    new { name = "codex", ownedFiles = state.Files.Keys.Count(x => IsUnder(x, ToolRoot(Tool.Codex))) },
++                    new { name = "claude", ownedFiles = state.Files.Keys.Count(x => IsUnder(x, ToolRoot(Tool.Claude))) }
++                },
++                cursorMode = "project-local"
++            }));
++            return 0;
++        }
+         Console.WriteLine($"State file: {_statePath}");
+         foreach (var tool in new[] { Tool.Codex, Tool.Claude })
+         {
+@@ -466,7 +482,7 @@ public sealed record PlannedFile(string Source, string Destination, byte[] Conte
+ 
+ public sealed class CliOptions
+ {
+-    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; }
++    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; } public bool Json { get; private set; }
+     public static CliOptions Parse(string[] args)
+     {
+         var result = new CliOptions();
+@@ -479,6 +495,7 @@ public sealed class CliOptions
+             else if (arg == "--backup") result.Backup = true;
+             else if (arg == "--apply") result.Apply = true;
+             else if (arg == "--print") result.Print = true;
++            else if (arg == "--json") result.Json = true;
+             else throw new ArgumentException($"Unknown option '{arg}'.");
+         }
+         return result;
+diff --git a/tests/AgentHarness.Tests/Program.cs b/tests/AgentHarness.Tests/Program.cs
+index 71d7d79..791ffef 100644
+--- a/tests/AgentHarness.Tests/Program.cs
++++ b/tests/AgentHarness.Tests/Program.cs
+@@ -67,7 +67,37 @@ try
+     var app = new HarnessApp(home, state);
+     var help = Capture(app, new[] { "--help" });
+     Check(help.ExitCode == 0 && help.Output.Contains("orchestrate", StringComparison.Ordinal), "help uses the orchestrate command name");
++    Check(help.Output.Contains("status [--json]", StringComparison.Ordinal), "help documents JSON status");
+     Check(!help.Output.Contains("agent-harness", StringComparison.Ordinal), "help omits the retired command name");
++    var jsonHome = Path.Combine(root, "json-home"); var jsonState = Path.Combine(root, "json-state");
++    var jsonStatePath = Path.Combine(jsonState, "state.json");
++    var jsonApp = new HarnessApp(jsonHome, jsonState);
++    var emptyJson = Capture(jsonApp, new[] { "status", "--json" });
++    var emptyExpected = $"{{\"schemaVersion\":1,\"stateFile\":{JsonSerializer.Serialize(jsonStatePath)},\"tools\":[{{\"name\":\"codex\",\"ownedFiles\":0}},{{\"name\":\"claude\",\"ownedFiles\":0}}],\"cursorMode\":\"project-local\"}}{Environment.NewLine}";
++    Check(emptyJson.ExitCode == 0 && emptyJson.Error == "" && emptyJson.Output == emptyExpected, "missing state emits exact version-1 JSON with zero counts");
++    Check(!File.Exists(jsonStatePath) && !Directory.Exists(jsonState), "JSON status does not create missing state");
++    var rejectedJson = Capture(jsonApp, new[] { "install", "--json", "--tools", "codex" });
++    Check(rejectedJson.ExitCode == 2 && rejectedJson.Output == "" && rejectedJson.Error.Contains("--json is only supported by status", StringComparison.Ordinal), "other commands reject JSON before work");
++    Check(!Directory.Exists(jsonHome) && !Directory.Exists(jsonState), "rejected JSON option does not install files or state");
++    var jsonDocument = StateDocument.Empty();
++    jsonDocument.Files[Path.Combine(jsonHome, ".codex", "missing.md")] = "recorded";
++    jsonDocument.Files[Path.Combine(jsonHome, ".codex", "nested", "missing.md")] = "recorded";
++    jsonDocument.Files[Path.Combine(jsonHome, ".claude", "missing.md")] = "recorded";
++    jsonDocument.Files[Path.Combine(jsonHome, ".agents", "skills", "missing.md")] = "recorded";
++    jsonDocument.Files[Path.Combine(jsonHome, ".codex-sibling", "missing.md")] = "recorded";
++    jsonDocument.Files[Path.Combine(jsonHome, ".claude-sibling", "missing.md")] = "recorded";
++    Directory.CreateDirectory(jsonState);
++    File.WriteAllText(jsonStatePath, JsonSerializer.Serialize(jsonDocument));
++    var expectedJson = $"{{\"schemaVersion\":1,\"stateFile\":{JsonSerializer.Serialize(jsonStatePath)},\"tools\":[{{\"name\":\"codex\",\"ownedFiles\":2}},{{\"name\":\"claude\",\"ownedFiles\":1}}],\"cursorMode\":\"project-local\"}}{Environment.NewLine}";
++    var recordedJson = Capture(jsonApp, new[] { "status", "--json" });
++    Check(recordedJson.ExitCode == 0 && recordedJson.Error == "" && recordedJson.Output == expectedJson, "JSON status has exact schema, order, and recorded ToolRoot counts");
++    Check(Capture(jsonApp, new[] { "status", "--json" }).Output == recordedJson.Output, "JSON status is deterministic for unchanged state");
++    var textStatus = Capture(jsonApp, new[] { "status" });
++    var expectedText = $"State file: {jsonStatePath}{Environment.NewLine}Codex: 2 CLI-owned file(s) tracked at {Path.Combine(jsonHome, ".codex")}{Environment.NewLine}Claude: 1 CLI-owned file(s) tracked at {Path.Combine(jsonHome, ".claude")}{Environment.NewLine}Cursor: project-local only; run init-project in each project.{Environment.NewLine}";
++    Check(textStatus.ExitCode == 0 && textStatus.Error == "" && textStatus.Output == expectedText, "ordinary status output remains byte-for-byte unchanged");
++    File.WriteAllText(jsonStatePath, "{invalid JSON");
++    var malformedJson = Capture(jsonApp, new[] { "status", "--json" });
++    Check(malformedJson.ExitCode == 2 && malformedJson.Output == "" && malformedJson.Error.Contains("State file is invalid JSON", StringComparison.Ordinal), "malformed state gives controlled error without partial JSON");
+     var unknown = Capture(app, new[] { "unknown-command" });
+     Check(unknown.ExitCode == 2 && unknown.Error.Contains("orchestrate --help", StringComparison.Ordinal), "unknown-command guidance uses orchestrate");
+     var doctor = Capture(app, new[] { "doctor" });

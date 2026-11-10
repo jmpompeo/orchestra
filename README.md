@@ -28,3 +28,6 @@ for setup, monitoring, budgets, and tool-specific behavior.
 
 See [INSTALL.md](INSTALL.md) for setup, updates, project adoption, model
 assignments, work/personal boundaries, and safe uninstall instructions.
+
+See [delegation evaluation](docs/delegation-evaluation.md) for the quality,
+completion-speed, and token targets and the executable coding evals.

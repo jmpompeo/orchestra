@@ -1,0 +1,166 @@
+{
+  "date": "2026-11-10",
+  "purpose": "Fresh five-task repeated C# repository benchmark; independent from prior exploratory screens.",
+  "baseline": "/path/to/frozen-baseline",
+  "candidate": "/path/to/frozen-candidate",
+  "source_commit": "3ad9d38943085290b1d5dcbaf2e7e49995a540ab",
+  "codex": "/path/to/native/codex",
+  "native_version": "codex-cli 0.159.0",
+  "dotnet_version": "10.0.101",
+  "agent_timeout_seconds": 900,
+  "grading_timeout_seconds": 300,
+  "schedule": [
+    {
+      "case": "option-validation",
+      "repetition": 1,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "status-json",
+      "repetition": 1,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "preview-execution",
+      "repetition": 1,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "state-validation",
+      "repetition": 1,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "verify-installed",
+      "repetition": 1,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "status-json",
+      "repetition": 2,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "verify-installed",
+      "repetition": 2,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "option-validation",
+      "repetition": 2,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "state-validation",
+      "repetition": 2,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "preview-execution",
+      "repetition": 2,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "preview-execution",
+      "repetition": 3,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "status-json",
+      "repetition": 3,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "option-validation",
+      "repetition": 3,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    },
+    {
+      "case": "state-validation",
+      "repetition": 3,
+      "order": [
+        "candidate",
+        "baseline"
+      ]
+    },
+    {
+      "case": "verify-installed",
+      "repetition": 3,
+      "order": [
+        "baseline",
+        "candidate"
+      ]
+    }
+  ],
+  "thresholds": {
+    "quality_delta_min": -0.25,
+    "throughput_ratio_min": 1.1,
+    "tokens_per_accepted_ratio_max": 1.1
+  },
+  "repetitions": 3,
+  "quality": "Mean accepted coding score = 70 held-out behavior +20 authored-test fault detection +10 anchored maintainability; failed attempts zero. Same five 0/1/2 anchors as earlier screens. At most 0.25 points lower quality.",
+  "manual_contract_gate": "Parent inspects all frozen requirements, including reusable typed plan for preview task. Record contract_pass separately from maintainability with opaque arm labels where practical. Any failed contract becomes an unaccepted zero-quality attempt in analysis; raw records remain immutable. Missing manual evidence blocks confirmation.",
+  "statistical_gate": "Paired hierarchical bootstrap: resample five task clusters, then three paired repetitions within each drawn task. 20000 deterministic samples, seed20261110. Bonferroni 98.3333% individual percentile intervals for approximate simultaneous95% protection of three outcomes. Lower quality bound>=-.25, lower throughput bound>=1.1, upper token bound<=1.1. Small cluster count limits confidence; no universal claim.",
+  "correctness_gate": "All candidate critical held-out, scope and authored-suite checks pass; no baseline-passing group regresses; acceptance not lower. Missing native counters/timing/model evidence blocks confirmation.",
+  "early_stop": "Stop on any infrastructure/native evidence error or unaccepted candidate; preserve every planned/started attempt. No automatic retries or tuning this experiment. Parent manual contract failure also stops further inference.",
+  "timing": "Serial model trials; measured start before native thread/start through independent functional/scope/required-suite validation, including internal checks, delegation, authorized review and rework. Fault scoring and offline assessments separately reported as evaluator overhead.",
+  "tokens": "Sum native parent/descendant totals once; cached input and reasoning subsets not added twice. All failures count. Model/role assignments unchanged. No pricing/human-productivity claim.",
+  "non_goals": [
+    "No production integration of benchmark feature solutions",
+    "No model changes or real user config changes",
+    "No tuning task corpus or instructions after inference begins",
+    "No unrelated repository edits"
+  ],
+  "setup_evidence": "All five references pass original .NET suites and fifteen held-out groups; all ten compile-valid faults detected. Integrated grader rejects all five starters and gives all references full functional/regression points;14 measurement tests pass. Setup/calibration contains no model inference.",
+  "offline_guard": "Held-out fixtures inject a fake HTTP handler and forbidden replacement callback, assert zero HTTP attempts, and use isolated home/state roots. Revalidated every complete reference and faulty seed before fresh inference.",
+  "diagnostic_overhead": [
+    {
+      "trial": "option-validation-r1-baseline-a1",
+      "experiment": "initial-five-task-start",
+      "status": "cancelled diagnostic, excluded from the fresh paired experiment and retained separately as setup overhead",
+      "reason": "Stopped before grading to add explicit fake HTTP and executable-replacement guards to held-out fixture construction. No instruction, task contract, model or acceptance threshold changed.",
+      "total_tokens": 243986,
+      "agent_seconds": 99.16065270907711,
+      "native_usage_complete": true
+    }
+  ]
+}

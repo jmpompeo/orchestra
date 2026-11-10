@@ -5,8 +5,8 @@ description: Plan, delegate, implement, verify, and review a non-trivial softwar
 
 # Agentic feature delivery
 
-Own the complete integrated result in one orchestrated session. Minimize total
-tokens and latency without weakening correctness or evidence.
+Own the complete integrated result in one orchestrated session. Prioritize
+correctness, then time to a validated result, with token use as a constraint.
 
 1. Read repository instructions and `docs/agent-context.md` when present.
    Read `docs/harness-evolution.md` when it exists and a recurring failure is
@@ -35,11 +35,13 @@ tokens and latency without weakening correctness or evidence.
 8. Parallelize only independent work. Parallel writers must have explicit,
    non-overlapping file ownership. Never overlap shared migration, schema, or
    integration surfaces.
-9. Delegate adaptively rather than assigning one agent to every phase. Keep a
-   small localized change with the parent when the handoff would cost more than
-   the work. Give faster capable agents only the context required for a bounded
-   task, reuse compact findings across phases, combine implementation with its
-   focused tests when ownership aligns, and stop obsolete branches early.
+9. Apply the global quality-first delegation rules. Identify the critical path;
+   parallelize independent bounded work only when it improves the result or
+   completion time after coordination and rework. Name capable configured roles
+   with suitable tools and permissions. Give compact evidence and acceptance
+   checks, pair implementation with regression tests, reuse findings, and stop
+   obsolete branches. Diagnose failures before retrying; escalate directly when
+   expertise is missing. Verify the integrated behavior and relevant edge cases.
 10. Only when the user explicitly requests a refactor audit for this task or a
     standing project rule opts in, wait for a reviewable draft or diff, then
     launch the lowest-cost capable read-only subagent using the refactor-code

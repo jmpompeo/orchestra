@@ -1,0 +1,26 @@
+{
+  "baseline": {
+    "error": "Error: --json is only supported by status.\n",
+    "exit": 2,
+    "output": "",
+    "requests": 0
+  },
+  "candidate": {
+    "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n",
+    "exit": 2,
+    "output": "",
+    "requests": 1
+  },
+  "reference": {
+    "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n",
+    "exit": 2,
+    "output": "",
+    "requests": 1
+  },
+  "starting-source": {
+    "exit": 2,
+    "requests": 1,
+    "output": "",
+    "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n"
+  }
+}

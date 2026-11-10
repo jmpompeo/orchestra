@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "model_calls": 0,
+  "reference_checks": {
+    "empty-schema": true,
+    "owned-counts": true,
+    "compatibility-errors": true,
+    "argument-boundaries": true,
+    "existing-dotnet-suite": true
+  },
+  "compiled_variants": {
+    "reference": true,
+    "old-reference": true,
+    "permissive-tools-value": true,
+    "saved-candidate": true
+  },
+  "expected_behavioral_rejections": {
+    "old-reference": true,
+    "permissive-tools-value": true,
+    "saved-candidate": true
+  },
+  "passed": true,
+  "limits": [
+    "Focused deterministic calibration only; no benchmark restart or performance claim.",
+    "Existing three status groups and suite checked; only new boundary faults and optional saved candidate rechecked.",
+    "Frozen v1 experiment and its reference are unchanged."
+  ],
+  "case": "status-json",
+  "version": 2,
+  "source_commit": "3ad9d38943085290b1d5dcbaf2e7e49995a540ab",
+  "invalid_boundary_cases": 90,
+  "valid_syntax_controls": 5,
+  "fault_rejection_proof": "All fault variants compiled; failures contain the C# CHECK assertion marker, not compiler/startup errors.",
+  "artifacts_sha256": {
+    "status-json.json": "c3bec46807a08234477c4b23e2f8741c900e0f5ddc7a761b1ab93a5d43badfe8",
+    "Reference.patch": "fe72560b424fca8e6847edb94e557e9cdc923ceedd1a0ab57ceadcf56d1b84e8",
+    "BoundaryChecks.cs": "dfc421514fa643c0ad3c5a69ffdee2d7bb973531a22298f24ddb76959561110e",
+    "check_boundary.py": "e6afc2e444a7ef6ebff2dfd98f3cdc52fe5e5304b570207bc272b8ba2593cf8e"
+  },
+  "input_path_guard": true
+}

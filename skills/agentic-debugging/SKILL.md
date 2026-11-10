@@ -5,7 +5,8 @@ description: Diagnose and fix software bugs from reports, failing tests, stack t
 
 # Agentic debugging
 
-Own the complete debugging result while minimizing total tokens and latency.
+Own the complete debugging result. Prioritize correctness, then time to a
+validated remedy, with token use as a constraint.
 Prefer the smallest investigation that can establish causality with sufficient
 confidence; do not trade correctness for a smaller transcript.
 
@@ -28,15 +29,13 @@ confidence; do not trade correctness for a smaller transcript.
    evidence, commands run, and remaining unknowns. Separate facts from
    inferences. Store concise excerpts or references instead of copying whole
    logs, transcripts, or source files.
-4. Delegate adaptively. Keep the causal model, remedy choice, integration, and
-   final accountability with the parent. Handle a small localized bug directly.
-   Use faster capable explorers for focused code-path or history questions,
-   verifiers for reproduction and one-hypothesis falsification, and workers for
-   bounded implementation with explicit file ownership. Let one worker usually
-   implement the remedy and its regression test together. Parallelize only
-   independent hypotheses or work; do not create one agent per phase by
-   default. Give each agent only the evidence and scope it needs, reuse compact
-   findings, and stop branches as soon as evidence rules them out.
+4. Keep the causal model, remedy choice, and integration with the parent. Use
+   the global quality-first delegation rules: named capable roles, appropriate
+   tools and permissions, compact evidence, and falsifiable checks. Parallelize
+   independent hypotheses only when useful; stop branches ruled out by evidence.
+   Keep small bugs and tightly dependent probes with the parent. Pair a worker's
+   bounded fix with its regression test. Diagnose failures before retrying and
+   escalate directly when expertise is missing, carrying evidence forward.
 5. Reproduce before editing when practical. Reduce the failure to the smallest
    deterministic case and capture the exact command and result. Distinguish a
    product defect from environment, configuration, dependency, flaky-test, or
