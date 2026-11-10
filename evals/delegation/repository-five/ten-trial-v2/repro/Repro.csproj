@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(SubjectRoot)/src/AgentHarness/*.cs" Exclude="$(SubjectRoot)/src/AgentHarness/Program.cs" Link="Subject/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SubjectRoot)/global/**/*" LogicalName="AgentHarness.Assets/global/%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SubjectRoot)/skills/**/*" LogicalName="AgentHarness.Assets/skills/%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SubjectRoot)/project-template/**/*" LogicalName="AgentHarness.Assets/project-template/%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="$(SubjectRoot)/models.conf" LogicalName="AgentHarness.Assets/models.conf" />
+  </ItemGroup>
+  <Target Name="RequireSubjectRoot" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(SubjectRoot)' == ''" Text="Set SubjectRoot to the isolated evaluated source directory." />
+  </Target>
+</Project>

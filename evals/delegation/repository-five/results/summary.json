@@ -1,0 +1,1511 @@
+{
+  "date": "2026-11-10",
+  "outcome": "Stopped on manual correctness-contract failure; repeatable improvement not established.",
+  "planned_trials": 30,
+  "started_trials": 5,
+  "completed_trials": 4,
+  "unstarted_trials": 25,
+  "cancelled_trials": 1,
+  "confirmed": false,
+  "source_commit": "3ad9d38943085290b1d5dcbaf2e7e49995a540ab",
+  "frozen_inputs": {
+    "source_assets": {
+      "baseline": {
+        "global/codex/AGENTS.md": "ae97f61132f079a3f30fb7374f1a2d43a66f31dc19f356e4ef6ecfa87be7f893",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "174482b19a505c6fc698d328d4a7f9aebf5b65159677ae384fa68f5651f0d3be",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "7f772fc28866baab18e4c3fc2b5ae29ae2cc4eac8a1fc3cfa5760c71917081f0",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      },
+      "candidate": {
+        "global/codex/AGENTS.md": "3c9b60908566a0ffa046cf9e3170891f430dc1c4faa80521cb38b225e9b05717",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "bf1f34b30feb9dacc7409f28133690f4b885042a74b94cb56c005cbe0d272f9b",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "db72e71d7a72c86a3618fe1f508eef4f4f8b16284b4f8229ab12f95374ff5238",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      }
+    },
+    "models": {
+      "CLAUDE_EXPLORER_MODEL": "haiku",
+      "CLAUDE_ORCHESTRATOR_MODEL": "opus",
+      "CLAUDE_REVIEWER_MODEL": "opus",
+      "CLAUDE_VERIFIER_MODEL": "haiku",
+      "CLAUDE_WORKER_MODEL": "sonnet",
+      "CODEX_EXPLORER_MODEL": "gpt-6-luna",
+      "CODEX_ORCHESTRATOR_MODEL": "gpt-6-sol",
+      "CODEX_REVIEWER_MODEL": "gpt-6-sol",
+      "CODEX_VERIFIER_MODEL": "gpt-6-luna",
+      "CODEX_WORKER_MODEL": "gpt-6-sol"
+    },
+    "root_effort": "medium",
+    "corpus_sha256": "44a229cba1b79f070ed664b8a1b26879e42869bb61c7324160d4e4e603d5da2e",
+    "runner_sha256": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+    "binary_sha256": "50ab38ba21d0d9f8346f32f41848382f15b556190f3c7a07e885a4fb73e379c8",
+    "five_task_protocol": {
+      "harness": {
+        "cases.json": "c1fb7f687213d3b2cb2dde23522bcf5f68c9b822869c229220bb5a7c4cd4991a",
+        "corpus.py": "44a229cba1b79f070ed664b8a1b26879e42869bb61c7324160d4e4e603d5da2e",
+        "experiment.py": "15c30518acfaa240a1ee2ca3c5eb11e60a87f44424d21420145a8f06b846a040",
+        "measurement.py": "eee0ce793296442ccf5388e88fd6a2f8ab0da498a9dfd6814b05b156ae919dae",
+        "runner.py": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+        "settings.json": "6a4c9fa267aad852a7fd83e56c7556bf2497913c79714550f6718148b5c34631",
+        "test_measurement.py": "74d9ddaa2b8168742ee189d96e39e5ff86378ca3f6a72bc8b81427115a1d81d3"
+      },
+      "protocol_sha256": "bd008d44df61cc360a5400a65692214911c8ec799bc08986f63f07261ca302d3",
+      "source": {
+        ".gitattributes": "8b83b81b416d38015ed7db5a6002aa8b6be627d31373c0907ea4c25e8b5f13bd",
+        ".github/workflows/ci.yml": "943e7cebbde7c149b1d9cce4e0e12703a8daa4a4570dffc884d6c61b4c952c69",
+        ".github/workflows/release.yml": "f208dfe5fe0b388a5574e45e4ec610596abaa3ba73f4a5b7d846842950bfc201",
+        ".gitignore": "1557ae6a930a5f3caabdaf3efeab5237da3d0aa777c1629657f078c2e5afe117",
+        "AgentHarness.sln": "7ad443fef990ce2750219ab2543d1b35fd371c9d814ccb4f07dd2c949c933a57",
+        "CHANGELOG.md": "242d0c9f087c992cee8ded0923fe8c1023492d671be2621638890929a9dee5a3",
+        "Directory.Build.props": "640e1ff5a5dc3f66a33aa73c301f4c626337ee8ea939b5eeb5686cc31f1a2613",
+        "INSTALL.md": "0e4dbfe6d88b0b252f3c0409f0d8356d235404a9ea36d47b6f3f490153eaa172",
+        "NuGet.Config": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
+        "README.md": "892bab89e47b8697407ff8934cfbedffd27fc621c439fa13ac6e7d8f3ff72ccb",
+        "docs/agent-context.md": "2c6501fda483041db32ff99c2885d8d48aa92bba70b83f14f28a7f4533018054",
+        "global/claude/CLAUDE.md": "70b64a30bd7c02b6df68558d4aec825359e7c3837c586a4676a844df3aa0ea54",
+        "global/claude/agents/workflow-explorer.md.tmpl": "b9898bdb1852d2156b99a592d870253d5d4d08eb9d45afb2fd514ade11779e3a",
+        "global/claude/agents/workflow-reviewer.md.tmpl": "652ffed71de53cb914b7db059598b7d8bb50a5a481658da58af1589ef6d670ff",
+        "global/claude/agents/workflow-verifier.md.tmpl": "e4c4c6b755c1b9ea141e03ea16c8ab7149897bdcb8bb547c97b7b567fcbfd810",
+        "global/claude/agents/workflow-worker.md.tmpl": "018100b3a55db0583a0da871b32d1a30b1bcc1f2cc49f4a55246de433d9ddef2",
+        "global/codex/AGENTS.md": "e9a50fbbc2692193ca191a52f4349354c81a3bd82e79fb41b6473cd6debd9fef",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "global/cursor/USER_RULES.md": "f0cdc8ad623aa0b6b5d431884d4f966590eec5dddee35edf959b083b41f0f35d",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "project-template/.cursor/rules/agentic-feature-workflow.mdc": "4efc074334c40adfbd14c718447674c065be21490ba4d8962b3ff9cfb66c549d",
+        "project-template/AGENTS.md": "6eecabf173d5024eedc7acc38a59237a9775993f923f6d0570465b798b28b46d",
+        "project-template/CLAUDE.md": "44ae6c4a06894feef99f9d8288de65ee8d189aa1e8b137bd353208818bd72143",
+        "project-template/docs/agent-context.md": "a9b87d4dc36a4a578fda45e668a73f55d747a8425befb5f5005f490bcc425ec8",
+        "project-template/docs/approved-fixtures/README.md": "09a3c263fcf29f2e0e9502a27cab77bbff2e9948aef55957e217b2929ba9f67d",
+        "project-template/docs/harness-evolution.md": "089a5c137f8d7186958a527467c20e893a493f8da30ce08a63e138c5ac88f1eb",
+        "scripts/install.ps1": "38f0fae65920526fa2fe99051140c8b7795c49e199bdf70de824c3f0d28a6ecb",
+        "scripts/install.sh": "2361a41ada8fb538022f68bffbc9ae0e5f3d8e03908c2b24f0092e6e8f77629a",
+        "skills/agentic-debugging/SKILL.md": "e10d4fe59bf353277c9c17c4e566d1f6ba3f9da78aeeae259d2e3ff7cad98285",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "f52ff5299a734fb392ba35f00cbc3b4705946f52ecebb07bb38337c00213c7f8",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62",
+        "src/AgentHarness/AgentHarness.csproj": "7cfc670a7c2fe20ed60d7febcc0978e2bf20487d877766d2acf35b0fda6f39ab",
+        "src/AgentHarness/Core.cs": "230eeeb1b4d68d2e56d729ab18ceb800240adca2b50b0d2c88ceaabbdf408a84",
+        "src/AgentHarness/Program.cs": "ed8d6527a714fcfadc2b9721f7b3a8024d285acaa741e990787111412d9836b8",
+        "tests/AgentHarness.Tests/AgentHarness.Tests.csproj": "01d6de4f264441a7ba9bfa01780e7abae386d1a124bb632004fc7285df94a98b",
+        "tests/AgentHarness.Tests/Program.cs": "bd6ef57ddb2a60fa8ff87b0e169f1cff3c4fa2a352ccde142cac9b537ba9af62",
+        "tests/Installer.Tests/install-ps1-tests.ps1": "161cab5cb13e3092a95f6fa2213ba3b0be7e5d564bbb18ab5e3a6dbd092b893f",
+        "tests/Installer.Tests/install-sh-tests.sh": "a486a0169588f3a15765f46ccb08adbfa87f5e912bbae62645a5a7aba28aeaf8"
+      }
+    }
+  },
+  "analysis": {
+    "aggregates": {
+      "baseline": {
+        "acceptance_rate": 0.6666666666666666,
+        "accepted": 2,
+        "attempts": 3,
+        "known_seconds": 551.3775235411013,
+        "known_tokens": 3907696,
+        "quality": null,
+        "quality_complete": false,
+        "throughput": 0.003627278796486731,
+        "time_complete": true,
+        "tokens_per_accepted_task": 1953848.0,
+        "total_seconds": 551.3775235411013,
+        "total_tokens": 3907696,
+        "usage_complete": true
+      },
+      "candidate": {
+        "acceptance_rate": 0.5,
+        "accepted": 1,
+        "attempts": 2,
+        "known_seconds": 560.2208043750143,
+        "known_tokens": 678536,
+        "quality": 50.0,
+        "quality_complete": true,
+        "throughput": 0.0017850104676416043,
+        "time_complete": true,
+        "tokens_per_accepted_task": 678536.0,
+        "total_seconds": 560.2208043750143,
+        "total_tokens": 678536,
+        "usage_complete": true
+      }
+    },
+    "all_records_accounting": {
+      "acceptance_rate": 0.6,
+      "accepted": 3,
+      "attempts": 5,
+      "known_seconds": 1111.5983279161155,
+      "known_tokens": 4586232,
+      "quality": null,
+      "quality_complete": false,
+      "throughput": 0.0026988165820868246,
+      "time_complete": true,
+      "tokens_per_accepted_task": 1528744.0,
+      "total_seconds": 1111.5983279161155,
+      "total_tokens": 4586232,
+      "usage_complete": true
+    },
+    "bootstrap": {
+      "family_wise_confidence": 0.95,
+      "individual_confidence": 0.9833333333333333,
+      "method": "hierarchical paired task-cluster then paired repetition percentile bootstrap",
+      "quantiles": [
+        0.008333333333333333,
+        0.9916666666666667
+      ],
+      "samples": 20000,
+      "seed": 20261110
+    },
+    "confirmatory_design": false,
+    "confirmed": false,
+    "design_issues": [
+      "Missing or unexpected paired units",
+      "Every planned pair must contain exactly one record per arm"
+    ],
+    "gates": {
+      "acceptance_not_lower": false,
+      "candidate_checks_pass": false,
+      "evidence_complete": false,
+      "exact_design": false,
+      "manual_contracts_complete": false,
+      "manual_contracts_pass": false,
+      "no_baseline_passed_group_regression": true,
+      "quality_delta_interval": false,
+      "quality_delta_point": false,
+      "throughput_ratio_interval": false,
+      "throughput_ratio_point": false,
+      "tokens_per_accepted_ratio_interval": false,
+      "tokens_per_accepted_ratio_point": true
+    },
+    "heldout_regressions": [],
+    "intervals": {},
+    "issues": [
+      "preview-execution-r1-baseline-a1: incomplete attempt or errors/missing error evidence",
+      "preview-execution-r1-baseline-a1: invalid/missing anchored manual review",
+      "preview-execution-r1-baseline-a1: invalid/missing grading evidence",
+      "Undefined ratio: zero acceptance or zero baseline token rate; verification blocked"
+    ],
+    "limitations": [
+      "Only five task clusters and three paired repetitions; bootstrap tail estimates are fragile.",
+      "Results apply to these sampled tasks and conditions; no universal or general engineering claim."
+    ],
+    "manual_acceptance_adjustments": "Raw results remain immutable; any manually identified contract failure is scored as an unaccepted attempt in this analysis.",
+    "manual_contract_failures": [
+      "status-json-r1-candidate-a1"
+    ],
+    "manual_contract_missing": [
+      "preview-execution-r1-baseline-a1"
+    ],
+    "pairs": [
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 159.99580229097046,
+            "known_tokens": 769867,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006250163977311023,
+            "time_complete": true,
+            "tokens_per_accepted_task": 769867.0,
+            "total_seconds": 159.99580229097046,
+            "total_tokens": 769867,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 150.89494683302473,
+            "known_tokens": 430879,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006627127156925715,
+            "time_complete": true,
+            "tokens_per_accepted_task": 430879.0,
+            "total_seconds": 150.89494683302473,
+            "total_tokens": 430879,
+            "usage_complete": true
+          }
+        },
+        "case": "option-validation",
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.0603125263566078,
+          "tokens_per_accepted_ratio": 0.5596797888466449
+        },
+        "repetition": 1,
+        "time_ratio": 0.9431181610540332,
+        "token_ratio": 0.5596797888466449
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "option-validation",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 2,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "option-validation",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 3,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "state-validation",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "state-validation",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 2,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "state-validation",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 3,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 149.89779841713607,
+            "known_tokens": 1301881,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.0066712120562117715,
+            "time_complete": true,
+            "tokens_per_accepted_task": 1301881.0,
+            "total_seconds": 149.89779841713607,
+            "total_tokens": 1301881,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 409.32585754198954,
+            "known_tokens": 247657,
+            "quality": 0,
+            "quality_complete": true,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 409.32585754198954,
+            "total_tokens": 247657,
+            "usage_complete": true
+          }
+        },
+        "case": "status-json",
+        "metrics": {
+          "quality_delta": -100.0,
+          "throughput_ratio": 0.0,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": 2.7306995957533426,
+        "token_ratio": 0.1902301362413308
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "status-json",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 2,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "status-json",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 3,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 241.48392283299472,
+            "known_tokens": 1835948,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 241.48392283299472,
+            "total_tokens": 1835948,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "preview-execution",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "preview-execution",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 2,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "preview-execution",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 3,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "verify-installed",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "verify-installed",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 2,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "verify-installed",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 3,
+        "time_ratio": null,
+        "token_ratio": null
+      }
+    ],
+    "per_case": {
+      "option-validation": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 159.99580229097046,
+            "known_tokens": 769867,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006250163977311023,
+            "time_complete": true,
+            "tokens_per_accepted_task": 769867.0,
+            "total_seconds": 159.99580229097046,
+            "total_tokens": 769867,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 150.89494683302473,
+            "known_tokens": 430879,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006627127156925715,
+            "time_complete": true,
+            "tokens_per_accepted_task": 430879.0,
+            "total_seconds": 150.89494683302473,
+            "total_tokens": 430879,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.0603125263566078,
+          "tokens_per_accepted_ratio": 0.5596797888466449
+        }
+      },
+      "preview-execution": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 241.48392283299472,
+            "known_tokens": 1835948,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 241.48392283299472,
+            "total_tokens": 1835948,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        }
+      },
+      "state-validation": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        }
+      },
+      "status-json": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 149.89779841713607,
+            "known_tokens": 1301881,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.0066712120562117715,
+            "time_complete": true,
+            "tokens_per_accepted_task": 1301881.0,
+            "total_seconds": 149.89779841713607,
+            "total_tokens": 1301881,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 409.32585754198954,
+            "known_tokens": 247657,
+            "quality": 0,
+            "quality_complete": true,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 409.32585754198954,
+            "total_tokens": 247657,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": -100.0,
+          "throughput_ratio": 0.0,
+          "tokens_per_accepted_ratio": null
+        }
+      },
+      "verify-installed": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        }
+      }
+    },
+    "point": {
+      "quality_delta": null,
+      "throughput_ratio": 0.49210732557158543,
+      "tokens_per_accepted_ratio": 0.34728187658405363
+    },
+    "record_count": 5,
+    "scope": "Five real Orchestra C# CLI tasks, three paired repetitions under frozen conditions; no universal productivity claim.",
+    "status": "blocked",
+    "thresholds": {
+      "quality_delta_min": -0.25,
+      "throughput_ratio_min": 1.1,
+      "tokens_per_accepted_ratio_max": 1.1
+    },
+    "worst_cases": {
+      "quality_delta": {
+        "case": "status-json",
+        "value": -100.0
+      },
+      "throughput_ratio": {
+        "case": "status-json",
+        "value": 0.0
+      },
+      "tokens_per_accepted_ratio": {
+        "case": "option-validation",
+        "value": 0.5596797888466449
+      }
+    }
+  },
+  "trials": [
+    {
+      "trial_id": "option-validation-r1-baseline-a1",
+      "case": "option-validation",
+      "repetition": 1,
+      "arm": "baseline",
+      "attempt": 1,
+      "complete": true,
+      "accepted": true,
+      "elapsed_seconds": 159.99580229097046,
+      "agent_seconds": 153.6782659998862,
+      "grading_seconds": 7.570412958972156,
+      "total_tokens": 769867,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "accepted-matrix": true,
+          "compatibility-errors": true,
+          "rejected-matrix": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.570412958972156,
+        "mutants": {
+          "accept-install-apply": true,
+          "reject-install-backup": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.317536291084252
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "selected_effort": "medium",
+      "requested_effort": "medium",
+      "automated_accepted": true,
+      "manual_assessment": {
+        "contract_pass": true,
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "rationale": "Core.cs ValidateOptions: one explicit command matrix runs before dispatch; existing parser/public APIs untouched, required flag and help compatibility preserved. Single cohesive validation helper, explicit ArgumentException, no state/resource changes or unrelated edits. Program.cs adds named matrix-driven behavioral cases, invalid-state/no-home/no-network checks and compatibility cases. No material issue on the five anchors.",
+        "reviewer": "parent-arm-obscured"
+      },
+      "accepted_after_manual": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 604858,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 165009,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ],
+      "observed_transport_retry_warnings": 0
+    },
+    {
+      "trial_id": "option-validation-r1-candidate-a1",
+      "case": "option-validation",
+      "repetition": 1,
+      "arm": "candidate",
+      "attempt": 1,
+      "complete": true,
+      "accepted": true,
+      "elapsed_seconds": 150.89494683302473,
+      "agent_seconds": 144.62098195799626,
+      "grading_seconds": 7.4965034580091015,
+      "total_tokens": 430879,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "accepted-matrix": true,
+          "compatibility-errors": true,
+          "rejected-matrix": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.4965034580091015,
+        "mutants": {
+          "accept-install-apply": true,
+          "reject-install-backup": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.273964875028469
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "selected_effort": "medium",
+      "requested_effort": "medium",
+      "automated_accepted": true,
+      "manual_assessment": {
+        "contract_pass": true,
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "rationale": "Core.cs ValidateOptions: explicit known-command guard and one allow-list check per parsed flag before dispatch; unchanged parser/APIs/help path. Focused function with clear errors, no state/resource mutation and contained edits. Program.cs exercises the invalid matrix with stub network and replacement guard plus accepted flags and compatibility. No material issue on the five anchors.",
+        "reviewer": "parent-arm-obscured"
+      },
+      "accepted_after_manual": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 430879,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ],
+      "observed_transport_retry_warnings": 0
+    },
+    {
+      "trial_id": "preview-execution-r1-baseline-a1",
+      "case": "preview-execution",
+      "repetition": 1,
+      "arm": "baseline",
+      "attempt": 1,
+      "complete": false,
+      "accepted": false,
+      "elapsed_seconds": 241.48392283299472,
+      "agent_seconds": 241.48392283299472,
+      "grading_seconds": null,
+      "total_tokens": 1835948,
+      "usage_complete": true,
+      "errors": [
+        "Cancelled; incomplete trial preserved",
+        "Root turn did not complete successfully"
+      ],
+      "grade": null,
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "selected_effort": "medium",
+      "requested_effort": "medium",
+      "automated_accepted": false,
+      "manual_assessment": null,
+      "accepted_after_manual": false,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 964908,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_worker",
+          "total_tokens": 588143,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            },
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 282897,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ],
+      "observed_transport_retry_warnings": 0
+    },
+    {
+      "trial_id": "status-json-r1-baseline-a1",
+      "case": "status-json",
+      "repetition": 1,
+      "arm": "baseline",
+      "attempt": 1,
+      "complete": true,
+      "accepted": true,
+      "elapsed_seconds": 149.89779841713607,
+      "agent_seconds": 143.25304345809855,
+      "grading_seconds": 9.991126582957804,
+      "total_tokens": 1301881,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "compatibility-errors": true,
+          "empty-schema": true,
+          "owned-counts": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 9.991126582957804,
+        "mutants": {
+          "counts-include-codex-skills": true,
+          "reversed-tool-order": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.644754959037527
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "selected_effort": "medium",
+      "requested_effort": "medium",
+      "automated_accepted": true,
+      "manual_assessment": {
+        "contract_pass": true,
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "rationale": "Core.cs Run rejects raw --json on non-status commands before parsing, including argument-value and help paths; Status(bool) loads state before output and shares OwnedFiles count across formats. Explicit errors, pure serialization, bounded source changes and no extra state handling. Program.cs readable schema/count/compatibility tests include update --tools --json. Offline reproduction confirms zero requests. No material issue on five anchors.",
+        "reviewer": "parent-arm-obscured"
+      },
+      "accepted_after_manual": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 655419,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_worker",
+          "total_tokens": 453899,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 192563,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ],
+      "observed_transport_retry_warnings": 0
+    },
+    {
+      "trial_id": "status-json-r1-candidate-a1",
+      "case": "status-json",
+      "repetition": 1,
+      "arm": "candidate",
+      "attempt": 1,
+      "complete": true,
+      "accepted": true,
+      "elapsed_seconds": 409.32585754198954,
+      "agent_seconds": 402.55122012493666,
+      "grading_seconds": 7.4203906250186265,
+      "total_tokens": 247657,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "compatibility-errors": true,
+          "empty-schema": true,
+          "owned-counts": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.4203906250186265,
+        "mutants": {
+          "counts-include-codex-skills": true,
+          "reversed-tool-order": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.7746374170528725
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "selected_effort": "medium",
+      "requested_effort": "medium",
+      "automated_accepted": true,
+      "manual_assessment": {
+        "contract_pass": false,
+        "criteria": [
+          0,
+          2,
+          2,
+          2,
+          2
+        ],
+        "rationale": "Core.cs Run checks options.Json only after CliOptions.Parse: update --tools --json consumes the new flag as Tools and enters Update, violating frozen reject-before-work contract. Offline injected-handler reproduction records1request; material contract/assumption issue(0). Status method/schema/error loading otherwise cohesive and bounded; tests readable, but do not cover this argument-position edge. Mark unaccepted in derived analysis, retain original automated results.",
+        "reviewer": "parent-arm-obscured"
+      },
+      "accepted_after_manual": false,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 247657,
+          "runtime_reported": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ],
+      "observed_transport_retry_warnings": 1
+    }
+  ],
+  "reproduction": {
+    "baseline": {
+      "error": "Error: --json is only supported by status.\n",
+      "exit": 2,
+      "output": "",
+      "requests": 0
+    },
+    "candidate": {
+      "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n",
+      "exit": 2,
+      "output": "",
+      "requests": 1
+    },
+    "reference": {
+      "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n",
+      "exit": 2,
+      "output": "",
+      "requests": 1
+    },
+    "starting-source": {
+      "exit": 2,
+      "requests": 1,
+      "output": "",
+      "error": "Error: Could not download orchestrate-fixture-rid.zip from https://github.com/jmpompeo/orchestra/releases/latest/download/orchestrate-fixture-rid.zip (HTTP 404). Download the release manually from https://github.com/jmpompeo/orchestra/releases/latest and retry.\n"
+    }
+  },
+  "setup_diagnostics": [
+    {
+      "trial": "option-validation-r1-baseline-a1",
+      "experiment": "initial-five-task-start",
+      "status": "cancelled diagnostic, excluded from the fresh paired experiment and retained separately as setup overhead",
+      "reason": "Stopped before grading to add explicit fake HTTP and executable-replacement guards to held-out fixture construction. No instruction, task contract, model or acceptance threshold changed.",
+      "total_tokens": 243986,
+      "agent_seconds": 99.16065270907711,
+      "native_usage_complete": true
+    }
+  ],
+  "measured_started_trial_tokens": 4586232,
+  "limits": [
+    "Only two completed pairs; no bootstrap intervals or repeated/general performance claim.",
+    "Raw automated grades remain unchanged; manually reproduced contract failure is represented separately and scores zero accepted-work quality in derived analysis.",
+    "Hidden groups AND reference missed the consumed-flag edge. The frozen corpus was not altered after inference; needs stronger coverage in a future experiment.",
+    "Status candidate timing includes one observed native WebSocket retry. Do not assign its delay solely to instructions.",
+    "Preview baseline cancelled after correctness stop; its partial timing/tokens are retained, not a baseline implementation failure.",
+    "All token counts include cached input; no billing/human productivity claim.",
+    "Parent supplied arm-obscured manual assessments with experiment context known.",
+    "No deliverable commit/push or integration of benchmark feature code.",
+    "The malformed-argument behavior exists in the starting source too: candidate failed the new reject-before-work requirement; it did not introduce this underlying parser behavior."
+  ]
+}

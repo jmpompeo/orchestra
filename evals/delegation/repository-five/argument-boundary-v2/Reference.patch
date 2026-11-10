@@ -1,0 +1,85 @@
+--- a/src/AgentHarness/Core.cs
++++ b/src/AgentHarness/Core.cs
+@@ -118,13 +118,16 @@
+     {
+         try
+         {
+-            if (args.Length == 0 || args[0] is "--help" or "-h" or "help") return Help();
++            if (args.Length == 0) return Help();
+             var command = args[0].ToLowerInvariant();
++            if (command != "status" && args[1..].Contains("--json", StringComparer.Ordinal))
++                throw new ArgumentException("--json is only valid for status.");
++            if (args[0] is "--help" or "-h" or "help") return Help();
+             var options = CliOptions.Parse(args[1..]);
+             return command switch
+             {
+                 "install" => Install(RequireTools(options, true), options),
+-                "status" => Status(),
++                "status" => Status(options.Json),
+                 "doctor" => Doctor(),
+                 "uninstall" => Uninstall(RequireTools(options, false), options),
+                 "init-project" => InitProject(RequireTools(options, true), options),
+@@ -142,7 +145,7 @@
+     private static int Help()
+     {
+         Console.WriteLine("orchestrate — Orchestra's portable AI engineering workflow CLI\n\n" +
+-            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
++            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status [--json]\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
+             "Without --tools, install and init-project ask interactively. Use --tools in scripts or CI.");
+         return 0;
+     }
+@@ -213,9 +216,19 @@
+         return 0;
+     }
+ 
+-    private int Status()
++    private int Status(bool json = false)
+     {
+         var state = LoadState();
++        if (json)
++        {
++            var tools = new[] { Tool.Codex, Tool.Claude }.Select(tool => new
++            {
++                name = tool.ToString().ToLowerInvariant(),
++                ownedFiles = state.Files.Keys.Count(x => IsUnder(x, ToolRoot(tool)))
++            }).ToArray();
++            Console.WriteLine(JsonSerializer.Serialize(new { schemaVersion = 1, stateFile = _statePath, tools, cursorMode = "project-local" }));
++            return 0;
++        }
+         Console.WriteLine($"State file: {_statePath}");
+         foreach (var tool in new[] { Tool.Codex, Tool.Claude })
+         {
+@@ -466,22 +479,30 @@
+ 
+ public sealed class CliOptions
+ {
+-    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; }
++    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; } public bool Json { get; private set; }
+     public static CliOptions Parse(string[] args)
+     {
+         var result = new CliOptions();
+         for (var i = 0; i < args.Length; i++)
+         {
+             var arg = args[i];
+-            if (arg == "--tools") { if (++i >= args.Length) throw new ArgumentException("--tools requires a value."); result.Tools = args[i]; }
+-            else if (arg.StartsWith("--tools=", StringComparison.Ordinal)) result.Tools = arg[8..];
++            if (arg == "--tools") { if (++i >= args.Length) throw new ArgumentException("--tools requires a value."); result.Tools = RequireToolsValue(args[i]); }
++            else if (arg.StartsWith("--tools=", StringComparison.Ordinal)) result.Tools = RequireToolsValue(arg[8..]);
+             else if (arg == "--dry-run") result.DryRun = true;
+             else if (arg == "--backup") result.Backup = true;
+             else if (arg == "--apply") result.Apply = true;
+             else if (arg == "--print") result.Print = true;
++            else if (arg == "--json") result.Json = true;
+             else throw new ArgumentException($"Unknown option '{arg}'.");
+         }
+         return result;
++    }
++
++    private static string RequireToolsValue(string value)
++    {
++        if (string.IsNullOrWhiteSpace(value) || value.TrimStart().StartsWith("-", StringComparison.Ordinal))
++            throw new ArgumentException("--tools requires a nonempty tool value, not an option.");
++        return value;
+     }
+ }
+ 

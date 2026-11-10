@@ -1,0 +1,35 @@
+{
+  "measurement_tests": 14,
+  "measurement_tests_pass": true,
+  "integrated_status_v2_calibration": {
+    "functional_score": 70.0,
+    "regression_score": 20.0,
+    "critical_pass": true,
+    "accepted": true,
+    "functional_groups": {
+      "empty-schema": true,
+      "owned-counts": true,
+      "compatibility-errors": true,
+      "argument-boundaries": true
+    },
+    "mutants": {
+      "reversed-tool-order": true,
+      "counts-include-codex-skills": true,
+      "consumed-json-value-v1": true,
+      "permissive-tools-value": true
+    },
+    "validation_seconds": 7.127536374959163,
+    "grading_seconds": 15.229849499999546,
+    "scope_ok": true,
+    "authored_tests_pass": true
+  },
+  "preliminary_calibration_note": "Initial calibration supplied production reference without authored regression tests, correctly earning zero authored-test credit; completed calibration adds external fixture tests and earns 70+20. Neither calibration changes frozen actor inputs.",
+  "frozen_inputs_unchanged": true,
+  "remaining_trial_auth_paths": 0,
+  "remaining_owned_inference_processes": 0,
+  "model_trials_restarted": false,
+  "limits": [
+    "No full repository build/suite repeated: shipped application/instruction assets unchanged since earlier passing checks; this slice adds evaluation evidence only.",
+    "No independent model review of this evaluation deliverable requested; parent inspected evidence and reproduction."
+  ]
+}

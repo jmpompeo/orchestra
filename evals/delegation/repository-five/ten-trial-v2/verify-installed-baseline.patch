@@ -1,0 +1,259 @@
+diff --git a/src/AgentHarness/Core.cs b/src/AgentHarness/Core.cs
+index 1386fc3..364d7b8 100644
+--- a/src/AgentHarness/Core.cs
++++ b/src/AgentHarness/Core.cs
+@@ -121,10 +121,12 @@ public sealed class HarnessApp
+             if (args.Length == 0 || args[0] is "--help" or "-h" or "help") return Help();
+             var command = args[0].ToLowerInvariant();
+             var options = CliOptions.Parse(args[1..]);
++            if (options.Json && command != "verify-installed") throw new ArgumentException("--json is only supported by verify-installed.");
+             return command switch
+             {
+                 "install" => Install(RequireTools(options, true), options),
+                 "status" => Status(),
++                "verify-installed" => VerifyInstalled(options),
+                 "doctor" => Doctor(),
+                 "uninstall" => Uninstall(RequireTools(options, false), options),
+                 "init-project" => InitProject(RequireTools(options, true), options),
+@@ -142,7 +144,7 @@ public sealed class HarnessApp
+     private static int Help()
+     {
+         Console.WriteLine("orchestrate — Orchestra's portable AI engineering workflow CLI\n\n" +
+-            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
++            "Commands:\n  install [--tools codex,claude,cursor|all] [--dry-run] [--backup]\n  verify-installed --tools codex,claude|all [--json]\n  status\n  doctor\n  update\n  uninstall --tools codex,claude [--dry-run]\n  init-project [--tools codex,claude,cursor|all] [--apply]\n  cursor-rules --print\n\n" +
+             "Without --tools, install and init-project ask interactively. Use --tools in scripts or CI.");
+         return 0;
+     }
+@@ -154,6 +156,111 @@ public sealed class HarnessApp
+         throw new ArgumentException("uninstall requires --tools codex,claude.");
+     }
+ 
++    private int VerifyInstalled(CliOptions options)
++    {
++        if (options.Tools is null) throw new ArgumentException("verify-installed requires --tools codex,claude|all.");
++        if (options.DryRun || options.Backup || options.Apply || options.Print)
++            throw new ArgumentException("verify-installed accepts only --tools and --json.");
++        var tools = ParseVerifyTools(options.Tools);
++        ValidateVerifyState();
++
++        var files = GlobalPlan(tools)
++            .Select(file => new { path = Path.GetFullPath(file.Destination), status = VerifyFile(file) })
++            .OrderBy(file => file.path, StringComparer.Ordinal).ToArray();
++        var summary = new
++        {
++            unchanged = files.Count(file => file.status == "unchanged"),
++            missing = files.Count(file => file.status == "missing"),
++            modified = files.Count(file => file.status == "modified"),
++            unsafeCount = files.Count(file => file.status == "unsafe")
++        };
++        if (options.Json)
++        {
++            Console.WriteLine(JsonSerializer.Serialize(new
++            {
++                version = 1,
++                files,
++                summary = new Dictionary<string, int>
++                {
++                    ["unchanged"] = summary.unchanged, ["missing"] = summary.missing,
++                    ["modified"] = summary.modified, ["unsafe"] = summary.unsafeCount
++                }
++            }));
++        }
++        else
++        {
++            foreach (var file in files) Console.WriteLine($"{file.status.ToUpperInvariant()} {file.path}");
++            Console.WriteLine($"Summary: unchanged={summary.unchanged}, missing={summary.missing}, modified={summary.modified}, unsafe={summary.unsafeCount}.");
++        }
++        return summary.missing + summary.modified + summary.unsafeCount == 0 ? 0 : 1;
++    }
++
++    private static Tool ParseVerifyTools(string value)
++    {
++        if (string.Equals(value, "all", StringComparison.OrdinalIgnoreCase)) return Tool.Codex | Tool.Claude;
++        var tools = Tool.None;
++        foreach (var part in value.Split(','))
++        {
++            var item = part.Trim();
++            tools |= item.ToLowerInvariant() switch
++            {
++                "codex" => Tool.Codex,
++                "claude" => Tool.Claude,
++                _ => throw new ArgumentException($"Invalid verify-installed tool '{item}'. Use codex, claude, or all.")
++            };
++        }
++        return tools;
++    }
++
++    private void ValidateVerifyState()
++    {
++        var stateRoot = Path.GetFullPath(Path.GetDirectoryName(_statePath)!);
++        var statePath = Path.GetFullPath(_statePath);
++        var rootEntry = VerifyEntry(stateRoot);
++        if (rootEntry is not null && ((rootEntry.Attributes & FileAttributes.ReparsePoint) != 0 || rootEntry is not DirectoryInfo))
++            throw new InvalidOperationException($"State directory is unsafe: {stateRoot}.");
++        if (rootEntry is null) return;
++        var stateEntry = VerifyEntry(statePath);
++        if (stateEntry is null) return;
++        if ((stateEntry.Attributes & FileAttributes.ReparsePoint) != 0 || stateEntry is not FileInfo)
++            throw new InvalidOperationException($"State file is unsafe: {statePath}.");
++        StateDocument? state;
++        try { state = JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(statePath)); }
++        catch (JsonException) { throw new InvalidOperationException($"State file is invalid JSON: {statePath}."); }
++        if (state is null || state.Version != 1 || state.Files is null ||
++            state.Files.Any(entry => !Path.IsPathFullyQualified(entry.Key) || entry.Value is null ||
++                entry.Value.Length != 64 || !entry.Value.All(Uri.IsHexDigit)))
++            throw new InvalidOperationException($"State file has an invalid version or shape: {statePath}.");
++    }
++
++    private string VerifyFile(PlannedFile file)
++    {
++        var root = Path.GetFullPath(_home);
++        var destination = Path.GetFullPath(file.Destination);
++        var relative = Path.GetRelativePath(root, destination);
++        if (relative == ".." || relative.StartsWith(".." + Path.DirectorySeparatorChar, StringComparison.Ordinal) || Path.IsPathRooted(relative))
++            throw new InvalidOperationException($"Expected destination is outside the configured home: {destination}.");
++        var current = root;
++        var parts = relative.Split(Path.DirectorySeparatorChar);
++        for (var index = -1; index < parts.Length; index++)
++        {
++            if (index >= 0) current = Path.Combine(current, parts[index]);
++            var entry = VerifyEntry(current);
++            if (entry is null) return "missing";
++            if ((entry.Attributes & FileAttributes.ReparsePoint) != 0) return "unsafe";
++            if (index < parts.Length - 1 && entry is not DirectoryInfo) return "unsafe";
++            if (index == parts.Length - 1)
++            {
++                if (entry is not FileInfo) return "unsafe";
++                return File.ReadAllBytes(current).AsSpan().SequenceEqual(file.Content) ? "unchanged" : "modified";
++            }
++        }
++        throw new InvalidOperationException("Invalid expected destination.");
++    }
++
++    private static FileSystemInfo? VerifyEntry(string path) =>
++        Path.GetPathRoot(path) == path ? new DirectoryInfo(path) : GetEntry(path);
++
+     public int Install(Tool tools, CliOptions options)
+     {
+         var plan = GlobalPlan(tools);
+@@ -466,7 +573,7 @@ public sealed record PlannedFile(string Source, string Destination, byte[] Conte
+ 
+ public sealed class CliOptions
+ {
+-    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; }
++    public string? Tools { get; private set; } public bool DryRun { get; private set; } public bool Backup { get; private set; } public bool Apply { get; private set; } public bool Print { get; private set; } public bool Json { get; private set; }
+     public static CliOptions Parse(string[] args)
+     {
+         var result = new CliOptions();
+@@ -479,6 +586,7 @@ public sealed class CliOptions
+             else if (arg == "--backup") result.Backup = true;
+             else if (arg == "--apply") result.Apply = true;
+             else if (arg == "--print") result.Print = true;
++            else if (arg == "--json") result.Json = true;
+             else throw new ArgumentException($"Unknown option '{arg}'.");
+         }
+         return result;
+diff --git a/tests/AgentHarness.Tests/Program.cs b/tests/AgentHarness.Tests/Program.cs
+index 71d7d79..165361c 100644
+--- a/tests/AgentHarness.Tests/Program.cs
++++ b/tests/AgentHarness.Tests/Program.cs
+@@ -178,6 +178,99 @@ try
+     Check(File.Exists(Path.Combine(home, ".claude", "skills", "agentic-debugging", "SKILL.md")), "Claude agentic-debugging skill installed");
+     Check(File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "SKILL.md")), "Claude refactor-code skill installed");
+     Check(!File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "agents", "openai.yaml")), "Claude excludes refactor-code Codex metadata");
++
++    var verifyHome = Path.Combine(root, "verify-home"); var verifyState = Path.Combine(root, "verify-state");
++    var verifyNetwork = new StubHttpHandler(new Dictionary<string, byte[]>());
++    var verifyApp = new HarnessApp(verifyHome, verifyState, new HttpClient(verifyNetwork));
++    var absentState = Capture(verifyApp, new[] { "verify-installed", "--tools", "CoDeX", "--json" });
++    Check(absentState.ExitCode == 1 && !Directory.Exists(verifyHome) && !Directory.Exists(verifyState), "verify reports missing files without creating home or state");
++    using (var json = JsonDocument.Parse(absentState.Output))
++    {
++        var files = json.RootElement.GetProperty("files").EnumerateArray().ToArray();
++        Check(json.RootElement.GetProperty("version").GetInt32() == 1 && files.Length > 1, "verify emits versioned JSON with expected files");
++        Check(files.All(file => file.GetProperty("status").GetString() == "missing" && Path.IsPathFullyQualified(file.GetProperty("path").GetString()!)), "missing JSON entries have absolute paths");
++        Check(files.Select(file => file.GetProperty("path").GetString()).SequenceEqual(files.Select(file => file.GetProperty("path").GetString()).Order(StringComparer.Ordinal)), "verify JSON files use ordinal path order");
++        Check(json.RootElement.GetProperty("summary").GetProperty("missing").GetInt32() == files.Length, "missing summary covers every file");
++    }
++    foreach (var rejectedArgs in new[]
++    {
++        new[] { "verify-installed" }, new[] { "verify-installed", "--tools", "cursor" },
++        new[] { "verify-installed", "--tools", "codex,cursor" },
++        new[] { "verify-installed", "--tools", "codex", "--dry-run" },
++        new[] { "verify-installed", "--tools", "codex", "--backup" },
++        new[] { "verify-installed", "--tools", "codex", "--apply" },
++        new[] { "verify-installed", "--tools", "codex", "--print" },
++        new[] { "status", "--json" }
++    }) Check(Capture(verifyApp, rejectedArgs).ExitCode == 2, "verify rejects missing tools, cursor, irrelevant flags, and JSON on other commands");
++    Check(help.Output.Contains("verify-installed --tools codex,claude|all [--json]", StringComparison.Ordinal), "help describes verify-installed");
++    Check(Capture(verifyApp, new[] { "install", "--tools", "codex,claude" }).ExitCode == 0, "verification fixture installs both tools");
++    var verifyStatePath = Path.Combine(verifyState, "state.json");
++    var stateBeforeVerify = File.ReadAllBytes(verifyStatePath);
++    var matching = Capture(verifyApp, new[] { "verify-installed", "--tools", "ALL", "--json" });
++    Check(matching.ExitCode == 0 && matching.Error.Length == 0 && verifyNetwork.RequestedAssets.Count == 0 && File.ReadAllBytes(verifyStatePath).SequenceEqual(stateBeforeVerify), "all verifies both tools without network or state writes");
++    int expectedCount;
++    using (var json = JsonDocument.Parse(matching.Output))
++    {
++        var files = json.RootElement.GetProperty("files").EnumerateArray().ToArray();
++        expectedCount = files.Length;
++        Check(files.All(file => file.GetProperty("status").GetString() == "unchanged"), "matching regular bytes are unchanged");
++        Check(files.Any(file => file.GetProperty("path").GetString()!.Contains(Path.Combine(".codex", "agents"), StringComparison.Ordinal)) &&
++              files.Any(file => file.GetProperty("path").GetString()!.Contains(Path.Combine(".claude", "agents"), StringComparison.Ordinal)), "rendered agent definitions are verified");
++        Check(!files.Any(file => file.GetProperty("path").GetString()!.Contains(Path.Combine(".claude", "skills", "refactor-code", "agents"), StringComparison.Ordinal)), "Claude excluded metadata is not expected");
++        Check(json.RootElement.GetProperty("summary").GetProperty("unchanged").GetInt32() == expectedCount, "unchanged summary covers all expected files");
++        Check(json.RootElement.GetProperty("summary").EnumerateObject().Select(property => property.Name).SequenceEqual(new[] { "unchanged", "missing", "modified", "unsafe" }), "JSON summary has exactly the four required states");
++    }
++    var codexOnly = Capture(verifyApp, new[] { "verify-installed", "--tools=codex", "--json" });
++    using (var json = JsonDocument.Parse(codexOnly.Output))
++        Check(codexOnly.ExitCode == 0 && json.RootElement.GetProperty("files").GetArrayLength() < expectedCount, "Codex selection excludes Claude destinations");
++    var verifyInstructions = Path.Combine(verifyHome, ".codex", "AGENTS.md");
++    var extraFile = Path.Combine(verifyHome, ".codex", "extra.txt"); File.WriteAllText(extraFile, "extra");
++    var verifyDocument = JsonSerializer.Deserialize<StateDocument>(File.ReadAllText(verifyStatePath))!;
++    verifyDocument.Files[Path.Combine(verifyHome, "stale.txt")] = new string('a', 64);
++    verifyDocument.Files.Remove(Path.GetFullPath(verifyInstructions));
++    File.WriteAllText(verifyStatePath, JsonSerializer.Serialize(verifyDocument));
++    Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "all" }).ExitCode == 0, "ownership, extras, and stale entries do not affect verification");
++    File.WriteAllText(verifyInstructions, "changed");
++    var drift = Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" });
++    Check(drift.ExitCode == 1 && drift.Output.Contains($"MODIFIED {verifyInstructions}", StringComparison.Ordinal) && drift.Output.Contains("modified=1", StringComparison.Ordinal), "text reports modified content and counts");
++    File.Delete(verifyInstructions);
++    Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).Output.Contains($"MISSING {verifyInstructions}", StringComparison.Ordinal), "missing destination is reported");
++    Directory.CreateDirectory(verifyInstructions);
++    Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).Output.Contains($"UNSAFE {verifyInstructions}", StringComparison.Ordinal), "directory destination is unsafe");
++    Directory.Delete(verifyInstructions);
++    var linkedTarget = Path.Combine(root, "linked-target"); File.WriteAllText(linkedTarget, "outside");
++    if (!OperatingSystem.IsWindows())
++    {
++        File.CreateSymbolicLink(verifyInstructions, linkedTarget);
++        Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).Output.Contains($"UNSAFE {verifyInstructions}", StringComparison.Ordinal), "linked destination is unsafe");
++        File.Delete(verifyInstructions);
++        var codexAgents = Path.Combine(verifyHome, ".codex", "agents");
++        var savedAgents = Path.Combine(verifyHome, "saved-agents"); Directory.Move(codexAgents, savedAgents);
++        Directory.CreateSymbolicLink(codexAgents, savedAgents);
++        Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).Output.Contains($"UNSAFE {Path.Combine(codexAgents, "workflow_explorer.toml")}", StringComparison.Ordinal), "linked ancestor is unsafe");
++        Directory.Delete(codexAgents); Directory.Move(savedAgents, codexAgents);
++        var linkedHome = Path.Combine(root, "linked-home"); Directory.CreateSymbolicLink(linkedHome, verifyHome);
++        var linkedHomeResult = Capture(new HarnessApp(linkedHome, Path.Combine(root, "linked-home-state")), new[] { "verify-installed", "--tools", "codex", "--json" });
++        using (var json = JsonDocument.Parse(linkedHomeResult.Output))
++            Check(linkedHomeResult.ExitCode == 1 && json.RootElement.GetProperty("files").EnumerateArray().All(file => file.GetProperty("status").GetString() == "unsafe"), "linked configured home makes every expected destination unsafe");
++    }
++    foreach (var invalid in new[] { "null", "{}", "{\"Version\":2,\"Files\":{}}", "{\"Version\":1,\"Files\":null}", "{\"Version\":1,\"Files\":{\"relative\":\"" + new string('a', 64) + "\"}}", "{\"Version\":1,\"Files\":{\"/absolute\":\"bad\"}}", "{" })
++    {
++        File.WriteAllText(verifyStatePath, invalid);
++        var invalidState = Capture(verifyApp, new[] { "verify-installed", "--tools", "codex", "--json" });
++        Check(invalidState.ExitCode == 2 && invalidState.Output.Length == 0 && File.ReadAllText(verifyStatePath) == invalid, "invalid state returns 2 without output or writes");
++    }
++    if (!OperatingSystem.IsWindows())
++    {
++        File.Delete(verifyStatePath); File.CreateSymbolicLink(verifyStatePath, linkedTarget);
++        Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).ExitCode == 2, "linked state file is invalid");
++        File.Delete(verifyStatePath);
++        var savedState = Path.Combine(root, "saved-state"); Directory.Move(verifyState, savedState);
++        Directory.CreateSymbolicLink(verifyState, savedState);
++        Check(Capture(verifyApp, new[] { "verify-installed", "--tools", "codex" }).ExitCode == 2, "linked state directory is invalid");
++        Directory.Delete(verifyState);
++    }
++
+     Directory.CreateDirectory(project); var previous = Directory.GetCurrentDirectory(); Directory.SetCurrentDirectory(project);
+     try
+     {

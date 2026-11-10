@@ -1,0 +1,1553 @@
+{
+  "date": "2026-11-10",
+  "outcome": "Stopped at frozen manual no-follow contract gate; incomplete ten-trial screen, no delivery decision pass.",
+  "planned_trials": 10,
+  "started_trials": 8,
+  "completed_trials": 7,
+  "cancelled_trials": 1,
+  "unstarted_trials": 2,
+  "confirmed": false,
+  "decision_pass": false,
+  "source_commit": "3ad9d38943085290b1d5dcbaf2e7e49995a540ab",
+  "thresholds": {
+    "quality_delta_min": -0.25,
+    "throughput_ratio_min": 1.1,
+    "tokens_per_accepted_ratio_max": 1.1
+  },
+  "frozen_inputs": {
+    "source_and_harness": {
+      "harness": {
+        "cases.json": "22335a932d17fb6176e889fcb3a40b99cdf8e2039522a5cab5ec6ba4d73806c9",
+        "corpus.py": "44a229cba1b79f070ed664b8a1b26879e42869bb61c7324160d4e4e603d5da2e",
+        "experiment.py": "4dfabcaac65103d85f336994cfba43f4aa86efa1d79cfdb6e4d36e3c8d5c9cb2",
+        "measurement.py": "eee0ce793296442ccf5388e88fd6a2f8ab0da498a9dfd6814b05b156ae919dae",
+        "runner.py": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+        "settings.json": "d3cfa4a90f33b367c306f92cdfa5f15bd0e7a5d4460406d8cd861430ebff1bf3",
+        "test_measurement.py": "74d9ddaa2b8168742ee189d96e39e5ff86378ca3f6a72bc8b81427115a1d81d3"
+      },
+      "protocol_sha256": "e8264650c90521d9d3fc65e822af8847ac39b8f23e15394172d39746eb388273",
+      "source": {
+        ".gitattributes": "8b83b81b416d38015ed7db5a6002aa8b6be627d31373c0907ea4c25e8b5f13bd",
+        ".github/workflows/ci.yml": "943e7cebbde7c149b1d9cce4e0e12703a8daa4a4570dffc884d6c61b4c952c69",
+        ".github/workflows/release.yml": "f208dfe5fe0b388a5574e45e4ec610596abaa3ba73f4a5b7d846842950bfc201",
+        ".gitignore": "1557ae6a930a5f3caabdaf3efeab5237da3d0aa777c1629657f078c2e5afe117",
+        "AgentHarness.sln": "7ad443fef990ce2750219ab2543d1b35fd371c9d814ccb4f07dd2c949c933a57",
+        "CHANGELOG.md": "242d0c9f087c992cee8ded0923fe8c1023492d671be2621638890929a9dee5a3",
+        "Directory.Build.props": "640e1ff5a5dc3f66a33aa73c301f4c626337ee8ea939b5eeb5686cc31f1a2613",
+        "INSTALL.md": "0e4dbfe6d88b0b252f3c0409f0d8356d235404a9ea36d47b6f3f490153eaa172",
+        "NuGet.Config": "9508cae5f76364f56e80eb97cb16493977243cf38e5cca6284e3d74f83b20a2c",
+        "README.md": "892bab89e47b8697407ff8934cfbedffd27fc621c439fa13ac6e7d8f3ff72ccb",
+        "docs/agent-context.md": "2c6501fda483041db32ff99c2885d8d48aa92bba70b83f14f28a7f4533018054",
+        "global/claude/CLAUDE.md": "70b64a30bd7c02b6df68558d4aec825359e7c3837c586a4676a844df3aa0ea54",
+        "global/claude/agents/workflow-explorer.md.tmpl": "b9898bdb1852d2156b99a592d870253d5d4d08eb9d45afb2fd514ade11779e3a",
+        "global/claude/agents/workflow-reviewer.md.tmpl": "652ffed71de53cb914b7db059598b7d8bb50a5a481658da58af1589ef6d670ff",
+        "global/claude/agents/workflow-verifier.md.tmpl": "e4c4c6b755c1b9ea141e03ea16c8ab7149897bdcb8bb547c97b7b567fcbfd810",
+        "global/claude/agents/workflow-worker.md.tmpl": "018100b3a55db0583a0da871b32d1a30b1bcc1f2cc49f4a55246de433d9ddef2",
+        "global/codex/AGENTS.md": "e9a50fbbc2692193ca191a52f4349354c81a3bd82e79fb41b6473cd6debd9fef",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "global/cursor/USER_RULES.md": "f0cdc8ad623aa0b6b5d431884d4f966590eec5dddee35edf959b083b41f0f35d",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "project-template/.cursor/rules/agentic-feature-workflow.mdc": "4efc074334c40adfbd14c718447674c065be21490ba4d8962b3ff9cfb66c549d",
+        "project-template/AGENTS.md": "6eecabf173d5024eedc7acc38a59237a9775993f923f6d0570465b798b28b46d",
+        "project-template/CLAUDE.md": "44ae6c4a06894feef99f9d8288de65ee8d189aa1e8b137bd353208818bd72143",
+        "project-template/docs/agent-context.md": "a9b87d4dc36a4a578fda45e668a73f55d747a8425befb5f5005f490bcc425ec8",
+        "project-template/docs/approved-fixtures/README.md": "09a3c263fcf29f2e0e9502a27cab77bbff2e9948aef55957e217b2929ba9f67d",
+        "project-template/docs/harness-evolution.md": "089a5c137f8d7186958a527467c20e893a493f8da30ce08a63e138c5ac88f1eb",
+        "scripts/install.ps1": "38f0fae65920526fa2fe99051140c8b7795c49e199bdf70de824c3f0d28a6ecb",
+        "scripts/install.sh": "2361a41ada8fb538022f68bffbc9ae0e5f3d8e03908c2b24f0092e6e8f77629a",
+        "skills/agentic-debugging/SKILL.md": "e10d4fe59bf353277c9c17c4e566d1f6ba3f9da78aeeae259d2e3ff7cad98285",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "f52ff5299a734fb392ba35f00cbc3b4705946f52ecebb07bb38337c00213c7f8",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62",
+        "src/AgentHarness/AgentHarness.csproj": "7cfc670a7c2fe20ed60d7febcc0978e2bf20487d877766d2acf35b0fda6f39ab",
+        "src/AgentHarness/Core.cs": "230eeeb1b4d68d2e56d729ab18ceb800240adca2b50b0d2c88ceaabbdf408a84",
+        "src/AgentHarness/Program.cs": "ed8d6527a714fcfadc2b9721f7b3a8024d285acaa741e990787111412d9836b8",
+        "tests/AgentHarness.Tests/AgentHarness.Tests.csproj": "01d6de4f264441a7ba9bfa01780e7abae386d1a124bb632004fc7285df94a98b",
+        "tests/AgentHarness.Tests/Program.cs": "bd6ef57ddb2a60fa8ff87b0e169f1cff3c4fa2a352ccde142cac9b537ba9af62",
+        "tests/Installer.Tests/install-ps1-tests.ps1": "161cab5cb13e3092a95f6fa2213ba3b0be7e5d564bbb18ab5e3a6dbd092b893f",
+        "tests/Installer.Tests/install-sh-tests.sh": "a486a0169588f3a15765f46ccb08adbfa87f5e912bbae62645a5a7aba28aeaf8"
+      }
+    },
+    "runner_sha256": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+    "source_assets": {
+      "baseline": {
+        "global/codex/AGENTS.md": "ae97f61132f079a3f30fb7374f1a2d43a66f31dc19f356e4ef6ecfa87be7f893",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "174482b19a505c6fc698d328d4a7f9aebf5b65159677ae384fa68f5651f0d3be",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "7f772fc28866baab18e4c3fc2b5ae29ae2cc4eac8a1fc3cfa5760c71917081f0",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      },
+      "candidate": {
+        "global/codex/AGENTS.md": "3c9b60908566a0ffa046cf9e3170891f430dc1c4faa80521cb38b225e9b05717",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "bf1f34b30feb9dacc7409f28133690f4b885042a74b94cb56c005cbe0d272f9b",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "db72e71d7a72c86a3618fe1f508eef4f4f8b16284b4f8229ab12f95374ff5238",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      }
+    },
+    "models": {
+      "CODEX_EXPLORER_MODEL": "gpt-6-luna",
+      "CODEX_ORCHESTRATOR_MODEL": "gpt-6-sol",
+      "CODEX_REVIEWER_MODEL": "gpt-6-sol",
+      "CODEX_VERIFIER_MODEL": "gpt-6-luna",
+      "CODEX_WORKER_MODEL": "gpt-6-sol"
+    },
+    "root_effort": "medium",
+    "native_binary_sha256": "50ab38ba21d0d9f8346f32f41848382f15b556190f3c7a07e885a4fb73e379c8"
+  },
+  "trials": [
+    {
+      "trial_id": "option-validation-r1-baseline-a1",
+      "case": "option-validation",
+      "arm": "baseline",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 186.11858229199424,
+      "elapsed_seconds": 192.94289895903785,
+      "grading_seconds": 7.745239333016798,
+      "total_tokens": 904176,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "accepted-matrix": true,
+          "compatibility-errors": true,
+          "rejected-matrix": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.745239333016798,
+        "mutants": {
+          "accept-install-apply": true,
+          "reject-install-backup": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.824316667043604
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts: exact accepted matrix enforced at dispatch, public parser and required options unchanged, help/unknown/case behavior retained. Cohesion: one validator called before command dispatch. Errors/state/resources: controlled command/flag diagnostics before prompt/state/write/download, tested with poisoned state and stub handler. Containment: one helper/call and test changes. Tests: rejected matrix covering both tools syntaxes, accepted mixed-case and required-option/value/help controls; all held-out groups and both faults pass. Production guard essentially identical to candidate."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 660015,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 606848,
+            "input_tokens": 653030,
+            "output_tokens": 6985,
+            "reasoning_output_tokens": 2922,
+            "total_tokens": 660015
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 606848,
+            "input_tokens": 653030,
+            "output_tokens": 6985,
+            "reasoning_output_tokens": 2922,
+            "total_tokens": 660015
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 244161,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 204672,
+            "input_tokens": 242225,
+            "output_tokens": 1936,
+            "reasoning_output_tokens": 848,
+            "total_tokens": 244161
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 204672,
+            "input_tokens": 242225,
+            "output_tokens": 1936,
+            "reasoning_output_tokens": 848,
+            "total_tokens": 244161
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "option-validation-r1-candidate-a1",
+      "case": "option-validation",
+      "arm": "candidate",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 151.69541720789857,
+      "elapsed_seconds": 159.42566558287945,
+      "grading_seconds": 7.8238457079278305,
+      "total_tokens": 576424,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "accepted-matrix": true,
+          "compatibility-errors": true,
+          "rejected-matrix": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.8238457079278305,
+        "mutants": {
+          "accept-install-apply": true,
+          "reject-install-backup": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 7.730248374980874
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts: exact flag matrix encoded in dispatch validator; top-level help, command case normalization and public parser preserved. Cohesion: one ValidateOptions method before dispatch/RequireTools. Errors/state/resources: throws controlled command/flag argument errors before state/prompt/files/download, unknown command handling retained. Containment: one call/helper plus tests. Tests: full rejected matrix including equals-form tools, poisoned state and request tracker, accepted syntax/help/unknown/required-value controls; all held-out groups and both faults pass."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 576424,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 540416,
+            "input_tokens": 570253,
+            "output_tokens": 6171,
+            "reasoning_output_tokens": 1922,
+            "total_tokens": 576424
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 540416,
+            "input_tokens": 570253,
+            "output_tokens": 6171,
+            "reasoning_output_tokens": 1922,
+            "total_tokens": 576424
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "preview-execution-r1-baseline-a1",
+      "case": "preview-execution",
+      "arm": "baseline",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 263.99262104101945,
+      "elapsed_seconds": 270.7571694579674,
+      "grading_seconds": 7.686738207936287,
+      "total_tokens": 3141325,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "conflict-and-backup": true,
+          "create-update-no-writes": true,
+          "stale-removal-accounting": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.686738207936287,
+        "mutants": {
+          "dry-run-writes-state": true,
+          "stale-removals-not-counted": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.764548416947946
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts/names: typed InstallActionKind and immutable action records carry content/hash/backup decisions. Cohesion: BuildInstallPlan classifies once and ExecuteInstallPlan handles both preview and application; project initialization kept separate. Errors/state/resources: linked parents/destinations and unsafe stale aliases preserved, deterministic occupied backup slots skipped, application revalidates observations. Containment: only production Core and public CLI tests changed. Tests: readable CLI parity, no-write snapshots, ownership, backup occupancy, stale accounting, tool-selection and symlink regressions; independent groups and both faults pass. No material issue found in final source/diff."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 1344373,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1286784,
+            "input_tokens": 1334121,
+            "output_tokens": 10252,
+            "reasoning_output_tokens": 3426,
+            "total_tokens": 1344373
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1286784,
+            "input_tokens": 1334121,
+            "output_tokens": 10252,
+            "reasoning_output_tokens": 3426,
+            "total_tokens": 1344373
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "explorer",
+          "total_tokens": 228970,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 189824,
+            "input_tokens": 227316,
+            "output_tokens": 1654,
+            "reasoning_output_tokens": 636,
+            "total_tokens": 228970
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 189824,
+            "input_tokens": 227316,
+            "output_tokens": 1654,
+            "reasoning_output_tokens": 636,
+            "total_tokens": 228970
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-luna",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "worker",
+          "total_tokens": 734803,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 685952,
+            "input_tokens": 726266,
+            "output_tokens": 8537,
+            "reasoning_output_tokens": 1502,
+            "total_tokens": 734803
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 685952,
+            "input_tokens": 726266,
+            "output_tokens": 8537,
+            "reasoning_output_tokens": 1502,
+            "total_tokens": 734803
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 833179,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 773632,
+            "input_tokens": 828765,
+            "output_tokens": 4414,
+            "reasoning_output_tokens": 2519,
+            "total_tokens": 833179
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 773632,
+            "input_tokens": 828765,
+            "output_tokens": 4414,
+            "reasoning_output_tokens": 2519,
+            "total_tokens": 833179
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "preview-execution-r1-candidate-a1",
+      "case": "preview-execution",
+      "arm": "candidate",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 179.26726058404893,
+      "elapsed_seconds": 186.07687066704966,
+      "grading_seconds": 7.648246958036907,
+      "total_tokens": 1061958,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "conflict-and-backup": true,
+          "create-update-no-writes": true,
+          "stale-removal-accounting": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.648246958036907,
+        "mutants": {
+          "dry-run-writes-state": true,
+          "stale-removals-not-counted": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.8096100830007344
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          1,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts/names: typed InstallationAction and InstallationStep carry content/hash/backup decisions. Cohesion: shared BuildInstallationPlan/ExecuteInstallationPlan classifies preview and execution consistently. Errors/state/resources: deterministic occupied-name selection, unchanged unowned preservation, selected-root stale normalization and linked-parent checks satisfy the frozen contract; public signatures preserved. Containment earns 1: former Apply helper remains with global update/backup/ownership branches although now called only for project initialization with onlyMissing=true, duplicating new global classification and leaving unreachable branch complexity; localized maintainability issue, no failed behavior contract. Tests: public CLI no-write snapshots, ordered parity, backup directory/link collisions, stale safety and tool isolation; independent groups and both faults pass."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 679972,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 626304,
+            "input_tokens": 672055,
+            "output_tokens": 7917,
+            "reasoning_output_tokens": 2925,
+            "total_tokens": 679972
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 626304,
+            "input_tokens": 672055,
+            "output_tokens": 7917,
+            "reasoning_output_tokens": 2925,
+            "total_tokens": 679972
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "worker",
+          "total_tokens": 381986,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 341120,
+            "input_tokens": 376789,
+            "output_tokens": 5197,
+            "reasoning_output_tokens": 1336,
+            "total_tokens": 381986
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 341120,
+            "input_tokens": 376789,
+            "output_tokens": 5197,
+            "reasoning_output_tokens": 1336,
+            "total_tokens": 381986
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "state-validation-r1-baseline-a1",
+      "case": "state-validation",
+      "arm": "baseline",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 210.2712040829938,
+      "elapsed_seconds": 216.66987516602967,
+      "grading_seconds": 7.540900333086029,
+      "total_tokens": 803557,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "document-shape": true,
+          "entry-validation": true,
+          "valid-syntax-compatibility": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.540900333086029,
+        "mutants": {
+          "accept-nonhex-hashes": true,
+          "ignore-version": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.398671083035879
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts: shared loader rejects invalid version/Files/path/hash shape and accepts ASCII uppercase/lowercase hex. Cohesion: validation remains at LoadState. Errors/state: controlled file-specific diagnostics, pre-work validation, existing missing/null/JSON syntax semantics retained. Containment: loader plus three ownership comparisons made case-insensitive to support uppercase valid hashes; no unrelated modules/assets changed. Tests: public command matrix asserts unchanged state/content; compatibility plus uppercase update/stale cleanup/uninstall checks. All independent groups and both faults pass. Baseline additionally repairs pre-existing case-sensitive ownership semantics; candidate preserves that existing behavior while accepting uppercase format. Frozen task explicitly requests validation and preservation of existing behavior, so this difference is disclosed rather than creating a new post-inference requirement."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 624990,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 590208,
+            "input_tokens": 618132,
+            "output_tokens": 6858,
+            "reasoning_output_tokens": 2208,
+            "total_tokens": 624990
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 590208,
+            "input_tokens": 618132,
+            "output_tokens": 6858,
+            "reasoning_output_tokens": 2208,
+            "total_tokens": 624990
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 178567,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 137600,
+            "input_tokens": 175792,
+            "output_tokens": 2775,
+            "reasoning_output_tokens": 1753,
+            "total_tokens": 178567
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 137600,
+            "input_tokens": 175792,
+            "output_tokens": 2775,
+            "reasoning_output_tokens": 1753,
+            "total_tokens": 178567
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "state-validation-r1-candidate-a1",
+      "case": "state-validation",
+      "arm": "candidate",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 132.52088229195215,
+      "elapsed_seconds": 138.96745862602256,
+      "grading_seconds": 7.560238292091526,
+      "total_tokens": 548300,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "document-shape": true,
+          "entry-validation": true,
+          "valid-syntax-compatibility": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.560238292091526,
+        "mutants": {
+          "accept-nonhex-hashes": true,
+          "ignore-version": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.446576334070414
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection",
+        "contract_pass": true,
+        "rationale": "Contracts: version 1, nonnull Files, fully qualified nonblank paths and exactly 64 ASCII hex characters explicitly validated, both letter cases allowed. Cohesion: validation lives in shared LoadState with one error helper. Errors/state: controlled InvalidOperationException caught by existing Run, diagnostic includes file/reason, no writes before failure; missing/top-level-null/malformed JSON compatibility preserved. Containment: only loader/helper and tests changed. Tests: invalid-state matrix across status/install/uninstall asserts exit, diagnostic and unchanged state/content, plus valid/null/malformed controls; all independent groups and both faults pass. Uppercase format acceptance is tested; pre-existing case-sensitive ownership comparisons remain, unlike the baseline extra repair. No new ownership-normalization requirement is added after freeze."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 548300,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 500992,
+            "input_tokens": 542673,
+            "output_tokens": 5627,
+            "reasoning_output_tokens": 1902,
+            "total_tokens": 548300
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 500992,
+            "input_tokens": 542673,
+            "output_tokens": 5627,
+            "reasoning_output_tokens": 1902,
+            "total_tokens": 548300
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "verify-installed-r1-baseline-a1",
+      "case": "verify-installed",
+      "arm": "baseline",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": true,
+      "agent_seconds": 308.4196297499584,
+      "elapsed_seconds": 314.9428597079823,
+      "grading_seconds": 7.4559347910108045,
+      "total_tokens": 1612594,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "clean-selection-json": true,
+          "drift-and-unowned": true,
+          "unsafe-and-errors": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 7.4559347910108045,
+        "mutants": {
+          "drift-exits-success": true,
+          "missing-reported-modified": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 6.523229958023876
+      },
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": {
+        "criteria": [
+          2,
+          2,
+          0,
+          2,
+          2
+        ],
+        "reviewer": "parent-source-inspection-and-CSharp-reproduction",
+        "contract_pass": false,
+        "rationale": "Contracts/names and classification/reporting are clear; rendered GlobalPlan reused cohesively and changes contained. Error/state/resource score 0: VerifyFile checks metadata then separately calls File.ReadAllBytes, and state validation similarly uses File.ReadAllText after a path check. Baseline final report explicitly marks concurrent no-follow safety incomplete. Unmodified-output macOS atomic-exchange reproduction observed unchanged bytes available only through a symlink (attempt 9), while stable regular/link controls report modified/unsafe; zero HTTP. Readable authored CLI tests and all automated groups/faults pass, but they omit concurrent path replacement. Frozen manual no-follow contract fails; derived accepted score is zero, raw automated acceptance unchanged."
+      },
+      "automated_accepted": true,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 1155217,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1104384,
+            "input_tokens": 1142669,
+            "output_tokens": 12548,
+            "reasoning_output_tokens": 3903,
+            "total_tokens": 1155217
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 1104384,
+            "input_tokens": 1142669,
+            "output_tokens": 12548,
+            "reasoning_output_tokens": 3903,
+            "total_tokens": 1155217
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 457377,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 419840,
+            "input_tokens": 452387,
+            "output_tokens": 4990,
+            "reasoning_output_tokens": 3155,
+            "total_tokens": 457377
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 419840,
+            "input_tokens": 452387,
+            "output_tokens": 4990,
+            "reasoning_output_tokens": 3155,
+            "total_tokens": 457377
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "high"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "verify-installed-r1-candidate-a1",
+      "case": "verify-installed",
+      "arm": "candidate",
+      "repetition": 1,
+      "attempt": 1,
+      "complete": false,
+      "agent_seconds": 50.59908108296804,
+      "elapsed_seconds": 50.59908108296804,
+      "grading_seconds": null,
+      "total_tokens": 241818,
+      "usage_complete": true,
+      "errors": [
+        "Cancelled; incomplete trial preserved",
+        "Root turn did not complete successfully"
+      ],
+      "grade": null,
+      "configured_model": "gpt-6-sol",
+      "selected_model": "gpt-6-sol",
+      "requested_effort": "medium",
+      "selected_effort": "medium",
+      "assessment": null,
+      "automated_accepted": false,
+      "native_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 148719,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 124544,
+            "input_tokens": 147401,
+            "output_tokens": 1318,
+            "reasoning_output_tokens": 210,
+            "total_tokens": 148719
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 124544,
+            "input_tokens": 147401,
+            "output_tokens": 1318,
+            "reasoning_output_tokens": 210,
+            "total_tokens": 148719
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        },
+        {
+          "role": "worker",
+          "total_tokens": 93099,
+          "event": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 62720,
+            "input_tokens": 92619,
+            "output_tokens": 480,
+            "reasoning_output_tokens": 65,
+            "total_tokens": 93099
+          },
+          "rollout": {
+            "cache_write_input_tokens": 0,
+            "cached_input_tokens": 62720,
+            "input_tokens": 92619,
+            "output_tokens": 480,
+            "reasoning_output_tokens": 65,
+            "total_tokens": 93099
+          },
+          "runtime_contexts": [
+            {
+              "model": "gpt-6-sol",
+              "effort": "medium"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "analysis": {
+    "aggregates": {
+      "baseline": {
+        "acceptance_rate": 0.75,
+        "accepted": 3,
+        "attempts": 4,
+        "known_seconds": 995.3128032910172,
+        "known_tokens": 6461652,
+        "quality": 75.0,
+        "quality_complete": true,
+        "throughput": 0.0030141278099512572,
+        "time_complete": true,
+        "tokens_per_accepted_task": 2153884.0,
+        "total_seconds": 995.3128032910172,
+        "total_tokens": 6461652,
+        "usage_complete": true
+      },
+      "candidate": {
+        "acceptance_rate": 0.75,
+        "accepted": 3,
+        "attempts": 4,
+        "known_seconds": 535.0690759589197,
+        "known_tokens": 2428500,
+        "quality": null,
+        "quality_complete": false,
+        "throughput": 0.005606752725568328,
+        "time_complete": true,
+        "tokens_per_accepted_task": 809500.0,
+        "total_seconds": 535.0690759589197,
+        "total_tokens": 2428500,
+        "usage_complete": true
+      }
+    },
+    "all_records_accounting": {
+      "acceptance_rate": 0.75,
+      "accepted": 6,
+      "attempts": 8,
+      "known_seconds": 1530.381879249937,
+      "known_tokens": 8890152,
+      "quality": null,
+      "quality_complete": false,
+      "throughput": 0.003920590070591198,
+      "time_complete": true,
+      "tokens_per_accepted_task": 1481692.0,
+      "total_seconds": 1530.381879249937,
+      "total_tokens": 8890152,
+      "usage_complete": true
+    },
+    "bootstrap": {
+      "family_wise_confidence": 0.95,
+      "individual_confidence": 0.9833333333333333,
+      "method": "hierarchical paired task-cluster then paired repetition percentile bootstrap",
+      "quantiles": [
+        0.008333333333333333,
+        0.9916666666666667
+      ],
+      "samples": 20000,
+      "seed": 20261110
+    },
+    "confirmatory_design": false,
+    "confirmed": false,
+    "decision_pass": false,
+    "design_issues": [
+      "Missing or unexpected paired units",
+      "Every planned pair must contain exactly one record per arm",
+      "Confirmatory protocol requires five cases and three repetitions"
+    ],
+    "gates": {
+      "acceptance_not_lower": true,
+      "candidate_checks_pass": false,
+      "evidence_complete": false,
+      "exact_design": false,
+      "manual_contracts_complete": false,
+      "manual_contracts_pass": false,
+      "no_baseline_passed_group_regression": false,
+      "quality_delta_interval": false,
+      "quality_delta_point": false,
+      "throughput_ratio_interval": false,
+      "throughput_ratio_point": true,
+      "tokens_per_accepted_ratio_interval": false,
+      "tokens_per_accepted_ratio_point": true
+    },
+    "heldout_regressions": [
+      {
+        "case": "verify-installed",
+        "group": "clean-selection-json",
+        "repetition": 1,
+        "trial_id": "verify-installed-r1-candidate-a1"
+      },
+      {
+        "case": "verify-installed",
+        "group": "drift-and-unowned",
+        "repetition": 1,
+        "trial_id": "verify-installed-r1-candidate-a1"
+      },
+      {
+        "case": "verify-installed",
+        "group": "unsafe-and-errors",
+        "repetition": 1,
+        "trial_id": "verify-installed-r1-candidate-a1"
+      }
+    ],
+    "intervals": {},
+    "issues": [
+      "verify-installed-r1-candidate-a1: incomplete attempt or errors/missing error evidence",
+      "verify-installed-r1-candidate-a1: invalid/missing anchored manual review",
+      "verify-installed-r1-candidate-a1: invalid/missing grading evidence",
+      "Undefined ratio: zero acceptance or zero baseline token rate; verification blocked"
+    ],
+    "limitations": [
+      "Only five task clusters and three paired repetitions; bootstrap tail estimates are fragile.",
+      "Results apply to these sampled tasks and conditions; no universal or general engineering claim."
+    ],
+    "manual_acceptance_adjustments": "Raw results remain immutable; any manually identified contract failure is scored as an unaccepted attempt in this analysis.",
+    "manual_contract_failures": [
+      "verify-installed-r1-baseline-a1"
+    ],
+    "manual_contract_missing": [
+      "verify-installed-r1-candidate-a1"
+    ],
+    "pairs": [
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 192.94289895903785,
+            "known_tokens": 904176,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.005182880558938331,
+            "time_complete": true,
+            "tokens_per_accepted_task": 904176.0,
+            "total_seconds": 192.94289895903785,
+            "total_tokens": 904176,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 159.42566558287945,
+            "known_tokens": 576424,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006272515760519986,
+            "time_complete": true,
+            "tokens_per_accepted_task": 576424.0,
+            "total_seconds": 159.42566558287945,
+            "total_tokens": 576424,
+            "usage_complete": true
+          }
+        },
+        "case": "option-validation",
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.21023737460098,
+          "tokens_per_accepted_ratio": 0.6375130505565288
+        },
+        "repetition": 1,
+        "time_ratio": 0.8262841827453097,
+        "token_ratio": 0.6375130505565288
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 216.66987516602967,
+            "known_tokens": 803557,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.004615316269664717,
+            "time_complete": true,
+            "tokens_per_accepted_task": 803557.0,
+            "total_seconds": 216.66987516602967,
+            "total_tokens": 803557,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 138.96745862602256,
+            "known_tokens": 548300,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.007195929247660168,
+            "time_complete": true,
+            "tokens_per_accepted_task": 548300.0,
+            "total_seconds": 138.96745862602256,
+            "total_tokens": 548300,
+            "usage_complete": true
+          }
+        },
+        "case": "state-validation",
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.5591410917941104,
+          "tokens_per_accepted_ratio": 0.6823411407031487
+        },
+        "repetition": 1,
+        "time_ratio": 0.6413787727506404,
+        "token_ratio": 0.6823411407031487
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "case": "status-json",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": null,
+        "token_ratio": null
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 270.7571694579674,
+            "known_tokens": 3141325,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.0036933463368741598,
+            "time_complete": true,
+            "tokens_per_accepted_task": 3141325.0,
+            "total_seconds": 270.7571694579674,
+            "total_tokens": 3141325,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 186.07687066704966,
+            "known_tokens": 1061958,
+            "quality": 99.0,
+            "quality_complete": true,
+            "throughput": 0.0053741230514850824,
+            "time_complete": true,
+            "tokens_per_accepted_task": 1061958.0,
+            "total_seconds": 186.07687066704966,
+            "total_tokens": 1061958,
+            "usage_complete": true
+          }
+        },
+        "case": "preview-execution",
+        "metrics": {
+          "quality_delta": -1.0,
+          "throughput_ratio": 1.4550823457389153,
+          "tokens_per_accepted_ratio": 0.338060531781971
+        },
+        "repetition": 1,
+        "time_ratio": 0.6872463286551547,
+        "token_ratio": 0.338060531781971
+      },
+      {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 314.9428597079823,
+            "known_tokens": 1612594,
+            "quality": 0,
+            "quality_complete": true,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 314.9428597079823,
+            "total_tokens": 1612594,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 50.59908108296804,
+            "known_tokens": 241818,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 50.59908108296804,
+            "total_tokens": 241818,
+            "usage_complete": true
+          }
+        },
+        "case": "verify-installed",
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        },
+        "repetition": 1,
+        "time_ratio": 0.1606611470089652,
+        "token_ratio": 0.14995590954697835
+      }
+    ],
+    "per_case": {
+      "option-validation": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 192.94289895903785,
+            "known_tokens": 904176,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.005182880558938331,
+            "time_complete": true,
+            "tokens_per_accepted_task": 904176.0,
+            "total_seconds": 192.94289895903785,
+            "total_tokens": 904176,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 159.42566558287945,
+            "known_tokens": 576424,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.006272515760519986,
+            "time_complete": true,
+            "tokens_per_accepted_task": 576424.0,
+            "total_seconds": 159.42566558287945,
+            "total_tokens": 576424,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.21023737460098,
+          "tokens_per_accepted_ratio": 0.6375130505565288
+        }
+      },
+      "preview-execution": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 270.7571694579674,
+            "known_tokens": 3141325,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.0036933463368741598,
+            "time_complete": true,
+            "tokens_per_accepted_task": 3141325.0,
+            "total_seconds": 270.7571694579674,
+            "total_tokens": 3141325,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 186.07687066704966,
+            "known_tokens": 1061958,
+            "quality": 99.0,
+            "quality_complete": true,
+            "throughput": 0.0053741230514850824,
+            "time_complete": true,
+            "tokens_per_accepted_task": 1061958.0,
+            "total_seconds": 186.07687066704966,
+            "total_tokens": 1061958,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": -1.0,
+          "throughput_ratio": 1.4550823457389153,
+          "tokens_per_accepted_ratio": 0.338060531781971
+        }
+      },
+      "state-validation": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 216.66987516602967,
+            "known_tokens": 803557,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.004615316269664717,
+            "time_complete": true,
+            "tokens_per_accepted_task": 803557.0,
+            "total_seconds": 216.66987516602967,
+            "total_tokens": 803557,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 1.0,
+            "accepted": 1,
+            "attempts": 1,
+            "known_seconds": 138.96745862602256,
+            "known_tokens": 548300,
+            "quality": 100.0,
+            "quality_complete": true,
+            "throughput": 0.007195929247660168,
+            "time_complete": true,
+            "tokens_per_accepted_task": 548300.0,
+            "total_seconds": 138.96745862602256,
+            "total_tokens": 548300,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": 0.0,
+          "throughput_ratio": 1.5591410917941104,
+          "tokens_per_accepted_ratio": 0.6823411407031487
+        }
+      },
+      "status-json": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          },
+          "candidate": {
+            "acceptance_rate": null,
+            "accepted": 0,
+            "attempts": 0,
+            "known_seconds": 0,
+            "known_tokens": 0,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": null,
+            "time_complete": false,
+            "tokens_per_accepted_task": null,
+            "total_seconds": null,
+            "total_tokens": null,
+            "usage_complete": false
+          }
+        },
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        }
+      },
+      "verify-installed": {
+        "arms": {
+          "baseline": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 314.9428597079823,
+            "known_tokens": 1612594,
+            "quality": 0,
+            "quality_complete": true,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 314.9428597079823,
+            "total_tokens": 1612594,
+            "usage_complete": true
+          },
+          "candidate": {
+            "acceptance_rate": 0.0,
+            "accepted": 0,
+            "attempts": 1,
+            "known_seconds": 50.59908108296804,
+            "known_tokens": 241818,
+            "quality": null,
+            "quality_complete": false,
+            "throughput": 0.0,
+            "time_complete": true,
+            "tokens_per_accepted_task": null,
+            "total_seconds": 50.59908108296804,
+            "total_tokens": 241818,
+            "usage_complete": true
+          }
+        },
+        "metrics": {
+          "quality_delta": null,
+          "throughput_ratio": null,
+          "tokens_per_accepted_ratio": null
+        }
+      }
+    },
+    "point": {
+      "quality_delta": null,
+      "throughput_ratio": 1.8601575908816546,
+      "tokens_per_accepted_ratio": 0.3758326817971627
+    },
+    "record_count": 8,
+    "scope": "Five real Orchestra C# CLI tasks, one pair each; decision screen only, no repeatability/general productivity claim.",
+    "statistical_confirmation": false,
+    "status": "blocked",
+    "thresholds": {
+      "quality_delta_min": -0.25,
+      "throughput_ratio_min": 1.1,
+      "tokens_per_accepted_ratio_max": 1.1
+    },
+    "worst_cases": {
+      "quality_delta": {
+        "case": "preview-execution",
+        "value": -1.0
+      },
+      "throughput_ratio": {
+        "case": "option-validation",
+        "value": 1.21023737460098
+      },
+      "tokens_per_accepted_ratio": {
+        "case": "state-validation",
+        "value": 0.6823411407031487
+      }
+    }
+  },
+  "reproduction": {
+    "regularControl": "modified",
+    "linkedControl": "unsafe",
+    "attempts": 9,
+    "exchanges": 274,
+    "swapError": 0,
+    "statusCounts": {
+      "unsafe": 6,
+      "modified": 2,
+      "unchanged": 1
+    },
+    "followedLink": true,
+    "httpRequests": 0
+  },
+  "measured_started_trial_tokens": 8890152,
+  "quota_observations": [
+    {
+      "checkpoint": "before-first-trial",
+      "used_percent": 31,
+      "reset_epoch": 1794343409
+    },
+    {
+      "checkpoint": "first-pair-complete-next-trial-started",
+      "used_percent": 54,
+      "reset_epoch": 1794343409
+    },
+    {
+      "checkpoint": "second-pair-complete-next-trial-started",
+      "used_percent": 63,
+      "reset_epoch": 1794343409
+    },
+    {
+      "checkpoint": "third-pair-complete-next-trial-started",
+      "used_percent": 71,
+      "reset_epoch": 1794343409
+    },
+    {
+      "checkpoint": "manual-stop-and-reproduction-complete",
+      "used_percent": 84,
+      "reset_epoch": 1794343409
+    }
+  ],
+  "limits": [
+    "Account-wide quota observations include parent evaluation work and any other concurrent usage, not isolated benchmark consumption.",
+    "Native total tokens include cached input; not a dollar-cost or quota conversion.",
+    "Baseline verify-installed automated acceptance is overridden only in derived manual analysis.",
+    "Interrupted candidate is incomplete, not a demonstrated implementation failure.",
+    "New race reproduction checks the frozen explicit no-follow requirement; no benchmark inputs or instructions changed after inference.",
+    "No repeatability or general productivity conclusion; old screens and stopped v1 results are separate."
+  ]
+}

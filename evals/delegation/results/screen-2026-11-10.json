@@ -1,0 +1,785 @@
+{
+  "date": "2026-11-10",
+  "design": "One paired screening repetition of four synthetic coding cases. Not confirmatory.",
+  "baseline": "Frozen current task-owned token-first instructions, before quality-first revision; distinct from Git main.",
+  "base_commit": "3ad9d38943085290b1d5dcbaf2e7e49995a540ab",
+  "baseline_snapshot_manifest_sha256": "9d6d0e4a64bd91f5c4ae061c1de88db5d43ea2c533e6510a7b08b4ec6a1c9437",
+  "frozen_inputs": {
+    "source_assets": {
+      "baseline": {
+        "global/codex/AGENTS.md": "ae97f61132f079a3f30fb7374f1a2d43a66f31dc19f356e4ef6ecfa87be7f893",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "174482b19a505c6fc698d328d4a7f9aebf5b65159677ae384fa68f5651f0d3be",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "7f772fc28866baab18e4c3fc2b5ae29ae2cc4eac8a1fc3cfa5760c71917081f0",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      },
+      "candidate": {
+        "global/codex/AGENTS.md": "3c9b60908566a0ffa046cf9e3170891f430dc1c4faa80521cb38b225e9b05717",
+        "global/codex/agents/workflow_explorer.toml.tmpl": "beed6837346d89b00a977b7ca4a65053ecd189efca802d72b045815bcc5da608",
+        "global/codex/agents/workflow_reviewer.toml.tmpl": "2fdba0ed07b325a4f1929a69d45076e8c80f6449d3bd8f8b4ca4180284abac79",
+        "global/codex/agents/workflow_verifier.toml.tmpl": "d0a5edffca6fb35d089f3a33c3df4ec1ff4996641af96be3f2b8c027f4a36bd0",
+        "global/codex/agents/workflow_worker.toml.tmpl": "c81ea66522e1944c9509bd57fcd3f86f5814d9603d33bf7fd1c8d4b259d0f526",
+        "models.conf": "260c96e5120dc9f3e9cdf5a39e176243a745a4bf7ff6f93592d50ccdcf3b3a95",
+        "skills/agentic-debugging/SKILL.md": "bf1f34b30feb9dacc7409f28133690f4b885042a74b94cb56c005cbe0d272f9b",
+        "skills/agentic-debugging/agents/openai.yaml": "848069f8ec997cbea4a1e91808f97aedd7fd80372150233b688b89e8b062a20d",
+        "skills/agentic-feature-delivery/SKILL.md": "db72e71d7a72c86a3618fe1f508eef4f4f8b16284b4f8229ab12f95374ff5238",
+        "skills/agentic-feature-delivery/agents/openai.yaml": "00595a48dffa24032eb6bc61311086db260dfd4a6f9bd16577e8b8e9d66ac0bd",
+        "skills/bootstrap-agent-harness/SKILL.md": "1596601de393e8fdde3da0bfef3bda6d59cfd0251e5ebac946182a1196d56ccf",
+        "skills/bootstrap-agent-harness/agents/openai.yaml": "c4fa7b1024e983f8a5a6e19f90d5f11dd0b7bf3fac5ae94669eebab2e14d52e0",
+        "skills/grill-me/LICENSE": "0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5",
+        "skills/grill-me/SKILL.md": "f6cc8e6703e452b3b45d3bbb09cebc07e4aa32e8a6e2350d5fb1642a5fba312c",
+        "skills/grill-me/agents/openai.yaml": "517dab8c9fe78e09c117674bd1605dc9f81aaee20d62dacb5ae3a4325b710a5f",
+        "skills/refactor-code/SKILL.md": "b881f6c1bcfde809ca7c349508af6d9a86b40fad4bb70a15d02e3977c1d1a8d3",
+        "skills/refactor-code/agents/openai.yaml": "8d1c8c2b3f8adebba2f005b42a13be6f706de92be8f0681cf8d6bc2082522b62"
+      }
+    },
+    "models": {
+      "CLAUDE_EXPLORER_MODEL": "haiku",
+      "CLAUDE_ORCHESTRATOR_MODEL": "opus",
+      "CLAUDE_REVIEWER_MODEL": "opus",
+      "CLAUDE_VERIFIER_MODEL": "haiku",
+      "CLAUDE_WORKER_MODEL": "sonnet",
+      "CODEX_EXPLORER_MODEL": "gpt-6-luna",
+      "CODEX_ORCHESTRATOR_MODEL": "gpt-6-sol",
+      "CODEX_REVIEWER_MODEL": "gpt-6-sol",
+      "CODEX_VERIFIER_MODEL": "gpt-6-luna",
+      "CODEX_WORKER_MODEL": "gpt-6-sol"
+    },
+    "root_effort": "medium",
+    "corpus_sha256": "5f44cead754c226270e3e0c752aa8ddaa69c04679608f91d362055b061da7cd6",
+    "runner_sha256": "b6933fd6a1533c111ba82fd21d5cebc0680f223d37a053f214b460be6a2c0a07",
+    "binary_sha256": "50ab38ba21d0d9f8346f32f41848382f15b556190f3c7a07e885a4fb73e379c8",
+    "timeout_seconds": 600,
+    "grading_timeout_seconds": 300
+  },
+  "summary": {
+    "arms": {
+      "baseline": {
+        "acceptance_rate": 1.0,
+        "accepted": 4,
+        "attempt_seconds": {
+          "max": 302.87001425016206,
+          "mean": 170.2741119270213,
+          "min": 37.299675832968205,
+          "n": 4,
+          "stdev": 111.91521533628796
+        },
+        "attempts": 4,
+        "attempts_with_delegation": 3,
+        "coding_attempts": 4,
+        "manual_reviews_complete": true,
+        "native_descendants": 5,
+        "quality": 100.0,
+        "throughput": 0.005872883368368971,
+        "time_complete": true,
+        "token_counters": {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 2560896,
+          "input_tokens": 2794476,
+          "output_tokens": 39728,
+          "reasoning_output_tokens": 15467,
+          "total_tokens": 2834204
+        },
+        "tokens_per_accepted_task": 708551.0,
+        "total_seconds": 681.0964477080852,
+        "total_tokens": 2834204,
+        "usage_complete": true
+      },
+      "candidate": {
+        "acceptance_rate": 1.0,
+        "accepted": 4,
+        "attempt_seconds": {
+          "max": 171.68124354199972,
+          "mean": 114.96919859401532,
+          "min": 38.96846479200758,
+          "n": 4,
+          "stdev": 56.35825535049511
+        },
+        "attempts": 4,
+        "attempts_with_delegation": 1,
+        "coding_attempts": 4,
+        "manual_reviews_complete": true,
+        "native_descendants": 2,
+        "quality": 99.75,
+        "throughput": 0.008697981826691228,
+        "time_complete": true,
+        "token_counters": {
+          "cache_write_input_tokens": 0,
+          "cached_input_tokens": 1119744,
+          "input_tokens": 1230438,
+          "output_tokens": 24037,
+          "reasoning_output_tokens": 7340,
+          "total_tokens": 1254475
+        },
+        "tokens_per_accepted_task": 313618.75,
+        "total_seconds": 459.8767943760613,
+        "total_tokens": 1254475,
+        "usage_complete": true
+      }
+    },
+    "automatic_commit_or_push": false,
+    "baseline_quality_ceiling": true,
+    "cost_status": "Unverified; no observed billing/pricing evidence.",
+    "critical_failures": [],
+    "delegation_claim_eligible": true,
+    "delegation_observed": true,
+    "gates": {
+      "acceptance_not_lower": true,
+      "all_attempts_complete": true,
+      "candidate_critical": true,
+      "confirmatory_design": false,
+      "native_usage_complete": true,
+      "no_heldout_regression": true,
+      "paired_design_complete": true,
+      "quality_target": false,
+      "quality_verified": true,
+      "throughput_target": true,
+      "token_target": true
+    },
+    "heldout_regressions": [],
+    "human_productivity": "Unverified; no observed user overhead or developer productivity measurements.",
+    "mode": "NONCONFIRMATORY screen",
+    "monetary_cost": null,
+    "notes": [
+      "Baseline quality exceeds 90.909; a 10% gain is impossible on the 100-point scale. Target unchanged.",
+      "NONCONFIRMATORY screen: one paired repetition cannot authorize commit or push."
+    ],
+    "paired_estimates": [
+      {
+        "case": "bundle",
+        "repetition": 1,
+        "throughput_ratio": 1.225287892868079,
+        "time_ratio": 0.8161347270470951
+      },
+      {
+        "case": "dag",
+        "repetition": 1,
+        "throughput_ratio": 1.4831916753377417,
+        "time_ratio": 0.6742216913888
+      },
+      {
+        "case": "ownership",
+        "repetition": 1,
+        "throughput_ratio": 1.7641415451191593,
+        "time_ratio": 0.5668479395923159
+      },
+      {
+        "case": "tools",
+        "repetition": 1,
+        "throughput_ratio": 0.9571759121652224,
+        "time_ratio": 1.0447400392033535
+      }
+    ],
+    "paired_time_ratio_variability": {
+      "max": 1.0447400392033535,
+      "mean": 0.7754860993078911,
+      "min": 0.5668479395923159,
+      "n": 4,
+      "stdev": 0.20650613960769268
+    },
+    "ratios": {
+      "quality": 0.9975,
+      "throughput": 1.4810411310972191,
+      "tokens": 0.4426198678711906
+    },
+    "screen_targets_passed": false,
+    "targets_passed": false,
+    "version": 1
+  },
+  "trials": [
+    {
+      "trial_id": "bundle-r1-baseline-a1",
+      "case": "bundle",
+      "arm": "baseline",
+      "accepted": true,
+      "elapsed_seconds": 136.46999224997126,
+      "agent_seconds": 136.03312612499576,
+      "grading_seconds": 0.4032617079792544,
+      "total_tokens": 901182,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "frontmatter": true,
+          "integration_interface": true,
+          "render_errors": true,
+          "render_values": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.4032617079792544,
+        "mutants": {
+          "crlf": true,
+          "metadata": true,
+          "missing_model": true,
+          "repeat": true,
+          "unclosed": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.43686612497549504
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts/names: rendering.py explicit ASCII token matching and used-value checks; skills.py exact opening/closing lines. Cohesion: separate render/strip/build functions with a focused replacement callback. Errors/state: malformed or unclosed content raises ValueError; no model input mutation. Containment: bounded three-module change using standard regex/string operations. Tests: readable module-specific cases plus bundle integration, CRLF preservation and error propagation."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 425975,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5da-8c34-7fd2-b207-3cbc5396e14c"
+            }
+          ]
+        },
+        {
+          "role": "workflow_worker",
+          "total_tokens": 193389,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5da-e765-7463-a0e0-0d9bef11a232"
+            }
+          ]
+        },
+        {
+          "role": "workflow_worker",
+          "total_tokens": 174554,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5da-f7cc-70e1-b786-95820a25ccf3"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 107264,
+          "runtime_contexts": [
+            {
+              "effort": "high",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5dc-1313-7cd3-b9a7-7af758604e57"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "bundle-r1-candidate-a1",
+      "case": "bundle",
+      "arm": "candidate",
+      "accepted": true,
+      "elapsed_seconds": 111.37789987504948,
+      "agent_seconds": 110.95598249998875,
+      "grading_seconds": 0.3997734999284148,
+      "total_tokens": 588563,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "frontmatter": true,
+          "integration_interface": true,
+          "render_errors": true,
+          "render_values": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.3997734999284148,
+        "mutants": {
+          "crlf": true,
+          "metadata": true,
+          "missing_model": true,
+          "repeat": true,
+          "unclosed": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.4219173750607297
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts/names: rendering.py explicit placeholder scan and literal insertion; skills.py named exact delimiter pattern. Cohesion: separate rendering, stripping and bundle composition with short functions. Errors/state: explicit ValueError for missing/invalid tokens and unclosed frontmatter, immutable strings and unchanged mapping. Containment: bounded module/test edits using standard helpers. Tests: readable repeated/literal model replacements, CRLF/body preservation and integration checks."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 290082,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d8-d6f4-7e80-ac74-d1644cfc2580"
+            }
+          ]
+        },
+        {
+          "role": "worker",
+          "total_tokens": 161571,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d9-3e93-70a1-a9cd-f4350bbb88de"
+            }
+          ]
+        },
+        {
+          "role": "worker",
+          "total_tokens": 136910,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d9-5091-72d1-ba14-c35ce8e393e1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "dag-r1-baseline-a1",
+      "case": "dag",
+      "arm": "baseline",
+      "accepted": true,
+      "elapsed_seconds": 204.45676537498366,
+      "agent_seconds": 203.87922437500674,
+      "grading_seconds": 2.639643874950707,
+      "total_tokens": 687013,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "dependencies": true,
+          "failure_isolation": true,
+          "parallel_limit": true,
+          "upfront_validation": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 2.639643874950707,
+        "mutants": {
+          "blocked": true,
+          "failure": true,
+          "limit": true,
+          "order": true,
+          "serial": true,
+          "validation": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.5775409999769181
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts: executor.py validates the required task mapping content, limits and graph before work. Cohesion: explicit upfront topological pass and bounded ready/active scheduling with a separate completion queue. State/resources: cancellation gathers active tasks before propagating; ownership is explicit. Containment: scheduler/tests-only changes and standard collections. Tests: event-driven behavior, multiple prerequisites, failure isolation and cancellation checks are readable and focused."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 482674,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d3-8b01-7ec1-a19a-2b0bb8388c85"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 204339,
+          "runtime_contexts": [
+            {
+              "effort": "high",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d5-0dc9-7bb1-86d0-07eb7df96b02"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "dag-r1-candidate-a1",
+      "case": "dag",
+      "arm": "candidate",
+      "accepted": true,
+      "elapsed_seconds": 137.84918616700452,
+      "agent_seconds": 137.31327179202344,
+      "grading_seconds": 1.551241708919406,
+      "total_tokens": 253275,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "dependencies": true,
+          "failure_isolation": true,
+          "parallel_limit": true,
+          "upfront_validation": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 1.551241708919406,
+        "mutants": {
+          "blocked": true,
+          "failure": true,
+          "limit": true,
+          "order": true,
+          "serial": true,
+          "validation": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.5359143749810755
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts: executor.py validates mappings, limits, names and graph before execution. Cohesion: local run/finish helpers isolate task outcomes and blocked propagation around two explicit graph passes. State/resources: finally cancels and gathers active tasks; no input mutation. Containment: scheduler/tests only, standard heap/asyncio structures. Tests: event-driven overlap, failure, ordering and invalid-input checks are readable."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 253275,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5d6-b610-7480-abc6-d017fd591a5a"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "ownership-r1-baseline-a1",
+      "case": "ownership",
+      "arm": "baseline",
+      "accepted": true,
+      "elapsed_seconds": 302.87001425016206,
+      "agent_seconds": 302.3321889580693,
+      "grading_seconds": 0.4686428749701008,
+      "total_tokens": 1138581,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "invalid_interface": true,
+          "links": true,
+          "ownership": true,
+          "regular_paths": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.4686428749701008,
+        "mutants": {
+          "backup": true,
+          "links": true,
+          "overwrite_modified": true,
+          "traversal": true,
+          "unchanged": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.537825292092748
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts: installer.py validates relative path components and names decisions explicitly. Cohesion: _plan_one separates per-file traversal from plan_install validation/root lifetime. State/errors: descriptor-relative no-follow opens and ExitStack/finally close resources; explicit conflicts. Containment: only planner/tests, no unnecessary machinery. Tests: behavioral ownership, filesystem nonmutation, link and swap regressions are readable and focused."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 743830,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5c7-5ab1-7df2-8f09-83d784d16bcd"
+            }
+          ]
+        },
+        {
+          "role": "workflow_reviewer",
+          "total_tokens": 394751,
+          "runtime_contexts": [
+            {
+              "effort": "high",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5c8-b1d7-78d0-8752-222c5d6fbfd5"
+            },
+            {
+              "effort": "high",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5ca-959c-7270-904f-8b7dc6f571f2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "ownership-r1-candidate-a1",
+      "case": "ownership",
+      "arm": "candidate",
+      "accepted": true,
+      "elapsed_seconds": 171.68124354199972,
+      "agent_seconds": 171.21479208301753,
+      "grading_seconds": 0.45253400004003197,
+      "total_tokens": 324278,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "invalid_interface": true,
+          "links": true,
+          "ownership": true,
+          "regular_paths": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.45253400004003197,
+        "mutants": {
+          "backup": true,
+          "links": true,
+          "overwrite_modified": true,
+          "traversal": true,
+          "unchanged": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.466451458982192
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          1,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts: installer.py explicit path validation and decision names. Cohesion: plan_install combines validation, descriptor lifetime, nested traversal and ownership decisions in one deeply nested function, creating localized reading complexity (1). State/errors: ExitStack and fdopen close resources and OSError maps to conflict. Containment: planner/tests-only changes with no needless extra abstraction. Tests: readable case tables and focused symlink/nonregular/nonmutation coverage."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 324278,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5c4-b464-7533-a360-e3536487306f"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "tools-r1-baseline-a1",
+      "case": "tools",
+      "arm": "baseline",
+      "accepted": true,
+      "elapsed_seconds": 37.299675832968205,
+      "agent_seconds": 36.84986462502275,
+      "grading_seconds": 0.41836245893500745,
+      "total_tokens": 107428,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "all": true,
+          "interface": true,
+          "invalid": true,
+          "normalization": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.41836245893500745,
+        "mutants": {
+          "all": true,
+          "case": true,
+          "duplicates": true,
+          "invalid": true,
+          "semicolon": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.4498112079454586
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts/names: tools.py parse_tools explicitly normalizes and rejects invalid segments; cohesion: one small validation/normalization function; errors/state: ValueError paths explicit and fresh result list; containment: only parser and focused tests changed, no extra abstraction; tests: test_parse_tools.py covers normalization/order/all and invalid cases with subTest labels. Seed smoke style unchanged and not penalized."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 107428,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5c3-8347-76c0-80b4-18fe59505a9e"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "trial_id": "tools-r1-candidate-a1",
+      "case": "tools",
+      "arm": "candidate",
+      "accepted": true,
+      "elapsed_seconds": 38.96846479200758,
+      "agent_seconds": 38.456000125035644,
+      "grading_seconds": 0.4681437920080498,
+      "total_tokens": 88359,
+      "usage_complete": true,
+      "errors": [],
+      "grade": {
+        "accepted": true,
+        "authored_tests_pass": true,
+        "critical_pass": true,
+        "functional_groups": {
+          "all": true,
+          "interface": true,
+          "invalid": true,
+          "normalization": true
+        },
+        "functional_score": 70.0,
+        "grading_seconds": 0.4681437920080498,
+        "mutants": {
+          "all": true,
+          "case": true,
+          "duplicates": true,
+          "invalid": true,
+          "semicolon": true
+        },
+        "regression_score": 20.0,
+        "scope_ok": true,
+        "validation_seconds": 0.5124646669719368
+      },
+      "maintainability": {
+        "criteria": [
+          2,
+          2,
+          2,
+          2,
+          2
+        ],
+        "reviewer": "parent-blinded",
+        "rationale": "Contracts/names: tools.py exposes the required API and clear normalized names; cohesion: standard regex split plus a short ordered de-duplication loop; errors/state: explicit ValueError and no input mutation; containment: bounded parser/tests-only work with no unrelated machinery; tests: test_tools.py groups input types, empty segments, unsupported names and all cases into readable behavioral tests. Seed smoke style unchanged."
+      },
+      "runtime_threads": [
+        {
+          "role": "orchestrator",
+          "total_tokens": 88359,
+          "runtime_contexts": [
+            {
+              "effort": "medium",
+              "model": "gpt-6-sol",
+              "turn_id": "01a1c5c4-1828-7592-9c59-16ec82c22c0f"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "diagnostic_overhead": [
+    {
+      "experiment": "screen",
+      "trial": "tools-r1-baseline-a1",
+      "reason": "Native appserver appended a trust record for the owned fixture to isolated config. No model/role/instruction changed. Preseeded identical trust record; no correctness or metric changes.",
+      "tokens": 87357,
+      "elapsed_seconds": 36.18925433396362,
+      "status": "diagnostic; comparison restarted in screen-v2, complete evidence retained separately"
+    }
+  ],
+  "measurement_repair": "First native session metadata identity retained; own event turn IDs distinguish inherited contexts. Four retained trial results reanalysed without rerunning inference, changing grading, elapsed time or inputs. Original results, manifests and raw hashes preserved in a local migration audit.",
+  "validation": {
+    "evaluator_unittests": "35 passed",
+    "dotnet_executable_suite": "passed",
+    "release_build": "passed; zero warnings/errors",
+    "independent_model_review": "Not requested; parent final diff inspection performed."
+  },
+  "limitations": [
+    "No repeated confirmation: quality target missed and baseline rubric ceiling prevents it.",
+    "Synthetic fixtures and Codex native performance only; Claude/Cursor distribution checked deterministically.",
+    "Policy changes include optional reviews becoming opt-in; timing cannot be attributed solely to parallel delegation.",
+    "Same parent supplied arm-obscured maintainability assessments; full experiment context was known.",
+    "Native tokens include cached input; no monetary cost claim.",
+    "No observed human overhead or developer productivity data.",
+    "Windows process cleanup not exercised."
+  ]
+}

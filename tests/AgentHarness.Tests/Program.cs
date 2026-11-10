@@ -158,6 +158,10 @@ try
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "grill-me", "SKILL.md")), "grill-me skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "refactor-code", "SKILL.md")), "refactor-code skill installed");
     Check(File.Exists(Path.Combine(home, ".agents", "skills", "refactor-code", "agents", "openai.yaml")), "refactor-code Codex metadata installed");
+    var assets = new AssetStore();
+    Check(File.ReadAllText(Path.Combine(home, ".codex", "AGENTS.md")) == assets.ReadText("global/codex/AGENTS.md"), "Codex installs complete canonical instructions");
+    foreach (var skill in new[] { "agentic-feature-delivery", "agentic-debugging" })
+        Check(File.ReadAllText(Path.Combine(home, ".agents", "skills", skill, "SKILL.md")) == assets.ReadText($"skills/{skill}/SKILL.md"), $"Codex installs complete {skill} guidance");
     Check(app.Run(new[] { "install", "--tools", "codex" }) == 0, "repeat install is a no-op");
     var instructions = Path.Combine(home, ".codex", "AGENTS.md");
     File.WriteAllText(instructions, "personal change");
@@ -178,6 +182,12 @@ try
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "agentic-debugging", "SKILL.md")), "Claude agentic-debugging skill installed");
     Check(File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "SKILL.md")), "Claude refactor-code skill installed");
     Check(!File.Exists(Path.Combine(home, ".claude", "skills", "refactor-code", "agents", "openai.yaml")), "Claude excludes refactor-code Codex metadata");
+    Check(File.ReadAllText(Path.Combine(home, ".claude", "CLAUDE.md")) == assets.ReadText("global/claude/CLAUDE.md"), "Claude installs complete canonical instructions");
+    foreach (var skill in new[] { "agentic-feature-delivery", "agentic-debugging" })
+        Check(File.ReadAllText(Path.Combine(home, ".claude", "skills", skill, "SKILL.md")) == assets.ReadText($"skills/{skill}/SKILL.md"), $"Claude installs complete {skill} guidance");
+    var cursorRules = Capture(app, new[] { "cursor-rules", "--print" });
+    var canonicalRules = assets.ReadText("global/cursor/USER_RULES.md").Split("```text\n", StringSplitOptions.None)[1].Split("```", StringSplitOptions.None)[0].Trim();
+    Check(cursorRules.ExitCode == 0 && cursorRules.Output.Trim() == canonicalRules, "Cursor prints the complete canonical rules body");
     Directory.CreateDirectory(project); var previous = Directory.GetCurrentDirectory(); Directory.SetCurrentDirectory(project);
     try
     {
@@ -189,6 +199,8 @@ try
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-feature-delivery.md")).Contains("reviewable draft or diff", StringComparison.Ordinal), "Cursor feature command retains refactor audit sequencing");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "agentic-debugging.md")), "Cursor agentic-debugging command generated");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "agentic-debugging.md")).Contains("compact evidence ledger", StringComparison.Ordinal), "Cursor agentic-debugging command retains workflow body");
+        foreach (var skill in new[] { "agentic-feature-delivery", "agentic-debugging" })
+            Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", skill + ".md")) == CursorCommandGenerator.FromSkill(skill, assets.ReadText($"skills/{skill}/SKILL.md")), $"Cursor generates complete {skill} guidance from its canonical skill");
         Check(File.Exists(Path.Combine(project, ".cursor", "commands", "grill-me.md")), "Cursor grill-me command generated");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "grill-me.md")).Contains("resume\n   `$agentic-debugging`", StringComparison.Ordinal), "Cursor grill-me command returns to debugging workflow");
         Check(File.ReadAllText(Path.Combine(project, ".cursor", "commands", "grill-me.md")).Contains("resume `$refactor-code`", StringComparison.Ordinal), "Cursor grill-me command returns to refactor workflow");

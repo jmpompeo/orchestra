@@ -5,14 +5,15 @@ description: Plan, delegate, implement, verify, and review a non-trivial softwar
 
 # Agentic feature delivery
 
-Own the complete integrated result in one orchestrated session. Minimize total
-tokens and latency without weakening correctness, evidence, or review.
+Own the complete integrated result in one orchestrated session. Prioritize
+correctness, then time to a validated result, with token use as a constraint.
 
 1. Read repository instructions and `docs/agent-context.md` when present.
    Read `docs/harness-evolution.md` when it exists and a recurring failure is
    relevant. Inspect the working tree and preserve unrelated changes.
-2. Decide whether orchestration is justified. Handle a small, obvious,
-   localized edit directly without subagents.
+2. Decide whether orchestration is justified. Handle small, obvious, low-risk
+   localized edits directly even when this workflow is invoked. Use a targeted
+   check; independent model review remains opt-in at every risk tier.
 3. Resolve meaningful ambiguity before editing. Establish outcomes,
    constraints, non-goals, edge cases, and acceptance criteria. Ask only about
    decisions that materially change behavior, architecture, risk, cost, or
@@ -39,18 +40,17 @@ tokens and latency without weakening correctness, evidence, or review.
 8. Parallelize only independent work. Parallel writers must have explicit,
    non-overlapping file ownership. Never overlap shared migration, schema, or
    integration surfaces.
-9. Delegate adaptively rather than assigning one agent to every phase. Keep a
-   small localized change with the parent when the handoff would cost more than
-   the work. Give faster capable agents only the context required for a bounded
-   task, reuse compact findings across phases, combine implementation with its
-   focused tests when ownership aligns, and stop obsolete branches early.
-10. Once a reviewable draft or diff exists, launch the lowest-cost capable
-    read-only subagent in parallel with validation or review using
-    `$refactor-code` audit mode. Scope it to the affected methods or functions
-    and minimum context, never the whole file by default. Implementation,
-    validation, and review must not depend on its completion, but collect its
-    result before the final handoff. Report pre-existing smells without fixing
-    them; route issues introduced by the feature through normal review.
+9. Apply the global quality-first delegation rules. Identify the critical path;
+   parallelize independent bounded work only when it improves the result or
+   completion time after coordination and rework. Name capable configured roles
+   with suitable tools and permissions. Give compact evidence and acceptance
+   checks, pair implementation with regression tests, reuse findings, and stop
+   obsolete branches. Diagnose failures before retrying; escalate directly when
+   expertise is missing. Verify the integrated behavior and relevant edge cases.
+10. Once a reviewable draft or diff exists, run a bounded read-only refactor
+    audit only when explicitly requested by the user or opted in by a standing
+    project rule. Scope it to the changed functions and collect findings before
+    handoff. Preserve unrelated work.
 11. Keep architecture and integration decisions with the parent. Inspect every
    returned change and the final diff; subagent reports are not proof.
 12. Run fast deterministic checks before handoff, then the broader checks the
@@ -60,8 +60,10 @@ tokens and latency without weakening correctness, evidence, or review.
 13. For behaviour-critical work, use approved fixtures or explicit manual
     acceptance steps. Do not treat agent-authored tests alone as sufficient
     evidence when trusted examples are available.
-14. For non-trivial changes, obtain an independent read-only review, address
-   material findings, and rerun affected checks.
+14. Obtain an independent read-only correctness review only when explicitly
+    requested by the user or opted in by a standing project rule. Address
+    material findings and rerun affected checks. An audit and a correctness
+    review are separate opt-ins.
 15. When a pattern has failed at least twice, propose the smallest durable
     control in `docs/harness-evolution.md`; never record sensitive data or raw
     transcripts. Stop only when acceptance criteria are met or a concrete

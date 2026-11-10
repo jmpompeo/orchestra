@@ -1,0 +1,14 @@
+{
+  "regularControl": "modified",
+  "linkedControl": "unsafe",
+  "attempts": 9,
+  "exchanges": 274,
+  "swapError": 0,
+  "statusCounts": {
+    "unsafe": 6,
+    "modified": 2,
+    "unchanged": 1
+  },
+  "followedLink": true,
+  "httpRequests": 0
+}
