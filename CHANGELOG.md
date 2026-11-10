@@ -1,5 +1,68 @@
 # Changelog
 
+## [2.9.0](https://github.com/jmpompeo/orchestra/compare/v2.8.0...v2.9.0) (2026-11-09)
+
+
+### Features
+
+* clean up successful runs and make liveness hooks optional ([#43](https://github.com/jmpompeo/orchestra/issues/43)) ([7e21d76](https://github.com/jmpompeo/orchestra/commit/7e21d768b7c21891ecd54668c4d1e008011dbff1))
+
+## [2.8.0](https://github.com/jmpompeo/orchestra/compare/v2.7.0...v2.8.0) (2026-11-09)
+
+
+### Features
+
+* streamline validation, model diagnostics, and run dashboards ([#40](https://github.com/jmpompeo/orchestra/issues/40)) ([eeb4930](https://github.com/jmpompeo/orchestra/commit/eeb49309d852f5f4a04e371081c80e90de8165a5))
+
+## [2.7.0](https://github.com/jmpompeo/orchestra/compare/v2.6.0...v2.7.0) (2026-10-09)
+
+
+### Features
+
+* append managed block to existing global instruction files ([#37](https://github.com/jmpompeo/orchestra/issues/37)) ([c583cbf](https://github.com/jmpompeo/orchestra/commit/c583cbf44d0b3986558e59ff58a2f145aacda947))
+
+## [2.6.0](https://github.com/jmpompeo/orchestra/compare/v2.5.0...v2.6.0) (2026-09-29)
+
+
+### Features
+
+* make model reviews opt-in and document token pilot ([#34](https://github.com/jmpompeo/orchestra/issues/34)) ([08a3b43](https://github.com/jmpompeo/orchestra/commit/08a3b431f18172b02d0200fee951247b00e7a530))
+
+## [2.5.0](https://github.com/jmpompeo/orchestra/compare/v2.4.2...v2.5.0) (2026-09-28)
+
+
+### Features
+
+* add bounded long-running agent sessions ([#32](https://github.com/jmpompeo/orchestra/issues/32)) ([b927afc](https://github.com/jmpompeo/orchestra/commit/b927afcd07532a6e04c1660cea1017909758bb45)), closes [#30](https://github.com/jmpompeo/orchestra/issues/30)
+
+## [2.4.2](https://github.com/jmpompeo/orchestra/compare/v2.4.1...v2.4.2) (2026-09-27)
+
+
+### Bug Fixes
+
+* **skills:** gate refactor audit by feature scope ([#28](https://github.com/jmpompeo/orchestra/issues/28)) ([b234afc](https://github.com/jmpompeo/orchestra/commit/b234afccb39eb64690fedd0e1193da07ff286e8c))
+
+## [2.4.1](https://github.com/jmpompeo/orchestra/compare/v2.4.0...v2.4.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* **models:** render configured agent models ([#23](https://github.com/jmpompeo/orchestra/issues/23)) ([797eba8](https://github.com/jmpompeo/orchestra/commit/797eba889d4edd57a692cf04a61805aa3b8dc7f8))
+
+## [2.4.0](https://github.com/jmpompeo/orchestra/compare/v2.3.2...v2.4.0) (2026-09-26)
+
+
+### Features
+
+* improve workflow skill handoffs ([#20](https://github.com/jmpompeo/orchestra/issues/20)) ([8ce1416](https://github.com/jmpompeo/orchestra/commit/8ce1416b4648e05cd211b6ce260ab769c88c4c7c))
+
+## [2.3.2](https://github.com/jmpompeo/orchestra/compare/v2.3.1...v2.3.2) (2026-09-23)
+
+
+### Bug Fixes
+
+* **install:** resolve embedded assets on Windows ([#17](https://github.com/jmpompeo/orchestra/issues/17)) ([1c467e8](https://github.com/jmpompeo/orchestra/commit/1c467e82c8d838d496054041491704ebd869e524))
+
 ## [2.3.1](https://github.com/jmpompeo/orchestra/compare/v2.3.0...v2.3.1) (2026-09-23)
 
 

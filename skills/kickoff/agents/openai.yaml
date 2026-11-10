@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kickoff Long Session"
+  short_description: "Run a prepared agent session to its stop condition"
+  default_prompt: "Use $kickoff with the run directory I provide to execute the prepared task plan, update the ledger and dashboard, and stop at its recorded limits."

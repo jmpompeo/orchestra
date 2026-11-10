@@ -1,6 +1,6 @@
 ---
 name: refactor-code
-description: Improve existing code structure, readability, and maintainability without changing observable behavior. Use for standalone requests to refactor, simplify, reorganize, clean up, or reduce duplication in code, and as the read-only audit subagent launched during agentic feature delivery; do not use for feature development, behavior changes, broad rewrites, or bug fixes.
+description: Improve existing code structure, readability, and maintainability without changing observable behavior. Use for standalone requests to refactor, simplify, reorganize, clean up, or reduce duplication in code, and for an explicitly opted-in read-only audit during agentic feature delivery; do not use for feature development, behavior changes, broad rewrites, or bug fixes.
 ---
 
 # Refactor code
@@ -13,8 +13,9 @@ ceremony.
 
 - When invoked standalone for a refactor request, execute the complete refactor
   workflow and edit only approved files.
-- When invoked by `$agentic-feature-delivery`, perform only the read-only audit
-  workflow below. Never expand the feature or edit code from this mode.
+- When explicitly opted in and invoked by agentic-feature-delivery as a
+  subagent, perform only the read-only audit workflow below. Never expand the
+  feature or edit code from this mode.
 
 ## Execute a refactor
 
@@ -31,7 +32,7 @@ ceremony.
    parent when delegation would cost more tokens.
 4. Reject work that requires changing observable behaviour, public contracts,
    or user-visible output; redirect it to the appropriate feature or debugging
-   workflow. Otherwise, use `$grill-me` when the refactor crosses files or
+   workflow. Otherwise, use the grill-me skill when the refactor crosses files or
    responsibilities, changes internal dependency direction, restructures state
    or data flow, affects concurrency or persistence, lacks meaningful tests, or
    has multiple plausible designs with material tradeoffs. Skip grilling for
@@ -42,7 +43,7 @@ ceremony.
    tests before editing. If relevant tests fail, resolve whether the baseline
    is trustworthy before proceeding. Treat absent or inadequate coverage as a
    hard stop: do not edit, and do not substitute agent-authored ad hoc checks
-   for established coverage. Use `$grill-me` and wait for the user to choose
+   for established coverage. Use the grill-me skill and wait for the user to choose
    between adding approved characterization tests and explicitly accepting an
    unverified refactor. Test files must also appear in the writable-file
    allowlist. Never treat user acceptance of risk as proof of preserved
@@ -61,6 +62,18 @@ ceremony.
    evidence rather than relying only on newly authored tests.
 9. Return a concise handoff with changed files, invariants, baseline and final
    evidence, review findings, accepted gaps, and residual risk.
+
+For a standalone refactor, this is the primary workflow. Necessary structural
+edits within a feature or bug task belong to that task's primary workflow; they
+do not trigger this skill. If a test exposes a defect, stop refactor edits and
+use agentic-debugging as a temporary detour. Carry the goal, failing check,
+observable invariants, authorization, decisions, constraints, file allowlist,
+and remaining work; return automatically when the baseline and writable-file
+scope are settled. A newly requested behavioral outcome can make
+agentic-feature-delivery primary when the user's scope supports it. Announce
+clear transitions briefly and ask only about new material decisions or scope.
+Switching skills does not grant permission to edit additional files. Satisfy
+the shared Git branch preflight before the task's first repository edit.
 
 ## Audit feature work
 

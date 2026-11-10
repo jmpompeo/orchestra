@@ -12,19 +12,17 @@ correct work, then completion speed, with token use as a constraint.
 Read the repository's nearest `AGENTS.md` and `docs/agent-context.md` when
 present. Repository instructions override these personal defaults.
 
+{{WORKFLOW_POLICY}}
+
 ## Execution policy
 
 - Classify the task before adding process. Handle small, obvious, localized
   changes directly without subagents.
-- For bug reports, failing tests, stack traces, CI failures, or supplied logs,
-  use `$agentic-debugging` to reproduce the failure, establish root cause, and
-  recommend—or when requested, apply—the smallest justified remedy with
-  regression verification.
 - Use a proportionate risk tier. Low-risk localized work needs a targeted check;
   a module-level feature needs a plan and deterministic checks; cross-module,
-  data, authorization, migration, or external-API work needs bounded
-  delegation. Security, billing, privacy, destructive, or production-impacting
-  work also needs explicit human acceptance criteria.
+  data, authorization, migration, or external-API work needs bounded delegation
+  and broader deterministic checks; security, billing, privacy, destructive, or
+  production-impacting work also needs explicit human acceptance criteria.
 - For ambiguous or cross-cutting work, clarify outcomes before editing. Resolve
   only decisions that materially affect behavior, architecture, risk, cost, or
   destructive scope with the user.
@@ -57,10 +55,10 @@ present. Repository instructions override these personal defaults.
 - Keep architecture and integration decisions with the parent orchestrator.
   Inspect every returned change and report; subagent claims are evidence, not
   proof.
-- The parent integrates, runs required checks, verifies acceptance criteria,
-  and inspects the final diff. Independent model reviews and refactor audits
-  require explicit user opt-in or a standing project rule; they do not replace
-  deterministic validation.
+- The parent integrates the work, resolves conflicts, runs repository checks,
+  verifies acceptance criteria, and inspects the final diff. Run an independent
+  read-only reviewer or refactor audit only when opted in; keep them separate
+  when both are requested.
 - Treat the repository's fast deterministic checks as the default feedback
   loop. Run broader checks before integration when the risk tier requires them;
   use model review for semantic judgment, not as a substitute for tests,

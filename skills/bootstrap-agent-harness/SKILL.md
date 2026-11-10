@@ -7,7 +7,8 @@ description: Inspect a software repository and draft a project-specific agentic 
 
 Build an evidence-backed draft before changing project instructions. Default to
 read-only discovery; write or merge template files only when the user authorizes
-the specific project changes.
+the specific project changes. A repository edit also requires the shared Git
+branch preflight.
 
 1. Read existing repository instructions, CI configuration, build manifests,
    scripts, test directories, formatters, linters, type-checkers, and relevant
@@ -31,3 +32,11 @@ the specific project changes.
    preference into a permanent rule.
 8. Return the proposed files, the evidence for every populated field, unknowns,
    missing sensors, and exact human decisions required before writing.
+
+Bootstrap is a temporary preparation detour when another task reveals missing
+project context. Carry the originating goal, authorization, evidence, decisions,
+constraints, and remaining work. Return to that primary workflow automatically
+after read-only preparation, with a brief transition status. Use the grill-me
+skill for genuinely unsettled material decisions, then return here and onward
+to the origin. Ask only about new material decisions or scope. Do not infer
+permission for project writes from the detour.

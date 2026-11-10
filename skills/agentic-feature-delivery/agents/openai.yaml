@@ -1,4 +1,4 @@
 interface:
   display_name: "Agentic Feature Delivery"
   short_description: "Orchestrate features through verified integration"
-  default_prompt: "Use $agentic-feature-delivery to implement this feature end-to-end with focused exploration, planning, bounded delegation, verification, and independent review."
+  default_prompt: "Use $agentic-feature-delivery to implement this feature end-to-end with focused exploration, planning, bounded delegation, and verification. Run model reviews only when I explicitly opt in or a standing project rule opts in."

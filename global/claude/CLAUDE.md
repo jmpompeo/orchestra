@@ -12,18 +12,16 @@ use as a constraint.
 Read the repository's `CLAUDE.md` and `docs/agent-context.md` when present.
 Repository instructions override these personal defaults.
 
+{{WORKFLOW_POLICY}}
+
 ## Workflow
 
 - Handle small, obvious, localized changes directly without subagents.
-- For bug reports, failing tests, stack traces, CI failures, or supplied logs,
-  use `$agentic-debugging` to reproduce the failure, establish root cause, and
-  recommend—or when requested, apply—the smallest justified remedy with
-  regression verification.
 - Use a proportionate risk tier. Low-risk localized work needs a targeted check;
   a module-level feature needs a plan and deterministic checks; cross-module,
-  data, authorization, migration, or external-API work needs bounded
-  delegation. Security, billing, privacy, destructive, or production-impacting
-  work also needs explicit human acceptance criteria.
+  data, authorization, migration, or external-API work needs bounded delegation
+  and broader deterministic checks; security, billing, privacy, destructive, or
+  production-impacting work also needs explicit human acceptance criteria.
 - For ambiguous or cross-cutting work, resolve material product and architecture
   choices before editing.
 - Explore actual behavior, tests, conventions, and constraints before planning.
@@ -54,9 +52,9 @@ Repository instructions override these personal defaults.
   rather than claiming an unmeasured improvement.
 - Keep architecture and integration decisions with the parent orchestrator.
   Inspect every returned change; a subagent success report is not proof.
-- Integrate centrally, run required checks, and inspect the final diff.
-  Independent model reviews and refactor audits require explicit user opt-in
-  or a standing project rule; they do not replace deterministic validation.
+- Integrate centrally, run repository checks, verify acceptance criteria, and
+  inspect the final diff. Run an independent read-only reviewer or refactor
+  audit only when opted in; keep them separate when both are requested.
 - Use fast deterministic checks as the default feedback loop. Run broader
   checks before integration when the risk tier requires them; use model review
   for semantic judgment, not as a substitute for tests, linters, type checks,

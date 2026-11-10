@@ -16,11 +16,25 @@ jobs:
       - run: dotnet build AgentHarness.sln --configuration Release
       - run: dotnet run --project tests/AgentHarness.Tests/AgentHarness.Tests.csproj --configuration Release
       - run: /bin/sh tests/Installer.Tests/install-sh-tests.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Workflow efficiency and dashboard regression tests
+        run: node --test tests/efficiency.test.mjs tests/dashboard.test.mjs
+      - name: Codex launcher protocol regression tests
+        run: node tests/codex-app-server-run.test.mjs
 
   windows-installer:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Claude install dry run
+        run: dotnet run --project src/AgentHarness/AgentHarness.csproj --configuration Release -- install --tools claude --dry-run
+      - name: CLI regression tests
+        run: dotnet run --project tests/AgentHarness.Tests/AgentHarness.Tests.csproj --configuration Release
       - name: Windows PowerShell 5.1 installer tests
         shell: powershell
         run: .\tests\Installer.Tests\install-ps1-tests.ps1

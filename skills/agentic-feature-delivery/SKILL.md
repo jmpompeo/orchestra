@@ -11,22 +11,17 @@ correctness, then time to a validated result, with token use as a constraint.
 1. Read repository instructions and `docs/agent-context.md` when present.
    Read `docs/harness-evolution.md` when it exists and a recurring failure is
    relevant. Inspect the working tree and preserve unrelated changes.
-2. Decide whether orchestration is justified. Handle small, obvious, low-risk
-   localized edits directly even when this workflow is invoked. Use a targeted
-   check; independent model review remains opt-in at every risk tier.
+2. Decide whether orchestration is justified. Handle small, obvious,
+   localized, low-risk feature work directly without subagents, even when this
+   skill was explicitly invoked. Use a targeted check. Model reviews are opt-in
+   at every risk tier.
 3. Resolve meaningful ambiguity before editing. Establish outcomes,
    constraints, non-goals, edge cases, and acceptance criteria. Ask only about
    decisions that materially change behavior, architecture, risk, cost, or
    destructive scope.
-4. Before implementation, require a Git repository, a clean working tree, and
-   an attached HEAD unless the user explicitly opts out for this task. Show the
-   current branch and short HEAD, ask the user to confirm the intended base and
-   supply the working branch name, then create or switch to that branch. If an
-   existing branch diverges from the confirmed base, disclose that and ask
-   before switching. Recheck the resulting branch and HEAD. Without an explicit
-   opt-out, stop on dirty, non-Git, detached, or unexpected state. With one,
-   record the exact exception and user-confirmed starting state. Never stash,
-   discard, clean, or switch implicitly.
+4. Before the task's first repository edit, satisfy the shared Git branch
+   preflight in the always-on workflow policy. Carry the verified branch
+   through skill transitions.
 5. Assign a risk tier: localized, module-level, cross-cutting, or
    high-consequence. For high-consequence work, obtain explicit human
    acceptance criteria before changing security, billing, privacy, destructive,
@@ -47,10 +42,13 @@ correctness, then time to a validated result, with token use as a constraint.
    checks, pair implementation with regression tests, reuse findings, and stop
    obsolete branches. Diagnose failures before retrying; escalate directly when
    expertise is missing. Verify the integrated behavior and relevant edge cases.
-10. Once a reviewable draft or diff exists, run a bounded read-only refactor
-    audit only when explicitly requested by the user or opted in by a standing
-    project rule. Scope it to the changed functions and collect findings before
-    handoff. Preserve unrelated work.
+10. Only when the user explicitly requests a refactor audit for this task or a
+    standing project rule opts in, wait for a reviewable draft or diff, then
+    launch the lowest-cost capable read-only subagent using the refactor-code
+    skill in audit mode. Scope it to the affected methods or functions and
+    minimum context, never the whole file by default. Collect its result before
+    handoff. Report pre-existing smells without fixing them; address problems
+    introduced by the feature within its approved scope.
 11. Keep architecture and integration decisions with the parent. Inspect every
    returned change and the final diff; subagent reports are not proof.
 12. Run fast deterministic checks before handoff, then the broader checks the
@@ -60,14 +58,29 @@ correctness, then time to a validated result, with token use as a constraint.
 13. For behaviour-critical work, use approved fixtures or explicit manual
     acceptance steps. Do not treat agent-authored tests alone as sufficient
     evidence when trusted examples are available.
-14. Obtain an independent read-only correctness review only when explicitly
-    requested by the user or opted in by a standing project rule. Address
-    material findings and rerun affected checks. An audit and a correctness
-    review are separate opt-ins.
+14. Only when the user explicitly requests an independent correctness review
+    for this task or a standing project rule opts in, obtain a separate
+    read-only review, address material findings, and rerun affected checks.
+    A refactor audit does not opt in to a correctness review, or vice versa.
 15. When a pattern has failed at least twice, propose the smallest durable
     control in `docs/harness-evolution.md`; never record sensitive data or raw
     transcripts. Stop only when acceptance criteria are met or a concrete
     blocker remains.
+
+## Skill transitions
+
+This is the primary workflow for a feature task. Keep the feature goal and plan
+when a temporary detour is needed. If a bug surfaces during implementation,
+use the agentic-debugging skill to diagnose and resolve it within the existing
+authorization, then return here. Use the grill-me skill for unsettled material
+decisions and return with the confirmed choices. Necessary structural edits
+remain part of this feature; a later, separately requested cleanup can make
+refactor-code the primary workflow. The read-only refactor audit above is a
+subagent review, not a workflow switch. Carry the goal, authorization,
+evidence, decisions, constraints, and remaining work through each detour.
+Announce a clear transition briefly, return automatically when its purpose is
+met, and ask only about new material decisions or scope. Do not repeat settled
+discovery or expand edit permission during a transition.
 
 Do not commit unless the user requests it. Never push, deploy, merge, publish,
 modify external systems, or perform destructive actions unless the user
@@ -76,3 +89,21 @@ explicitly authorizes the exact action.
 Return one handoff containing the outcome, risk tier, decisions and assumptions,
 files changed, deterministic and behavioural evidence, review findings, checks
 not run with reasons, unresolved risks or blockers, and required user action.
+
+
+## Efficient validation and bounded handoffs
+
+Use the repository's required checks and affected dependency graph to choose the
+smallest defensible local feedback loop. The bundled `scripts/validate.mjs` plans
+checks from changed paths and a reviewed project manifest; use `--run` to execute
+and `--report` to retain command, reason, duration and result. Supply the target
+project's manifest; the Orchestra repository defaults are not universal build
+commands. Broaden for unknown paths, shared configuration and affected consumers.
+A manifest from an untrusted project contains executable commands: inspect it
+before running. Run only project-authorized commands with normal tool permissions.
+
+Call custom roles explicitly. Give a worker a compact goal, file ownership,
+relevant contracts, constraints, acceptance command and return contract. Omit
+full history when it adds no necessary evidence. Report retry/integration overhead
+alongside speed or cost gains; verify actual role selection rather than assuming
+it from configuration. Keep tiny work in the parent.

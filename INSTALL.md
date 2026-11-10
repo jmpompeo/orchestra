@@ -76,13 +76,141 @@ generated from each canonical `SKILL.md`, excluding Codex-only agent metadata.
 For a personal Cursor baseline, run `orchestrate cursor-rules --print` and
 paste the result into Cursor Settings → Rules → User Rules.
 
+The shared workflow policy requires a Git repository, clean working tree,
+attached HEAD, and an agreed base and working branch before any repository
+edit. If a base or branch was not supplied, the agent proposes one and waits
+for confirmation. Once verified, the branch carries through skill detours.
+Feature work uses `agentic-feature-delivery`, defects use `agentic-debugging`,
+and standalone behaviour-preserving cleanup uses `refactor-code`. `grill-me`
+and `bootstrap-agent-harness` support the active workflow, which resumes
+afterward; a read-only refactor audit during feature work does not switch the
+primary workflow.
+
 Bundled workflows include `$agentic-debugging` for evidence-driven diagnosis,
 root-cause fixes, and regression verification; `$grill-me` for resolving
 non-trivial choices after investigation or before feature implementation;
 `$agentic-feature-delivery` for executing an approved feature; `$refactor-code`
 for behaviour-preserving structural improvements and scoped smell audits; and
 `$bootstrap-agent-harness` for adopting the framework in an existing
-repository.
+repository. `$prep` and `$kickoff` structure long, unattended sessions.
+
+### Prepare a long-running session
+
+Invoke `$prep` (or `/prep` in Claude Code or Cursor) in the target project.
+Prep asks for the outcome, allowed scope and decisions, a branch, time budget,
+stop conditions, and explicit commands for the done check, baseline tests, and
+an app smoke check when applicable. It verifies the done check is runnable,
+then requires the baseline tests and app smoke check to pass. It also verifies
+required permissions before starting a fresh native session where the host
+supports it. Native liveness hooks are opt-in; without verified hooks, task
+progress still works and native liveness is unavailable. Cursor can launch through the
+measured SDK runner or receive instructions for `/kickoff` in a new IDE Agent
+chat. Orchestra does not supervise the native loop.
+
+Prep keeps the brief, plan, progress ledger, decisions, heartbeat data, and
+local dashboard under `.orchestra/runs/<run-id>/`. These files are ignored by
+Git for that project. The dashboard is a reusable HTML template emitted by `heartbeat init`;
+it reloads `heartbeat.js` from the same directory and works over `file://`
+without a server. It shows task progress, parked questions, liveness, and
+available budget data, including the usage source and last sample time. Run
+notes can contain sensitive context, so inspect them before sharing or
+copying them elsewhere.
+
+Kickoff reads the brief and resumes from the local ledger after compaction or a
+restart. The time budget begins with its first task. A question needing human
+judgment is recorded in the decision queue; independent tasks can continue.
+The run stops at its time limit, an unmet permission or environment gate, or
+the second occurrence of the same failure on a task.
+Per-task commits require explicit authorization in that run's brief and stay
+on its named branch. Token counts come from the selected tool's native usage
+feed and are bound to that run's session ID. The agent or collector writes an
+absolute native total through `orchestrate heartbeat usage`; task events do
+not accept token deltas. If no native sample has arrived, the dashboard shows
+usage as unavailable rather than zero.
+
+| Tool and launch path | Token source | When a token cap is available |
+| --- | --- | --- |
+| Codex app-server | Bundled one-turn launcher reads live `thread/tokenUsage/updated` notifications | When its read-only probe receives a native usage sample |
+| Codex desktop | Native Goal `get_goal` usage written at kickoff checkpoints | When the user authorizes a capped Goal and the fresh task can create and read it |
+| Codex CLI `exec --json` | `turn.completed` usage forwarded to `heartbeat collect-codex` | Final accounting only for a single long kickoff turn; no token cap |
+| Claude Code background | [OpenTelemetry token counter](https://code.claude.com/docs/en/monitoring-usage) sent to a run-scoped loopback receiver | When prep proves telemetry with a native sample and starts the receiver before kickoff |
+| Cursor SDK | [SDK usage events](https://cursor.com/docs/sdk/typescript) recorded by the bundled project launcher | When its read-only native usage probe succeeds |
+| Cursor IDE Agent chat | No documented cumulative per-session token feed | Unavailable; use a time limit and failure stop |
+
+Prep offers both the Cursor SDK measured run and manual IDE chat. The SDK
+launcher is installed in the project at `.cursor/orchestra/cursor-sdk-run.mjs`;
+it needs Node.js, `@cursor/sdk` installed in the ignored run directory, a
+selected model, and Cursor authentication. Run its read-only usage probe
+before starting a capped run. Manual chat remains available through a fresh
+Agent chat and `/kickoff <absolute-run-dir>`, with token usage labeled
+unavailable. The SDK launcher runs one native Cursor agent and records its
+usage; it does not supervise it. An explicit `--resume` checks that the prior
+SDK run ended, reuses its saved agent state, and adds the new run's usage to
+the existing total.
+
+For Codex, the bundled prep script can start a measured app-server run and
+record live thread usage. Its read-only probe must succeed with the installed
+Codex version before prep accepts a cap. A parked measured run can continue
+with `--resume` after the prior turn ends. Prep uses `--detach` for the measured
+run, retains its local PID and log, and verifies the native session binding
+before ending. The separate `collect-codex` command
+also parses an existing app-server or CLI JSONL stream.
+
+The Claude receiver starts as a local process for that run and listens only
+on `127.0.0.1`. Prep launches Claude with session telemetry directed to the
+receiver and verifies that a sample reaches the right session. It counts
+native input, output, cache-read, and cache-creation token counters. The
+receiver records cumulative series snapshots in batches, keeping the local
+dashboard file compact across long runs. It stops the
+receiver when the run completes or aborts. Token caps require Claude Code
+2.1.214 or newer because earlier versions can inflate streamed usage metrics.
+Codex hooks and Claude hooks
+report liveness, not tokens. Codex desktop Goal snapshots are written by the
+kickoff agent at safe boundaries; they are not a background feed. The Codex
+CLI final event arrives too late to stop a single long kickoff turn at a cap.
+
+A token cap stops additional work at the next safe boundary after usage
+reaches it. One model request or a delayed telemetry export can exceed the
+number. Prep declines a cap when the selected path cannot prove a working
+usage feed, and kickoff parks a capped run if that feed later stops.
+
+`orchestrate heartbeat` records task events, hook timestamps, and native usage
+samples in the dashboard's script file. `heartbeat collect-codex` reads a
+Codex JSONL stream, while `heartbeat collect-claude` listens for local Claude
+telemetry. Neither starts or supervises an agent. When requested, hooks are
+configured for the selected project and run during prep, not enabled globally by
+`orchestrate install`. [Codex requires review and
+trust](https://learn.chatgpt.com/docs/hooks) of a new hook definition before
+it runs. For requested hooks, prep verifies an actual hook probe, then binds
+future stamps to the launched session ID so another session
+in the same project cannot make this run appear live. An unverified hook does
+not block ordinary work; it blocks only a run that explicitly requires verified
+monitoring. Claude background
+sessions [normally move into a new worktree](https://code.claude.com/docs/en/agent-view#how-file-edits-are-isolated)
+on their first edit; prep uses a
+verified dedicated linked worktree for an automatic Claude launch.
+
+After successful tasks and final checks, kickoff retires run-owned temporary
+worktrees and scratch resources, retaining the final deliverable and concise
+validation/run evidence, including `dashboard.html` and its sibling
+`heartbeat.js`. The pair is retained together after success, even when a
+worktree is retired. Prep and kickoff provide a clickable **Open dashboard in
+agent** file link and a separate **Open in browser** action or platform command;
+completion repeats those choices at the retained path. Rendering depends on the
+host's HTML preview support; a blocked preview is reported without preventing
+implementation. Cleanup preserves uncommitted work, active resources and
+resumable runs, and asks before uncertain removal. Pre-existing worktrees are
+outside this cleanup scope.
+
+Refactor audits and independent model correctness reviews run only when you
+request them for a task or a standing project rule opts in. The agent may
+suggest a review when evidence is weak, but deterministic checks, risk-based
+acceptance criteria, and its own final diff inspection still apply without one.
+The installed policy also keeps persistent guidance stable, uses concise state
+checkpoints when context grows or work changes phases, avoids repeated
+unproductive tool calls, and delegates narrow tasks when the handoff saves
+total tokens or latency. These are agent instructions, not runtime enforcement
+of prompt caching, tool-call interception, or a fixed turn limit.
 
 ## Conflicts, backups, and safety
 
@@ -93,7 +221,16 @@ orchestrate install --tools codex,claude --dry-run
 ```
 
 The CLI creates missing files, updates only unchanged CLI-owned files, and
-never silently overwrites a different file. It refuses links/reparse points and
+never silently overwrites a different file. The one exception to skipping is
+your global `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`: if one exists and
+the CLI doesn't own it, the policy is appended between `<!-- orchestra:begin -->`
+and `<!-- orchestra:end -->` markers and the rest of your file is untouched.
+Later installs rewrite only that block, and `uninstall` removes only that block.
+These operations preserve UTF-8 BOMs and user whitespace, and stage replacement
+bytes in the same directory before atomically replacing the file. Non-UTF-8
+instruction files are a conflict; convert them to UTF-8 before re-running.
+The dry run reports these as `APPEND` or `UPDATE`. Unmatched markers are a
+conflict. It refuses links/reparse points and
 records SHA-256 ownership data in its per-user state directory. To explicitly
 replace a conflicting file while retaining a timestamped sibling backup:
 
@@ -153,6 +290,33 @@ The first command is preview-only. `--apply` creates missing selected-tool
 files only; existing instructions, rules, and docs are conflicts requiring a
 manual merge. It does not remove project-local files.
 
+### Update an existing Cursor project
+
+After updating the CLI, refresh the personal Cursor rule separately:
+
+```sh
+orchestrate cursor-rules --print
+```
+
+Compare the output with your current Cursor Settings → Rules → User Rules,
+then paste or merge it there. The CLI does not edit Cursor User Rules for you.
+From each existing project root, preview the current project files:
+
+```sh
+orchestrate init-project --tools cursor
+```
+
+To obtain the current rule and commands for comparison, run
+`orchestrate init-project --tools cursor --apply` in a new empty temporary
+directory. On the verified working branch of your existing project, compare
+those generated `.cursor/rules/` and `.cursor/commands/` files with your
+project's versions and merge the changes you want. Review the reported
+conflicts before merging.
+`orchestrate init-project --tools cursor --apply` can create missing files, but
+it preserves every existing project file, including files you modified; it
+does not update or silently overwrite them. Keep a copy of your custom rules
+and commands while merging.
+
 ## Work-versus-personal boundaries
 
 - Keep this repository generic: no credentials, customer data, internal
@@ -176,9 +340,22 @@ orchestrate uninstall --tools codex,claude --dry-run
 orchestrate uninstall --tools codex,claude
 ```
 
-Only unchanged, CLI-owned global files are removed. Retired skill files are
+Only unchanged, CLI-owned global files are removed, and the Orchestra block
+is stripped from a `CLAUDE.md` or `AGENTS.md` it was appended to. Retired skill files are
 removed only when their ownership hash still matches. Modified, unknown, or
 unsafe files and all project-local harness files are preserved.
+
+## Measure workflow efficiency
+
+See [the efficiency guide](docs/efficiency.md) for dependency-aware local validation,
+model assignment diagnostics and report-only candidate evaluation, and observed
+productivity trials. The portable Node tools require Node.js 22 or newer; normal
+CLI installation and heartbeat dashboards remain self-contained.
+
+`orchestrate models inspect --tool codex` (or `claude`) compares bundled assignments
+with installed role definitions. `orchestrate models candidate --config PATH`
+validates a proposed models.conf without adopting it. Requested and runtime-reported
+models remain separate; configuration and token totals do not prove execution.
 
 ## Developing and releasing
 
