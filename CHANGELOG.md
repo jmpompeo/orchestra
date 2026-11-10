@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.10.0](https://github.com/jmpompeo/orchestra/compare/v2.9.0...v2.10.0) (2026-11-10)
+
+
+### Features
+
+* prioritize correctness in subagent delegation ([#45](https://github.com/jmpompeo/orchestra/issues/45)) ([661e497](https://github.com/jmpompeo/orchestra/commit/661e4977d5f041e024aa641e75c72e7bd17c75a8))
+
 ## [2.9.0](https://github.com/jmpompeo/orchestra/compare/v2.8.0...v2.9.0) (2026-11-09)
 
 
